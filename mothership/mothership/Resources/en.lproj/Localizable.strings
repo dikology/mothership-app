@@ -1,0 +1,34 @@
+/* 
+  Localizable.strings (English)
+  mothership
+*/
+
+// MARK: - Greetings
+
+"greeting.morning" = "Good morning, Captain";
+"greeting.day" = "Good afternoon, Captain";
+"greeting.evening" = "Good evening, Captain";
+"greeting.night" = "Good night, Captain";
+"greeting.subtitle" = "Have a great mood and weather";
+
+// MARK: - Tab Bar
+
+"tab.home" = "Home";
+"tab.learn" = "Learn";
+"tab.practice" = "Practice";
+"tab.profile" = "Profile";
+
+// MARK: - Common
+
+"common.coming_soon" = "Coming soon";
+"common.cancel" = "Cancel";
+"common.save" = "Save";
+"common.done" = "Done";
+"common.back" = "Back";
+
+// MARK: - Settings
+
+"settings.title" = "Settings";
+"settings.language" = "Language";
+"settings.system_language" = "System Language";
+

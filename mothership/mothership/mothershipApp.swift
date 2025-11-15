@@ -14,6 +14,7 @@ struct mothershipApp: App {
     var body: some Scene {
         WindowGroup {
             AppView(model: model)
+                .environment(\.localization, model.localization)
         }
     }
 }

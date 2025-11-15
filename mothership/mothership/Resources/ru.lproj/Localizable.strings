@@ -1,0 +1,34 @@
+/* 
+  Localizable.strings (Russian)
+  mothership
+*/
+
+// MARK: - Greetings
+
+"greeting.morning" = "Доброе утро, Капитан";
+"greeting.day" = "Добрый день, Капитан";
+"greeting.evening" = "Добрый вечер, Капитан";
+"greeting.night" = "Доброй ночи, Капитан";
+"greeting.subtitle" = "Хорошего настроения и погоды";
+
+// MARK: - Tab Bar
+
+"tab.home" = "Главная";
+"tab.learn" = "Обучение";
+"tab.practice" = "Практика";
+"tab.profile" = "Профиль";
+
+// MARK: - Common
+
+"common.coming_soon" = "Скоро будет";
+"common.cancel" = "Отмена";
+"common.save" = "Сохранить";
+"common.done" = "Готово";
+"common.back" = "Назад";
+
+// MARK: - Settings
+
+"settings.title" = "Настройки";
+"settings.language" = "Язык";
+"settings.system_language" = "Системный язык";
+

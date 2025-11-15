@@ -12,17 +12,26 @@ struct AppView: View {
     @State private var selectedTab: MainTab = .home
     
     enum MainTab: String, CaseIterable {
-        case home = "Home"
-        // case learn = "Learn"
-        // case practice = "Practice"
-        // case profile = "Profile"
+        case home
+        // case learn
+        // case practice
+        // case profile
         
         var icon: String {
             switch self {
             case .home: return "house.fill"
             // case .learn: return "book.fill"
             // case .practice: return "checklist"
-            // case .profile: return "person.fill"
+            // case .profile: return "person.fill"  
+            }
+        }
+        
+        func localizedName(using service: LocalizationService) -> String {
+            switch self {
+            case .home: return service.localized(L10n.Tab.home)
+            // case .learn: return service.localized(L10n.Tab.learn)
+            // case .practice: return service.localized(L10n.Tab.practice)
+            // case .profile: return service.localized(L10n.Tab.profile)
             }
         }
     }
@@ -65,7 +74,7 @@ struct AppView: View {
     private func destinationView(for path: AppPath) -> some View {
         switch path {
         default:
-            Text("Coming soon")
+            Text(model.localization.localized(L10n.Common.comingSoon))
                 .font(AppTypography.title1)
         }
     }
@@ -74,13 +83,15 @@ struct AppView: View {
 // Custom Tab Bar Component
 struct CustomTabBar: View {
     @Binding var selectedTab: AppView.MainTab
+    @Environment(\.localization) private var localization
     
     var body: some View {
         HStack(spacing: 0) {
             ForEach(AppView.MainTab.allCases, id: \.self) { tab in
                 TabBarItem(
                     tab: tab,
-                    isSelected: selectedTab == tab
+                    isSelected: selectedTab == tab,
+                    localization: localization
                 ) {
                     selectedTab = tab
                 }
@@ -101,6 +112,7 @@ struct CustomTabBar: View {
 struct TabBarItem: View {
     let tab: AppView.MainTab
     let isSelected: Bool
+    let localization: LocalizationService
     let action: () -> Void
     
     var body: some View {
@@ -122,7 +134,7 @@ struct TabBarItem: View {
                 .frame(width: 46, height: 46)
                 
                 // Text label
-                Text(tab.rawValue)
+                Text(tab.localizedName(using: localization))
                     .font(AppTypography.tabBar)
                     .foregroundColor(isSelected ? AppColors.tabBarSelected : AppColors.tabBarUnselected)
             }

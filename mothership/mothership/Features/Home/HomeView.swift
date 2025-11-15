@@ -9,6 +9,7 @@ import SwiftUI
 //import Tagged
 
 struct HomeView: View {
+    @Environment(\.localization) private var localization
     
     var body: some View {
         ScrollView {
@@ -31,7 +32,7 @@ struct HomeView: View {
             Text(greetingText)
                 .font(AppTypography.greeting)
                 .foregroundColor(AppColors.meditationTextPrimary)
-            Text("Хорошего настроения и погоды")
+            Text(localization.localized(L10n.Greeting.subtitle))
                 .font(AppTypography.greetingSubtitle)
                 .foregroundColor(AppColors.meditationTextSecondary)
         }
@@ -44,13 +45,13 @@ struct HomeView: View {
         
         switch hour {
         case 5..<12:
-            return "Доброе утро, Капитан"
+            return localization.localized(L10n.Greeting.morning)
         case 12..<17:
-            return "Добрый день, Капитан"
+            return localization.localized(L10n.Greeting.day)
         case 17..<22:
-            return "Добрый вечер, Капитан"
+            return localization.localized(L10n.Greeting.evening)
         default:
-            return "Доброй ночи, Капитан"
+            return localization.localized(L10n.Greeting.night)
         }
     }
     
