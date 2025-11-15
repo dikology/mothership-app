@@ -54,6 +54,7 @@ struct AppView: View {
                 destinationView(for: path)
             }
         }
+        .environment(\.charterStore, model.charterStore)
     }
     
     @ViewBuilder
@@ -146,6 +147,6 @@ struct TabBarItem: View {
 }
 
 #Preview {
-    AppView(model: AppModel())
+    AppView(model: AppModel(charterStore: CharterStore()))
 }
 

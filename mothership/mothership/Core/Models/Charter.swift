@@ -22,8 +22,31 @@ struct Charter: Identifiable, Hashable, Codable {
     var createdAt: Date
     
     var isActive: Bool {
+        let calendar = Calendar.current
         let now = Date()
-        return startDate <= now && (endDate == nil || endDate! >= now)
+        
+        // Normalize dates to start of day for comparison
+        guard let todayStart = calendar.startOfDay(for: now) as Date?,
+              let charterStart = calendar.startOfDay(for: startDate) as Date? else {
+            return false
+        }
+        
+        // Check if today is on or after the charter start date
+        guard todayStart >= charterStart else {
+            return false
+        }
+        
+        // If there's no end date, charter is active indefinitely
+        guard let endDate = endDate else {
+            return true
+        }
+        
+        // Normalize end date and check if today is on or before it
+        guard let charterEnd = calendar.startOfDay(for: endDate) as Date? else {
+            return false
+        }
+        
+        return todayStart <= charterEnd
     }
     
     init(

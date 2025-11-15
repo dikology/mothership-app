@@ -11,6 +11,7 @@ struct CharterCreationView: View {
     //@Environment(\.charterStore) private var charterStore
     @Environment(\.dismiss) private var dismiss
     @Environment(\.localization) private var localization
+    @Environment(\.charterStore) private var charterStore
     
     @State private var name: String = ""
     @State private var startDate: Date = Date()
@@ -20,7 +21,6 @@ struct CharterCreationView: View {
     @State private var yachtName: String = ""
     @State private var charterCompany: String = ""
     @State private var notes: String = ""
-    @State private var setAsActive: Bool = true
     @State private var showingError: Bool = false
     @State private var errorMessage: String = ""
     
@@ -207,13 +207,7 @@ struct CharterCreationView: View {
             notes: notes.isEmpty ? nil : notes.trimmingCharacters(in: .whitespaces)
         )
         
-        // TODO: Add to store
-        // charterStore.addCharter(charter)
-
-        // TODO: Set as active if requested
-        // if setAsActive {
-        //     charterStore.setActiveCharter(charter)
-        // }
+        charterStore.addCharter(charter)
         
         // Dismiss
         dismiss()
