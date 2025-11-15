@@ -37,6 +37,17 @@
 "charter.information" = "Информация";
 "charter.charter" = "Чартер";
 
+// MARK: - Practice
+
+"practice.practice" = "Практика";
+"practice.essential_checklists_and_practical_guides" = "Основные чек-листы и практические руководства";
+"practice.life_on_board" = "Жизнь на яхте";
+"practice.knots" = "Узлы";
+"practice.safety" = "Безопасность";
+"practice.maneuvering" = "Маневрирование";
+"practice.mooring" = "Швартовка";
+"practice.all" = "Все";
+
 // MARK: - Tab Bar
 
 "tab.home" = "Главная";

@@ -37,6 +37,17 @@
 "charter.information" = "Information";
 "charter.charter" = "Charter";
 
+// MARK: - Practice
+
+"practice.practice" = "Practice";
+"practice.essential_checklists_and_practical_guides" = "Essential checklists and practical guides";
+"practice.life_on_board" = "Life on board";
+"practice.knots" = "Knots";
+"practice.safety" = "Safety";
+"practice.maneuvering" = "Maneuvering";
+"practice.mooring" = "Mooring";
+"practice.all" = "All";
+
 // MARK: - Tab Bar
 
 "tab.home" = "Home";

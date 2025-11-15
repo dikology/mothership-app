@@ -12,5 +12,9 @@ enum AppPath: Hashable {
     // Charter paths
     case charterCreation
     case charterDetail(Charter.ID)
+    case charterEdit(Charter.ID)
+    
+    // Practice paths
+    case practiceModule(String)
 }
 

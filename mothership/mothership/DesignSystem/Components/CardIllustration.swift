@@ -44,10 +44,11 @@ struct CardIllustration: View {
                 }
                 
             case .focus:
-                // Person meditating - placeholder
-                Image(systemName: "figure.mind.and.body")
-                    .font(.system(size: size * 0.6))
-                    .foregroundColor(.white.opacity(0.9))
+                Image("officeworker")
+                    .renderingMode(.original)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: size, height: size)
                 
             case .happiness:
                 // Person with floating elements - placeholder

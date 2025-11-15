@@ -29,7 +29,7 @@ struct CharterDetailView: View {
                     if let location = charter.location {
                         HStack {
                             Image(systemName: "location.fill")
-                                .foregroundColor(AppColors.oceanBlue)
+                                .foregroundColor(AppColors.lavenderBlue)
                             Text(location)
                                 .font(AppTypography.subheadline)
                                 .foregroundColor(AppColors.textSecondary)
@@ -39,7 +39,7 @@ struct CharterDetailView: View {
                     if let yachtName = charter.yachtName {
                         HStack {
                             Image(systemName: "sailboat.fill")
-                                .foregroundColor(AppColors.oceanBlue)
+                                .foregroundColor(AppColors.lavenderBlue)
                             Text(yachtName)
                                 .font(AppTypography.subheadline)
                                 .foregroundColor(AppColors.textSecondary)
@@ -107,7 +107,7 @@ struct CharterDetailView: View {
                     }
                 } label: {
                     Image(systemName: "ellipsis.circle")
-                        .foregroundColor(AppColors.oceanBlue)
+                        .foregroundColor(AppColors.lavenderBlue)
                 }
             }
         }
