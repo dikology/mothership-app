@@ -9,5 +9,7 @@ import Foundation
 
 enum AppPath: Hashable {
     
+    // Charter paths
+    case charterCreation
 }
 

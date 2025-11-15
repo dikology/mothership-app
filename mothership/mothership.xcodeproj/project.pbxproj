@@ -85,14 +85,14 @@
 					};
 				};
 			};
-		buildConfigurationList = 92896A1A2EC8855100932A4C /* Build configuration list for PBXProject "mothership" */;
-		developmentRegion = ru;
-		hasScannedForEncodings = 0;
-		knownRegions = (
-			en,
-			ru,
-			Base,
-		);
+			buildConfigurationList = 92896A1A2EC8855100932A4C /* Build configuration list for PBXProject "mothership" */;
+			developmentRegion = ru;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				ru,
+				Base,
+			);
 			mainGroup = 92896A162EC8855100932A4C;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;

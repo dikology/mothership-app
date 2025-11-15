@@ -20,6 +20,13 @@ enum L10n {
         static let subtitle = "greeting.subtitle"
     }
     
+    // MARK: - Charter
+    
+    enum Charter {
+        static let createCharter = "charter.create_charter"
+        static let createCharterDescription = "charter.create_charter_description"
+    }
+    
     // MARK: - Tab Bar
     
     enum Tab {

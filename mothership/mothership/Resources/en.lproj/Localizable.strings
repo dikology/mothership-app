@@ -11,6 +11,11 @@
 "greeting.night" = "Good night, Captain";
 "greeting.subtitle" = "Have a great mood and weather";
 
+// MARK: - Charter
+
+"charter.create_charter" = "Create Charter";
+"charter.create_charter_description" = "Start a new charter";
+
 // MARK: - Tab Bar
 
 "tab.home" = "Home";

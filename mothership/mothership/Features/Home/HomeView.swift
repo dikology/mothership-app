@@ -17,8 +17,7 @@ struct HomeView: View {
                 // Header with personalized greeting
                 headerSection
                 
-                // Content
-                //contentSection
+                createCharterCard
             }
         }
         .appBackground()
@@ -38,6 +37,25 @@ struct HomeView: View {
         }
         .padding(.horizontal, AppSpacing.screenPadding)
         .padding(.top, AppSpacing.lg)
+    }
+
+    private var createCharterCard: some View {
+        NavigationLink(value: AppPath.charterCreation) {
+            FeaturedCard(
+                backgroundColor: AppColors.basicsCardColor,
+                illustrationType: .basics
+            ) {
+                VStack(alignment: .leading, spacing: AppSpacing.sm) {
+                    Text(localization.localized(L10n.Charter.createCharter))
+                        .font(AppTypography.cardTitle)
+                    Text(localization.localized(L10n.Charter.createCharterDescription))
+                        .font(AppTypography.caption)
+                        .opacity(0.9)
+                }
+            }
+        }
+        .buttonStyle(PlainButtonStyle())
+        .padding(.horizontal, AppSpacing.screenPadding)
     }
     
     private var greetingText: String {
