@@ -54,6 +54,7 @@ struct AppView: View {
                 destinationView(for: path)
             }
         }
+        .environment(\.charterStore, model.charterStore)
     }
     
     @ViewBuilder
@@ -73,6 +74,12 @@ struct AppView: View {
     @ViewBuilder
     private func destinationView(for path: AppPath) -> some View {
         switch path {
+        case .charterDetail(let id):
+            if let charter = model.charterStore.charters.first(where: { $0.id == id }) {
+                CharterDetailView(charter: charter)
+            }
+        case .charterCreation:
+            CharterCreationView()
         default:
             Text(model.localization.localized(L10n.Common.comingSoon))
                 .font(AppTypography.title1)
@@ -144,6 +151,6 @@ struct TabBarItem: View {
 }
 
 #Preview {
-    AppView(model: AppModel())
+    AppView(model: AppModel(charterStore: CharterStore()))
 }
 

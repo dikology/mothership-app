@@ -44,8 +44,8 @@ enum AppColors {
     static let accentTextFallback = Color(red: 0.0, green: 0.4, blue: 0.6)
     
     // MARK: - Text Colors
-    static let meditationTextPrimary = Color(red: 0.25, green: 0.25, blue: 0.31) // #3F414E
-    static let meditationTextSecondary = Color(red: 0.6, green: 0.6, blue: 0.65) // Lighter gray
+    static let textPrimary = Color(hex: "3F414E") // #3F414E
+    static let textSecondary = Color(hex: "A1A4B2") // Lighter gray
     
     // MARK: - Primary Maritime Colors
     static let oceanBlue = Color(red: 0.0, green: 0.4, blue: 0.6)
@@ -65,12 +65,11 @@ enum AppColors {
     static let lightGray = Color(red: 0.9, green: 0.9, blue: 0.9)
     
     // MARK: - Tab Bar Colors
-    static let tabBarSelected = Color(red: 0.58, green: 0.45, blue: 0.85) // Lavender-purple #9486D9
+    static let tabBarSelected = Color(hex: "8E97FD")
     static let tabBarUnselected = Color(red: 0.6, green: 0.6, blue: 0.65) // Gray
     static let tabBarBackground = Color.white
     
     // MARK: - Featured Card Colors
-    // Light purple/lavender-blue for "Basics" style cards
     static let basicsCardColor = Color(hex: "8E97FD") // Lavender-blue from Figma
     
     // Light orange for "Relaxation" style cards

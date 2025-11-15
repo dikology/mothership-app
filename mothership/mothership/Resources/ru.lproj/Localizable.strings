@@ -11,6 +11,32 @@
 "greeting.night" = "Доброй ночи, Капитан";
 "greeting.subtitle" = "Хорошего настроения и погоды";
 
+// MARK: - Charter
+
+"charter.create_charter" = "Создать чартер";
+"charter.create_charter_description" = "Начните новый чартер";
+"charter.edit_charter" = "Редактировать чартер";
+"charter.edit_charter_description" = "Обновить информацию о чартере";
+"charter.delete_charter" = "Удалить чартер";
+"charter.delete_charter_confirmation" = "Вы уверены, что хотите удалить этот чартер? Это действие нельзя отменить.";
+"charter.main_information" = "Основная информация";
+"charter.charter_name" = "Название чартера";
+"charter.charter_name_example" = "Пример: Хорватия 2024";
+"charter.start_date" = "Дата начала";
+"charter.end_date" = "Дата окончания";
+"charter.additional_information" = "Дополнительная информация";
+"charter.location" = "Место";
+"charter.location_example" = "Пример: Сплит, Хорватия";
+"charter.yacht_name" = "Название яхты";
+"charter.yacht_name_example" = "Пример: Sunset Dream";
+"charter.charter_company" = "Чартерная компания";
+"charter.charter_company_example" = "Пример: SunSail";
+"charter.notes" = "Заметки";
+"charter.set_as_active" = "Сделать активным чартером";
+"charter.charter_name_required" = "Пожалуйста, введите название чартера";
+"charter.information" = "Информация";
+"charter.charter" = "Чартер";
+
 // MARK: - Tab Bar
 
 "tab.home" = "Главная";
@@ -25,6 +51,10 @@
 "common.save" = "Сохранить";
 "common.done" = "Готово";
 "common.back" = "Назад";
+"common.error" = "Ошибка";
+"common.ok" = "ОК";
+"common.edit" = "Редактировать";
+"common.delete" = "Удалить";
 
 // MARK: - Settings
 

@@ -10,15 +10,19 @@ import SwiftUI
 
 struct HomeView: View {
     @Environment(\.localization) private var localization
-    
+    @Environment(\.charterStore) private var charterStore
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: AppSpacing.sectionSpacing) {
                 // Header with personalized greeting
                 headerSection
                 
-                // Content
-                //contentSection
+                if let activeCharter = charterStore.activeCharter {
+                    activeCharterCard(charter: activeCharter)
+                } else {
+                    createCharterCard
+                }
             }
         }
         .appBackground()
@@ -31,13 +35,53 @@ struct HomeView: View {
         VStack(alignment: .leading, spacing: AppSpacing.sm) {
             Text(greetingText)
                 .font(AppTypography.greeting)
-                .foregroundColor(AppColors.meditationTextPrimary)
+                .foregroundColor(AppColors.textPrimary)
             Text(localization.localized(L10n.Greeting.subtitle))
                 .font(AppTypography.greetingSubtitle)
-                .foregroundColor(AppColors.meditationTextSecondary)
+                .foregroundColor(AppColors.textSecondary)
         }
         .padding(.horizontal, AppSpacing.screenPadding)
         .padding(.top, AppSpacing.lg)
+    }
+
+    private func activeCharterCard(charter: Charter) -> some View {
+        NavigationLink(value: AppPath.charterDetail(charter.id)) {
+            FeaturedCard(
+                backgroundColor: AppColors.basicsCardColor,
+                illustrationType: .basics
+            ) {
+                VStack(alignment: .leading, spacing: AppSpacing.sm) {
+                    Text(charter.name)
+                        .font(AppTypography.cardTitle)
+                    if let location = charter.location {
+                        Text(location)
+                            .font(AppTypography.caption)
+                            .opacity(0.9)
+                    }
+                }
+            }
+        }
+        .buttonStyle(PlainButtonStyle())
+        .padding(.horizontal, AppSpacing.screenPadding)
+    }
+
+    private var createCharterCard: some View {
+        NavigationLink(value: AppPath.charterCreation) {
+            FeaturedCard(
+                backgroundColor: AppColors.basicsCardColor,
+                illustrationType: .basics
+            ) {
+                VStack(alignment: .leading, spacing: AppSpacing.sm) {
+                    Text(localization.localized(L10n.Charter.createCharter))
+                        .font(AppTypography.cardTitle)
+                    Text(localization.localized(L10n.Charter.createCharterDescription))
+                        .font(AppTypography.caption)
+                        .opacity(0.9)
+                }
+            }
+        }
+        .buttonStyle(PlainButtonStyle())
+        .padding(.horizontal, AppSpacing.screenPadding)
     }
     
     private var greetingText: String {
