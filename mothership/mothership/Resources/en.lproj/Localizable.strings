@@ -15,6 +15,21 @@
 
 "charter.create_charter" = "Create Charter";
 "charter.create_charter_description" = "Start a new charter";
+"charter.main_information" = "Main information";
+"charter.charter_name" = "Charter name";
+"charter.charter_name_example" = "Example: Croatia 2024";
+"charter.start_date" = "Start date";
+"charter.end_date" = "End date";
+"charter.additional_information" = "Additional information";
+"charter.location" = "Location";
+"charter.location_example" = "Example: Split, Croatia";
+"charter.yacht_name" = "Yacht name";
+"charter.yacht_name_example" = "Example: Sunset Dream";
+"charter.charter_company" = "Charter company";
+"charter.charter_company_example" = "Example: SunSail";
+"charter.notes" = "Notes";
+"charter.set_as_active" = "Set as active charter";
+"charter.charter_name_required" = "Please enter a charter name";
 
 // MARK: - Tab Bar
 
@@ -30,6 +45,8 @@
 "common.save" = "Save";
 "common.done" = "Done";
 "common.back" = "Back";
+"common.error" = "Error";
+"common.ok" = "OK";
 
 // MARK: - Settings
 

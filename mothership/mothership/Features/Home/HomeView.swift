@@ -30,10 +30,10 @@ struct HomeView: View {
         VStack(alignment: .leading, spacing: AppSpacing.sm) {
             Text(greetingText)
                 .font(AppTypography.greeting)
-                .foregroundColor(AppColors.meditationTextPrimary)
+                .foregroundColor(AppColors.textPrimary)
             Text(localization.localized(L10n.Greeting.subtitle))
                 .font(AppTypography.greetingSubtitle)
-                .foregroundColor(AppColors.meditationTextSecondary)
+                .foregroundColor(AppColors.textSecondary)
         }
         .padding(.horizontal, AppSpacing.screenPadding)
         .padding(.top, AppSpacing.lg)

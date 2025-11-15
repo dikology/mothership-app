@@ -73,6 +73,8 @@ struct AppView: View {
     @ViewBuilder
     private func destinationView(for path: AppPath) -> some View {
         switch path {
+        case .charterCreation:
+            CharterCreationView()
         default:
             Text(model.localization.localized(L10n.Common.comingSoon))
                 .font(AppTypography.title1)

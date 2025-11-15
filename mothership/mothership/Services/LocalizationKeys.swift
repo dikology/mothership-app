@@ -25,6 +25,21 @@ enum L10n {
     enum Charter {
         static let createCharter = "charter.create_charter"
         static let createCharterDescription = "charter.create_charter_description"
+        static let mainInformation = "charter.main_information"
+        static let charterName = "charter.charter_name"
+        static let charterNameExample = "charter.charter_name_example"
+        static let startDate = "charter.start_date"
+        static let endDate = "charter.end_date"
+        static let additionalInformation = "charter.additional_information"
+        static let location = "charter.location"
+        static let locationExample = "charter.location_example"
+        static let yachtName = "charter.yacht_name"
+        static let yachtNameExample = "charter.yacht_name_example"
+        static let charterCompany = "charter.charter_company"
+        static let charterCompanyExample = "charter.charter_company_example"
+        static let notes = "charter.notes"
+        static let setAsActive = "charter.set_as_active"
+        static let charterNameRequired = "charter.charter_name_required"
     }
     
     // MARK: - Tab Bar
@@ -44,6 +59,8 @@ enum L10n {
         static let save = "common.save"
         static let done = "common.done"
         static let back = "common.back"
+        static let error = "common.error"
+        static let ok = "common.ok"
     }
     
     // MARK: - Settings (for future use)

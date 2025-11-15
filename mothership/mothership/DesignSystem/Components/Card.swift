@@ -61,7 +61,7 @@ struct FeaturedCard<Content: View>: View {
     ) {
         self.backgroundColor = backgroundColor
         // Auto-determine text color if not provided
-        self.textColor = textColor ?? (backgroundColor == AppColors.basicsCardColor ? .white : AppColors.meditationTextPrimary)
+        self.textColor = textColor ?? (backgroundColor == AppColors.basicsCardColor ? .white : AppColors.textPrimary)
         self.illustrationType = illustrationType
         self.content = content()
     }
@@ -128,7 +128,7 @@ struct RecommendedCard<Content: View>: View {
     ) {
         self.backgroundColor = backgroundColor
         // Auto-determine text color - light backgrounds use dark text
-        self.textColor = textColor ?? AppColors.meditationTextPrimary
+        self.textColor = textColor ?? AppColors.textPrimary
         self.illustration = illustration
         self.content = content()
     }

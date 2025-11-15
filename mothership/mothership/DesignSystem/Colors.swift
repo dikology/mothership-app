@@ -44,8 +44,8 @@ enum AppColors {
     static let accentTextFallback = Color(red: 0.0, green: 0.4, blue: 0.6)
     
     // MARK: - Text Colors
-    static let meditationTextPrimary = Color(red: 0.25, green: 0.25, blue: 0.31) // #3F414E
-    static let meditationTextSecondary = Color(red: 0.6, green: 0.6, blue: 0.65) // Lighter gray
+    static let textPrimary = Color(hex: "3F414E") // #3F414E
+    static let textSecondary = Color(hex: "A1A4B2") // Lighter gray
     
     // MARK: - Primary Maritime Colors
     static let oceanBlue = Color(red: 0.0, green: 0.4, blue: 0.6)
