@@ -40,6 +40,8 @@ enum L10n {
         static let notes = "charter.notes"
         static let setAsActive = "charter.set_as_active"
         static let charterNameRequired = "charter.charter_name_required"
+        static let information = "charter.information"
+        static let charter = "charter.charter"
     }
     
     // MARK: - Tab Bar

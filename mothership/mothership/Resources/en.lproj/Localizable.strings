@@ -30,6 +30,8 @@
 "charter.notes" = "Notes";
 "charter.set_as_active" = "Set as active charter";
 "charter.charter_name_required" = "Please enter a charter name";
+"charter.information" = "Information";
+"charter.charter" = "Charter";
 
 // MARK: - Tab Bar
 

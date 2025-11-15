@@ -45,7 +45,7 @@ struct HomeView: View {
     }
 
     private func activeCharterCard(charter: Charter) -> some View {
-        NavigationLink(value: AppPath.charterCreation) {
+        NavigationLink(value: AppPath.charterDetail(charter.id)) {
             FeaturedCard(
                 backgroundColor: AppColors.basicsCardColor,
                 illustrationType: .basics

@@ -11,5 +11,6 @@ enum AppPath: Hashable {
     
     // Charter paths
     case charterCreation
+    case charterDetail(Charter.ID)
 }
 

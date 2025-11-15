@@ -193,7 +193,7 @@ struct CharterCreationView: View {
             let dateFormatter = DateFormatter()
             dateFormatter.dateStyle = .medium
             let todayString = dateFormatter.string(from: Date())
-            name = "\(localization.localized(L10n.Charter.charterName)) \(todayString)"
+            name = "\(localization.localized(L10n.Charter.charter)) \(todayString)"
         }
         
         // Create charter

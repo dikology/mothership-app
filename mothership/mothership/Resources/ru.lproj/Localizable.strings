@@ -30,6 +30,8 @@
 "charter.notes" = "Заметки";
 "charter.set_as_active" = "Сделать активным чартером";
 "charter.charter_name_required" = "Пожалуйста, введите название чартера";
+"charter.information" = "Информация";
+"charter.charter" = "Чартер";
 
 // MARK: - Tab Bar
 
