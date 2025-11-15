@@ -15,6 +15,10 @@
 
 "charter.create_charter" = "Create Charter";
 "charter.create_charter_description" = "Start a new charter";
+"charter.edit_charter" = "Edit Charter";
+"charter.edit_charter_description" = "Update charter information";
+"charter.delete_charter" = "Delete Charter";
+"charter.delete_charter_confirmation" = "Are you sure you want to delete this charter? This action cannot be undone.";
 "charter.main_information" = "Main information";
 "charter.charter_name" = "Charter name";
 "charter.charter_name_example" = "Example: Croatia 2024";
@@ -49,6 +53,8 @@
 "common.back" = "Back";
 "common.error" = "Error";
 "common.ok" = "OK";
+"common.edit" = "Edit";
+"common.delete" = "Delete";
 
 // MARK: - Settings
 

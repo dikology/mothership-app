@@ -25,6 +25,10 @@ enum L10n {
     enum Charter {
         static let createCharter = "charter.create_charter"
         static let createCharterDescription = "charter.create_charter_description"
+        static let editCharter = "charter.edit_charter"
+        static let editCharterDescription = "charter.edit_charter_description"
+        static let deleteCharter = "charter.delete_charter"
+        static let deleteCharterConfirmation = "charter.delete_charter_confirmation"
         static let mainInformation = "charter.main_information"
         static let charterName = "charter.charter_name"
         static let charterNameExample = "charter.charter_name_example"
@@ -63,6 +67,8 @@ enum L10n {
         static let back = "common.back"
         static let error = "common.error"
         static let ok = "common.ok"
+        static let edit = "common.edit"
+        static let delete = "common.delete"
     }
     
     // MARK: - Settings (for future use)

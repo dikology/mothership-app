@@ -15,6 +15,10 @@
 
 "charter.create_charter" = "Создать чартер";
 "charter.create_charter_description" = "Начните новый чартер";
+"charter.edit_charter" = "Редактировать чартер";
+"charter.edit_charter_description" = "Обновить информацию о чартере";
+"charter.delete_charter" = "Удалить чартер";
+"charter.delete_charter_confirmation" = "Вы уверены, что хотите удалить этот чартер? Это действие нельзя отменить.";
 "charter.main_information" = "Основная информация";
 "charter.charter_name" = "Название чартера";
 "charter.charter_name_example" = "Пример: Хорватия 2024";
@@ -47,6 +51,10 @@
 "common.save" = "Сохранить";
 "common.done" = "Готово";
 "common.back" = "Назад";
+"common.error" = "Ошибка";
+"common.ok" = "ОК";
+"common.edit" = "Редактировать";
+"common.delete" = "Удалить";
 
 // MARK: - Settings
 

@@ -12,6 +12,10 @@ struct CharterDetailView: View {
     
     @Environment(\.charterStore) private var charterStore
     @Environment(\.localization) private var localization
+    @Environment(\.dismiss) private var dismiss
+    
+    @State private var showingEditSheet = false
+    @State private var showingDeleteAlert = false
 
     var body: some View {
         ScrollView {
@@ -87,7 +91,43 @@ struct CharterDetailView: View {
         }
         .appBackground()
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Menu {
+                    Button {
+                        showingEditSheet = true
+                    } label: {
+                        Label(localization.localized(L10n.Common.edit), systemImage: "pencil")
+                    }
+                    
+                    Button(role: .destructive) {
+                        showingDeleteAlert = true
+                    } label: {
+                        Label(localization.localized(L10n.Common.delete), systemImage: "trash")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                        .foregroundColor(AppColors.oceanBlue)
+                }
+            }
+        }
+        .sheet(isPresented: $showingEditSheet) {
+            NavigationStack {
+                CharterEditView(charter: charter)
+            }
+        }
+        .alert(localization.localized(L10n.Charter.deleteCharter), isPresented: $showingDeleteAlert) {
+            Button(localization.localized(L10n.Common.cancel), role: .cancel) { }
+            Button(localization.localized(L10n.Common.delete), role: .destructive) {
+                deleteCharter()
+            }
+        } message: {
+            Text(localization.localized(L10n.Charter.deleteCharterConfirmation))
+        }
     }
     
-    
+    private func deleteCharter() {
+        charterStore.deleteCharter(charter)
+        dismiss()
+    }
 }
