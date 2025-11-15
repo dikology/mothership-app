@@ -53,9 +53,8 @@ enum L10n {
     enum Practice {
         static let practice = "practice.practice"
         static let essentialChecklistsAndPracticalGuides = "practice.essential_checklists_and_practical_guides"
-        static let lifeOnBoard = "practice.life_on_board"
+        static let briefing = "practice.briefing"
         static let knots = "practice.knots"
-        static let safety = "practice.safety"
         static let maneuvering = "practice.maneuvering"
         static let mooring = "practice.mooring"
         static let all = "practice.all"

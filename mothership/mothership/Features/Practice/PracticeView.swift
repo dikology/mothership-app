@@ -97,12 +97,10 @@ struct PracticeModuleCard: View {
         switch category {
         case .all:
             return AppColors.basicsCardColor
-        case .lifeOnBoard:
+        case .briefing:
             return AppColors.relaxationCardColor
         case .knots:
-            return AppColors.recommendedCardRed
-        case .safety:
-            return AppColors.recommendedCardOrange
+            return AppColors.recommendedCardRed 
         case .maneuvering:
             return AppColors.basicsCardColor
         case .mooring:
@@ -114,12 +112,10 @@ struct PracticeModuleCard: View {
         switch category {
         case .all:
             return .basics
-        case .lifeOnBoard:
+        case .briefing:
             return .focus
         case .knots:
             return .focus
-        case .safety:
-            return .basics
         case .maneuvering:
             return .dailyThought
         case .mooring:
@@ -215,14 +211,14 @@ extension PracticeModule {
         PracticeModule(
             title: "Безопасность",
             subtitle: "Брифинг по безопасности на яхте",
-            category: .safety,
+            category: .briefing,
             type: .document,
             source: .remote
         ),
         PracticeModule(
             title: "Жизнь на яхте",
             subtitle: "Брифинг по жизни на яхте",
-            category: .lifeOnBoard,
+            category: .briefing,
             type: .document,
             source: .remote
         )
@@ -233,9 +229,8 @@ extension PracticeCategory {
     func displayName(using localization: LocalizationService) -> String {
         switch self {
         case .all: return localization.localized(L10n.Practice.all)
-        case .lifeOnBoard: return localization.localized(L10n.Practice.lifeOnBoard)
+        case .briefing: return localization.localized(L10n.Practice.briefing)
         case .knots: return localization.localized(L10n.Practice.knots)
-        case .safety: return localization.localized(L10n.Practice.safety)
         case .maneuvering: return localization.localized(L10n.Practice.maneuvering)
         case .mooring: return localization.localized(L10n.Practice.mooring)
         }
@@ -244,9 +239,8 @@ extension PracticeCategory {
     var icon: String {
         switch self {
         case .all: return "square.grid.2x2"
-        case .lifeOnBoard: return "house"
+        case .briefing: return "shield"
         case .knots: return "figure.walk"
-        case .safety: return "shield"
         case .maneuvering: return "arrow.triangle.2.circlepath"
         case .mooring: return "anchor"
         }

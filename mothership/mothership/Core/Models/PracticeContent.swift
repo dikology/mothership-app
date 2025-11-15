@@ -17,9 +17,8 @@ enum PracticeModuleType: String, Codable {
 enum PracticeCategory: String, Codable, CaseIterable {
     // New comprehensive categories
     case all = "all"
-    case lifeOnBoard = "lifeOnBoard"
+    case briefing = "briefing"
     case knots = "knots"
-    case safety = "safety"
     case maneuvering = "maneuvering"
     case mooring = "mooring"
 }

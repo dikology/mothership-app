@@ -80,6 +80,13 @@ struct AppView: View {
             }
         case .charterCreation:
             CharterCreationView()
+        case .practiceModule(let moduleID):
+            if let uuid = UUID(uuidString: moduleID) {
+                PracticeModuleDetailView(moduleID: uuid)
+            } else {
+                Text(model.localization.localized(L10n.Common.comingSoon))
+                    .font(AppTypography.title1)
+            }
         default:
             Text(model.localization.localized(L10n.Common.comingSoon))
                 .font(AppTypography.title1)
