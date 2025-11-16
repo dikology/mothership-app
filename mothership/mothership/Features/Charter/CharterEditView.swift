@@ -176,7 +176,7 @@ struct CharterEditView: View {
                         PrimaryButton(
                             title: localization.localized(L10n.Common.save),
                             action: saveCharter,
-                            backgroundColor: AppColors.oceanBlue
+                            backgroundColor: AppColors.lavenderBlue
                         )
                         
                         SecondaryButton(

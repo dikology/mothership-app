@@ -48,6 +48,18 @@ enum L10n {
         static let charter = "charter.charter"
     }
     
+    // MARK: - Practice
+    
+    enum Practice {
+        static let practice = "practice.practice"
+        static let essentialChecklistsAndPracticalGuides = "practice.essential_checklists_and_practical_guides"
+        static let briefing = "practice.briefing"
+        static let knots = "practice.knots"
+        static let maneuvering = "practice.maneuvering"
+        static let mooring = "practice.mooring"
+        static let all = "practice.all"
+    }
+    
     // MARK: - Tab Bar
     
     enum Tab {

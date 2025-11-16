@@ -163,7 +163,7 @@ struct CharterCreationView: View {
                         PrimaryButton(
                             title: localization.localized(L10n.Charter.createCharter),
                             action: createCharter,
-                            backgroundColor: AppColors.oceanBlue
+                            backgroundColor: AppColors.lavenderBlue
                         )
                         
                         SecondaryButton(

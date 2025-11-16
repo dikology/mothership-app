@@ -48,7 +48,7 @@ enum AppColors {
     static let textSecondary = Color(hex: "A1A4B2") // Lighter gray
     
     // MARK: - Primary Maritime Colors
-    static let oceanBlue = Color(red: 0.0, green: 0.4, blue: 0.6)
+    static let lavenderBlue = Color(hex: "8E97FD")
     static let deepBlue = Color(red: 0.0, green: 0.2, blue: 0.4)
     static let skyBlue = Color(red: 0.5, green: 0.7, blue: 0.9)
     static let sailWhite = Color(red: 0.98, green: 0.98, blue: 0.98)
@@ -73,15 +73,15 @@ enum AppColors {
     static let basicsCardColor = Color(hex: "8E97FD") // Lavender-blue from Figma
     
     // Light orange for "Relaxation" style cards
-    static let relaxationCardColor = Color(red: 1.0, green: 0.9, blue: 0.8) // Light orange/peach
+    static let relaxationCardColor = Color(hex: "F4A17C") // Light orange/peach
     
     // MARK: - Daily Thought Card
-    static let dailyThoughtBackground = Color(red: 0.3, green: 0.3, blue: 0.35) // Dark gray
+    static let dailyThoughtBackground = Color(hex: "333242") // Dark gray
     
     // MARK: - Recommended Card Colors
-    static let recommendedCardGreen = Color(red: 0.85, green: 0.95, blue: 0.85) // Light green
-    static let recommendedCardOrange = Color(red: 1.0, green: 0.9, blue: 0.75) // Light orange
-    static let recommendedCardBlue = Color(red: 0.85, green: 0.9, blue: 0.95) // Light blue
+    static let recommendedCardGreen = Color(hex: "85D485") // Light green
+    static let recommendedCardOrange = Color(hex: "76C79E") // Light orange
+    static let recommendedCardRed = Color(hex: "F05D48") // Light red
     
     // MARK: - Gradient Colors
     static let featuredCardGradientStart = Color(red: 0.58, green: 0.45, blue: 0.85) // #9486D9

@@ -14,14 +14,14 @@ struct AppView: View {
     enum MainTab: String, CaseIterable {
         case home
         // case learn
-        // case practice
+        case practice
         // case profile
         
         var icon: String {
             switch self {
             case .home: return "house.fill"
             // case .learn: return "book.fill"
-            // case .practice: return "checklist"
+            case .practice: return "checklist"
             // case .profile: return "person.fill"  
             }
         }
@@ -30,7 +30,7 @@ struct AppView: View {
             switch self {
             case .home: return service.localized(L10n.Tab.home)
             // case .learn: return service.localized(L10n.Tab.learn)
-            // case .practice: return service.localized(L10n.Tab.practice)
+            case .practice: return service.localized(L10n.Tab.practice)
             // case .profile: return service.localized(L10n.Tab.profile)
             }
         }
@@ -64,8 +64,8 @@ struct AppView: View {
             HomeView()
         // case .learn:
         //     LearnView()
-        // case .practice:
-        //     PracticeView()
+        case .practice:
+            PracticeView()
         // case .profile:
         //     ProfileView()
         }
@@ -80,6 +80,13 @@ struct AppView: View {
             }
         case .charterCreation:
             CharterCreationView()
+        case .practiceModule(let moduleID):
+            if let uuid = UUID(uuidString: moduleID) {
+                PracticeModuleDetailView(moduleID: uuid)
+            } else {
+                Text(model.localization.localized(L10n.Common.comingSoon))
+                    .font(AppTypography.title1)
+            }
         default:
             Text(model.localization.localized(L10n.Common.comingSoon))
                 .font(AppTypography.title1)
