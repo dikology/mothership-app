@@ -70,6 +70,18 @@ enum L10n {
         static let profile = "tab.profile"
     }
     
+    // MARK: - Checklist
+    
+    enum Checklist {
+        static let checkInChecklist = "checklist.check_in_checklist"
+        static let checkAllItemsWhenReceivingYacht = "checklist.check_all_items_when_receiving_yacht"
+        static let progress = "checklist.progress"
+        static let items = "checklist.items"
+        static let information = "checklist.information"
+        static let yourNotes = "checklist.your_notes"
+        static let addNote = "checklist.add_note"
+    }
+    
     // MARK: - Common
     
     enum Common {

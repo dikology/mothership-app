@@ -49,6 +49,29 @@ struct CharterDetailView: View {
                 .padding(.horizontal, AppSpacing.screenPadding)
                 .padding(.top, AppSpacing.md)
                 
+                // Check-in Checklist Card
+                NavigationLink(value: AppPath.checkInChecklist(charter.id)) {
+                    FeaturedCard(
+                        backgroundColor: AppColors.recommendedCardGreen,
+                        illustrationType: .basics
+                    ) {
+                        VStack(alignment: .leading, spacing: AppSpacing.sm) {
+                            HStack {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .font(.system(size: 28))
+                                Text(localization.localized(L10n.Checklist.checkInChecklist))
+                                    .font(AppTypography.cardTitle)
+                            }
+                            Text(localization.localized(L10n.Checklist.checkAllItemsWhenReceivingYacht))
+                                .font(AppTypography.caption)
+                                .opacity(0.9)
+                                .lineLimit(2)
+                        }
+                    }
+                }
+                .buttonStyle(PlainButtonStyle())
+                .padding(.horizontal, AppSpacing.screenPadding)
+                
                 // Charter Info
                 if charter.notes != nil || charter.charterCompany != nil {
                     VStack(alignment: .leading, spacing: AppSpacing.md) {

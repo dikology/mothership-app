@@ -7,11 +7,14 @@ final class AppModel {
 
     // Core stores
     var charterStore: CharterStore
+    var checklistStore: ChecklistStore
 
     init(
-        charterStore: CharterStore = CharterStore()
+        charterStore: CharterStore = CharterStore(),
+        checklistStore: ChecklistStore = ChecklistStore()
     ) {
         self.charterStore = charterStore
+        self.checklistStore = checklistStore
     }
 
 }
