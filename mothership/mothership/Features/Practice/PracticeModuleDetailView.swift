@@ -55,44 +55,7 @@ struct PracticeModuleDetailView: View {
                     if !content.sections.isEmpty {
                         VStack(alignment: .leading, spacing: AppSpacing.lg) {
                             ForEach(Array(content.sections.enumerated()), id: \.offset) { index, section in
-                                VStack(alignment: .leading, spacing: AppSpacing.md) {
-                                    if let sectionTitle = section.title {
-                                        Text(sectionTitle)
-                                            .font(AppTypography.title2)
-                                            .foregroundColor(AppColors.textPrimary)
-                                            .padding(.horizontal, AppSpacing.screenPadding)
-                                    }
-                                    
-                                    if !section.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                                        Text(section.content)
-                                            .font(AppTypography.body)
-                                            .foregroundColor(AppColors.textSecondary)
-                                            .padding(.horizontal, AppSpacing.screenPadding)
-                                    }
-                                    
-                                    // Items (for flashcards or lists)
-                                    if !section.items.isEmpty {
-                                        VStack(alignment: .leading, spacing: AppSpacing.sm) {
-                                            ForEach(Array(section.items.enumerated()), id: \.offset) { itemIndex, item in
-                                                HStack(alignment: .top, spacing: AppSpacing.sm) {
-                                                    Text("•")
-                                                        .foregroundColor(AppColors.lavenderBlue)
-                                                    VStack(alignment: .leading, spacing: AppSpacing.xs) {
-                                                        Text(item.title)
-                                                            .font(AppTypography.body)
-                                                            .foregroundColor(AppColors.textPrimary)
-                                                        if let itemContent = item.content {
-                                                            Text(itemContent)
-                                                                .font(AppTypography.caption)
-                                                                .foregroundColor(AppColors.textSecondary)
-                                                        }
-                                                    }
-                                                }
-                                                .padding(.horizontal, AppSpacing.screenPadding)
-                                            }
-                                        }
-                                    }
-                                }
+                                SectionView(section: section)
                             }
                         }
                         .padding(.vertical, AppSpacing.md)
@@ -142,6 +105,7 @@ struct PracticeModuleDetailView: View {
                     images: parsedContent.images,
                     videos: parsedContent.videos,
                     animatedMedia: parsedContent.animatedMedia,
+                    wikilinks: parsedContent.wikilinks,
                     metadata: parsedContent.metadata
                 )
             }
@@ -177,6 +141,111 @@ struct PracticeModuleDetailView: View {
             let categoryPath = module.category.rawValue.lowercased()
             return "\(categoryPath)/\(module.title.lowercased()).md"
         }
+    }
+}
+
+// MARK: - Section View Component
+
+struct SectionView: View {
+    let section: MarkdownSection
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: AppSpacing.md) {
+            // Section title
+            if let sectionTitle = section.title {
+                Text(sectionTitle)
+                    .font(fontForLevel(section.level))
+                    .foregroundColor(AppColors.textPrimary)
+                    .fontWeight(weightForLevel(section.level))
+                    .padding(.horizontal, AppSpacing.screenPadding)
+                    .padding(.top, section.level == 2 ? AppSpacing.sm : 0)
+            }
+            
+            // Section content
+            if !section.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                Text(attributedString(from: section.content))
+                    .font(AppTypography.body)
+                    .foregroundColor(AppColors.textSecondary)
+                    .padding(.horizontal, AppSpacing.screenPadding)
+            }
+            
+            // Section items (lists)
+            if !section.items.isEmpty {
+                VStack(alignment: .leading, spacing: AppSpacing.sm) {
+                    ForEach(Array(section.items.enumerated()), id: \.offset) { itemIndex, item in
+                        HStack(alignment: .top, spacing: AppSpacing.sm) {
+                            Text("•")
+                                .font(AppTypography.body)
+                                .foregroundColor(AppColors.lavenderBlue)
+                            VStack(alignment: .leading, spacing: AppSpacing.xs) {
+                                Text(attributedString(from: item.title))
+                                    .font(AppTypography.body)
+                                    .foregroundColor(AppColors.textPrimary)
+                                if let itemContent = item.content {
+                                    Text(attributedString(from: itemContent))
+                                        .font(AppTypography.caption)
+                                        .foregroundColor(AppColors.textSecondary)
+                                }
+                            }
+                        }
+                        .padding(.horizontal, AppSpacing.screenPadding)
+                    }
+                }
+            }
+            
+            // Subsections (recursive)
+            if !section.subsections.isEmpty {
+                VStack(alignment: .leading, spacing: AppSpacing.md) {
+                    ForEach(Array(section.subsections.enumerated()), id: \.offset) { index, subsection in
+                        SectionView(section: subsection)
+                    }
+                }
+            }
+        }
+    }
+    
+    private func fontForLevel(_ level: Int) -> Font {
+        switch level {
+        case 2: return AppTypography.title2
+        case 3: return AppTypography.title3
+        default: return AppTypography.body
+        }
+    }
+    
+    private func weightForLevel(_ level: Int) -> Font.Weight {
+        switch level {
+        case 2: return .bold
+        case 3: return .semibold
+        default: return .regular
+        }
+    }
+    
+    private func attributedString(from markdown: String) -> AttributedString {
+        var result = AttributedString(markdown)
+        
+        // Apply bold formatting for **text**
+        let boldPattern = #"\*\*([^*]+)\*\*"#
+        if let regex = try? NSRegularExpression(pattern: boldPattern, options: []) {
+            let nsString = markdown as NSString
+            let matches = regex.matches(in: markdown, options: [], range: NSRange(location: 0, length: nsString.length))
+            
+            // Process matches in reverse to maintain correct indices
+            for match in matches.reversed() {
+                if let contentRange = Range(match.range(at: 1), in: markdown),
+                   let fullRange = Range(match.range, in: markdown) {
+                    let boldText = String(markdown[contentRange])
+                    
+                    // Find the range in AttributedString
+                    if let attrRange = result.range(of: "**\(boldText)**") {
+                        var boldAttrString = AttributedString(boldText)
+                        boldAttrString.font = .body.weight(.bold)
+                        result.replaceSubrange(attrRange, with: boldAttrString)
+                    }
+                }
+            }
+        }
+        
+        return result
     }
 }
 
