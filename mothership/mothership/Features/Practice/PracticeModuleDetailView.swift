@@ -171,7 +171,7 @@ struct PracticeModuleDetailView: View {
         case "Безопасность":
             return "безопасность/брифинг по безопасности.md"
         case "Жизнь на яхте":
-            return "брифинги/жизнь на яхте.md"
+            return "команда/жизнь на лодке.md"
         default:
             // Try to construct path from category
             let categoryPath = module.category.rawValue.lowercased()
