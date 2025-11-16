@@ -23,6 +23,11 @@ struct HomeView: View {
                 } else {
                     createCharterCard
                 }
+
+                // Context-aware content based on charter state
+                if charterStore.activeCharter != nil {
+                    charterContextContent
+                }
             }
         }
         .appBackground()
@@ -99,6 +104,42 @@ struct HomeView: View {
         }
     }
     
+    // MARK: - Charter Context Content
+    
+    private var charterContextContent: some View {
+        VStack(alignment: .leading, spacing: AppSpacing.md) {
+            // Section Header
+            VStack(alignment: .leading, spacing: AppSpacing.xs) {
+                Text(localization.localized(L10n.Practice.briefing))
+                    .font(AppTypography.sectionTitle)
+                    .foregroundColor(AppColors.textPrimary)
+                Text(localization.localized(L10n.Practice.essentialBriefingsForYourCharter))
+                    .font(AppTypography.caption)
+                    .foregroundColor(AppColors.textSecondary)
+            }
+            .padding(.horizontal, AppSpacing.screenPadding)
+            
+            // Briefing Modules Grid
+            let columns = [
+                GridItem(.flexible(), spacing: AppSpacing.cardSpacing),
+                GridItem(.flexible(), spacing: AppSpacing.cardSpacing)
+            ]
+            
+            LazyVGrid(columns: columns, spacing: AppSpacing.cardSpacing) {
+                ForEach(briefingModules) { module in
+                    NavigationLink(value: AppPath.practiceModule(module.id.uuidString)) {
+                        PracticeModuleCard(module: module)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+            }
+            .padding(.horizontal, AppSpacing.screenPadding)
+        }
+    }
+    
+    private var briefingModules: [PracticeModule] {
+        PracticeModule.defaultModules.filter { $0.category == .briefing }
+    }
     
 }
 
