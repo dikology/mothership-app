@@ -112,10 +112,14 @@ struct PracticeModuleDetailView: View {
         errorMessage = nil
         
         guard let module = module else {
-            errorMessage = "Модуль не найден"
-            isLoading = false
+            await MainActor.run {
+                self.errorMessage = "Модуль не найден"
+                self.isLoading = false
+            }
             return
         }
+        
+        await loadArticleContent(module: module)
     }
     
     private func loadArticleContent(module: PracticeModule) async {
@@ -164,16 +168,10 @@ struct PracticeModuleDetailView: View {
     private func determineContentPath(for module: PracticeModule) -> String {
         // Map module titles to GitHub paths
         switch module.title {
-        case "Узлы", "Knots":
-            return "узлы/штык со шлагом.md"
-        case "МППСС", "COLREGS":
-            return "МППСС/общие правила.md"
-        case "Звуковые сигналы":
-            return "звуковые сигналы/сигналы маневрирования.md"
-        case "Правила расхождения":
-            return "МППСС/правила расхождения.md"
-        case "Навигационные огни":
-            return "навигационные огни/идентификация судов.md"
+        case "Безопасность":
+            return "безопасность/брифинг по безопасности.md"
+        case "Жизнь на яхте":
+            return "брифинги/жизнь на яхте.md"
         default:
             // Try to construct path from category
             let categoryPath = module.category.rawValue.lowercased()
