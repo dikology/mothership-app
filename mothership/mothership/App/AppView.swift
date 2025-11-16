@@ -55,6 +55,7 @@ struct AppView: View {
             }
         }
         .environment(\.charterStore, model.charterStore)
+        .environment(\.checklistStore, model.checklistStore)
     }
     
     @ViewBuilder
@@ -80,6 +81,8 @@ struct AppView: View {
             }
         case .charterCreation:
             CharterCreationView()
+        case .checkInChecklist(let charterId):
+            CheckInChecklistView(charterId: charterId)
         case .practiceModule(let moduleID):
             if let uuid = UUID(uuidString: moduleID) {
                 PracticeModuleDetailView(moduleID: uuid)

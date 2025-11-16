@@ -48,6 +48,16 @@
 "practice.mooring" = "Mooring";
 "practice.all" = "All";
 
+// MARK: - Checklist
+
+"checklist.check_in_checklist" = "Check-in Checklist";
+"checklist.check_all_items_when_receiving_yacht" = "Check all items when receiving the yacht";
+"checklist.progress" = "Progress";
+"checklist.items" = "items";
+"checklist.information" = "Information";
+"checklist.your_notes" = "Your notes";
+"checklist.add_note" = "Add a note...";
+
 // MARK: - Tab Bar
 
 "tab.home" = "Home";
