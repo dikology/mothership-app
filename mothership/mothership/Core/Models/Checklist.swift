@@ -69,6 +69,37 @@ enum ChecklistSource: String, Codable {
 struct ChecklistSection: Identifiable, Hashable, Codable {
     let id: UUID
     var title: String
+    var subsections: [ChecklistSubsection]
+    
+    // Computed property for backward compatibility - returns all items from all subsections
+    var items: [ChecklistItem] {
+        subsections.flatMap { $0.items }
+    }
+    
+    init(
+        id: UUID = UUID(),
+        title: String,
+        subsections: [ChecklistSubsection] = [],
+        items: [ChecklistItem] = []
+    ) {
+        self.id = id
+        self.title = title
+        
+        // If subsections are provided, use them; otherwise create a default subsection from items
+        if !subsections.isEmpty {
+            self.subsections = subsections
+        } else if !items.isEmpty {
+            // Backward compatibility: wrap items in a default subsection
+            self.subsections = [ChecklistSubsection(title: "", items: items)]
+        } else {
+            self.subsections = []
+        }
+    }
+}
+
+struct ChecklistSubsection: Identifiable, Hashable, Codable {
+    let id: UUID
+    var title: String
     var items: [ChecklistItem]
     
     init(
@@ -161,36 +192,61 @@ enum CheckInChecklistData {
     static let defaultSections: [ChecklistSection] = [
         ChecklistSection(
             title: "Equipment and Documents / Оборудование и документы",
-            items: [
-                ChecklistItem(title: "Registration / Регистрация"),
-                ChecklistItem(title: "Insurance / Страховка"),
-                ChecklistItem(title: "Charter agreement / Чартерный договор"),
-                ChecklistItem(title: "Transit log / Судовой журнал"),
-                ChecklistItem(title: "Crew list / Список экипажа"),
-                ChecklistItem(title: "Skipper's licence / Права шкипера"),
-                ChecklistItem(title: "VHF Radio licence / Лицензия на радиостанцию"),
-                ChecklistItem(title: "First aid kit / Аптечка"),
-                ChecklistItem(title: "Life jackets / Спасательные жилеты"),
-                ChecklistItem(title: "Life lines / Страховочные стропы"),
-                ChecklistItem(title: "Fire extinguishers / Огнетушители"),
-                ChecklistItem(title: "Fire blanket / Противопожарная кошма"),
-                ChecklistItem(title: "EPIRB / EPIRB"),
-                ChecklistItem(title: "VHF radio / УКВ-радио"),
-                ChecklistItem(title: "Fog horn / Туманный горн"),
-                ChecklistItem(title: "Bilge pumps / Трюмные помпы"),
-                ChecklistItem(title: "Pyrotechnics / Пиротехника"),
-                ChecklistItem(title: "Searchlight / Прожектор"),
-                ChecklistItem(title: "Radar reflector / Радарный отражатель"),
-                ChecklistItem(title: "Life raft / Спасательный плот"),
-                ChecklistItem(title: "Safety ring / Спасательный круг"),
-                ChecklistItem(title: "Floating line / Плавучий линь"),
-                ChecklistItem(title: "Snorkeling equipment / Снаряжение для снорклинга"),
-                ChecklistItem(title: "Emergency tiller / Аварийный румпель"),
-                ChecklistItem(title: "Impeller / Крыльчатка помпы"),
-                ChecklistItem(title: "Alternator belt / Ремень генератора"),
-                ChecklistItem(title: "Diesel can / Канистра для дизеля"),
-                ChecklistItem(title: "Winch handles / Ручки для лебедок"),
-                ChecklistItem(title: "Sails repair kit / Ремкомплект парусов")
+            subsections: [
+                ChecklistSubsection(
+                    title: "Documents / Документы",
+                    items: [
+                        ChecklistItem(title: "Registration / Регистрация"),
+                        ChecklistItem(title: "Insurance / Страховка"),
+                        ChecklistItem(title: "Charter agreement / Чартерный договор"),
+                        ChecklistItem(title: "Transit log / Судовой журнал"),
+                        ChecklistItem(title: "Crew list / Список экипажа"),
+                        ChecklistItem(title: "Skipper's licence / Права шкипера"),
+                        ChecklistItem(title: "VHF Radio licence / Лицензия на радиостанцию")
+                    ]
+                ),
+                ChecklistSubsection(
+                    title: "Safety Equipment / Безопасность",
+                    items: [
+                        ChecklistItem(title: "First aid kit / Аптечка"),
+                        ChecklistItem(title: "Life jackets / Спасательные жилеты"),
+                        ChecklistItem(title: "Life lines / Страховочные стропы"),
+                        ChecklistItem(title: "Fire extinguishers / Огнетушители"),
+                        ChecklistItem(title: "Fire blanket / Противопожарная кошма"),
+                        ChecklistItem(title: "Life raft / Спасательный плот"),
+                        ChecklistItem(title: "Safety ring / Спасательный круг"),
+                        ChecklistItem(title: "Floating line / Плавучий линь"),
+                        ChecklistItem(title: "Pyrotechnics / Пиротехника")
+                    ]
+                ),
+                ChecklistSubsection(
+                    title: "Navigation & Communication / Навигация и связь",
+                    items: [
+                        ChecklistItem(title: "EPIRB / EPIRB"),
+                        ChecklistItem(title: "VHF radio / УКВ-радио"),
+                        ChecklistItem(title: "Fog horn / Туманный горн"),
+                        ChecklistItem(title: "Searchlight / Прожектор"),
+                        ChecklistItem(title: "Radar reflector / Радарный отражатель")
+                    ]
+                ),
+                ChecklistSubsection(
+                    title: "Technical Equipment / Техника",
+                    items: [
+                        ChecklistItem(title: "Bilge pumps / Трюмные помпы"),
+                        ChecklistItem(title: "Snorkeling equipment / Снаряжение для снорклинга")
+                    ]
+                ),
+                ChecklistSubsection(
+                    title: "Spare Parts / Запчасти",
+                    items: [
+                        ChecklistItem(title: "Emergency tiller / Аварийный румпель"),
+                        ChecklistItem(title: "Impeller / Крыльчатка помпы"),
+                        ChecklistItem(title: "Alternator belt / Ремень генератора"),
+                        ChecklistItem(title: "Diesel can / Канистра для дизеля"),
+                        ChecklistItem(title: "Winch handles / Ручки для лебедок"),
+                        ChecklistItem(title: "Sails repair kit / Ремкомплект парусов")
+                    ]
+                )
             ]
         ),
         ChecklistSection(

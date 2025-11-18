@@ -35,17 +35,71 @@ enum AppColors {
         accentTextFallback
     }
     
-    // MARK: - Direct Color Values
-    static let backgroundFallback = Color(red: 0.98, green: 0.98, blue: 0.98)
-    static let secondaryBackgroundFallback = Color(red: 0.95, green: 0.95, blue: 0.97)
-    static let cardBackgroundFallback = Color.white
-    static let primaryTextFallback = Color(red: 0.25, green: 0.25, blue: 0.31)
-    static let secondaryTextFallback = Color(red: 0.6, green: 0.6, blue: 0.65)
-    static let accentTextFallback = Color(red: 0.0, green: 0.4, blue: 0.6)
+    // MARK: - Direct Color Values (Adaptive for Dark Mode)
+    static var backgroundFallback: Color {
+        Color(uiColor: UIColor { traitCollection in
+            traitCollection.userInterfaceStyle == .dark
+                ? UIColor(red: 0.11, green: 0.11, blue: 0.12, alpha: 1.0) // Dark: #1C1C1E
+                : UIColor(red: 0.98, green: 0.98, blue: 0.98, alpha: 1.0) // Light
+        })
+    }
     
-    // MARK: - Text Colors
-    static let textPrimary = Color(hex: "3F414E") // #3F414E
-    static let textSecondary = Color(hex: "A1A4B2") // Lighter gray
+    static var secondaryBackgroundFallback: Color {
+        Color(uiColor: UIColor { traitCollection in
+            traitCollection.userInterfaceStyle == .dark
+                ? UIColor(red: 0.17, green: 0.17, blue: 0.18, alpha: 1.0) // Dark: #2C2C2E
+                : UIColor(red: 0.95, green: 0.95, blue: 0.97, alpha: 1.0) // Light
+        })
+    }
+    
+    static var cardBackgroundFallback: Color {
+        Color(uiColor: UIColor { traitCollection in
+            traitCollection.userInterfaceStyle == .dark
+                ? UIColor(red: 0.17, green: 0.17, blue: 0.18, alpha: 1.0) // Dark: #2C2C2E
+                : UIColor.white // Light
+        })
+    }
+    
+    static var primaryTextFallback: Color {
+        Color(uiColor: UIColor { traitCollection in
+            traitCollection.userInterfaceStyle == .dark
+                ? UIColor(red: 0.92, green: 0.92, blue: 0.96, alpha: 1.0) // Dark: #EBEBF5
+                : UIColor(red: 0.25, green: 0.25, blue: 0.31, alpha: 1.0) // Light: #3F414E
+        })
+    }
+    
+    static var secondaryTextFallback: Color {
+        Color(uiColor: UIColor { traitCollection in
+            traitCollection.userInterfaceStyle == .dark
+                ? UIColor(red: 0.55, green: 0.55, blue: 0.58, alpha: 1.0) // Dark: #8C8C93
+                : UIColor(red: 0.6, green: 0.6, blue: 0.65, alpha: 1.0) // Light
+        })
+    }
+    
+    static var accentTextFallback: Color {
+        Color(uiColor: UIColor { traitCollection in
+            traitCollection.userInterfaceStyle == .dark
+                ? UIColor(red: 0.4, green: 0.6, blue: 0.8, alpha: 1.0) // Dark: lighter blue
+                : UIColor(red: 0.0, green: 0.4, blue: 0.6, alpha: 1.0) // Light
+        })
+    }
+    
+    // MARK: - Text Colors (Adaptive for Dark Mode)
+    static var textPrimary: Color {
+        Color(uiColor: UIColor { traitCollection in
+            traitCollection.userInterfaceStyle == .dark
+                ? UIColor(red: 0.92, green: 0.92, blue: 0.96, alpha: 1.0) // Dark: #EBEBF5
+                : UIColor(red: 0.25, green: 0.25, blue: 0.31, alpha: 1.0) // Light: #3F414E
+        })
+    }
+    
+    static var textSecondary: Color {
+        Color(uiColor: UIColor { traitCollection in
+            traitCollection.userInterfaceStyle == .dark
+                ? UIColor(red: 0.55, green: 0.55, blue: 0.58, alpha: 1.0) // Dark: #8C8C93
+                : UIColor(red: 0.63, green: 0.64, blue: 0.70, alpha: 1.0) // Light: #A1A4B2
+        })
+    }
     
     // MARK: - Primary Maritime Colors
     static let lavenderBlue = Color(hex: "8E97FD")
@@ -59,15 +113,29 @@ enum AppColors {
     static let dangerRed = Color(red: 0.8, green: 0.2, blue: 0.2)
     static let successGreen = Color(red: 0.2, green: 0.7, blue: 0.3)
     
-    // MARK: - Neutral Colors
+    // MARK: - Neutral Colors (Adaptive for Dark Mode)
     static let charcoal = Color(red: 0.2, green: 0.2, blue: 0.2)
     static let slateGray = Color(red: 0.4, green: 0.4, blue: 0.45)
-    static let lightGray = Color(red: 0.9, green: 0.9, blue: 0.9)
     
-    // MARK: - Tab Bar Colors
+    static var lightGray: Color {
+        Color(uiColor: UIColor { traitCollection in
+            traitCollection.userInterfaceStyle == .dark
+                ? UIColor(red: 0.23, green: 0.23, blue: 0.25, alpha: 1.0) // Dark: #3A3A3F
+                : UIColor(red: 0.9, green: 0.9, blue: 0.9, alpha: 1.0) // Light
+        })
+    }
+    
+    // MARK: - Tab Bar Colors (Adaptive for Dark Mode)
     static let tabBarSelected = Color(hex: "8E97FD")
     static let tabBarUnselected = Color(red: 0.6, green: 0.6, blue: 0.65) // Gray
-    static let tabBarBackground = Color.white
+    
+    static var tabBarBackground: Color {
+        Color(uiColor: UIColor { traitCollection in
+            traitCollection.userInterfaceStyle == .dark
+                ? UIColor(red: 0.11, green: 0.11, blue: 0.12, alpha: 1.0) // Dark: #1C1C1E
+                : UIColor.white // Light
+        })
+    }
     
     // MARK: - Featured Card Colors
     static let basicsCardColor = Color(hex: "8E97FD") // Lavender-blue from Figma
