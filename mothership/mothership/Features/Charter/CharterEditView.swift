@@ -78,7 +78,7 @@ struct CharterEditView: View {
                                 selection: $startDate,
                                 displayedComponents: [.date]
                             )
-                            .datePickerStyle(.compact)
+                            .datePickerStyle(.graphical)
                             .labelsHidden()
                             .environment(\.calendar, Calendar.current)
                             .padding(.horizontal, AppSpacing.md)
@@ -110,7 +110,7 @@ struct CharterEditView: View {
                                     in: startDate...,
                                     displayedComponents: [.date]
                                 )
-                                .datePickerStyle(.compact)
+                                .datePickerStyle(.graphical)
                                 .labelsHidden()
                                 .environment(\.calendar, Calendar.current)
                                 .padding(.horizontal, AppSpacing.md)
