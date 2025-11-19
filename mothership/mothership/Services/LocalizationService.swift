@@ -121,7 +121,9 @@ enum AppLanguage: String, CaseIterable, Identifiable {
 // MARK: - SwiftUI Environment
 
 private struct LocalizationServiceKey: EnvironmentKey {
-    static let defaultValue = LocalizationService()
+    static var defaultValue: LocalizationService {
+        LocalizationService()
+    }
 }
 
 extension EnvironmentValues {

@@ -136,6 +136,8 @@ struct PracticeModuleDetailView: View {
             return "безопасность/брифинг по безопасности.md"
         case "Жизнь на яхте":
             return "команда/жизнь на лодке.md"
+        case "Аптечка":
+            return "безопасность/аптечка.md"
         default:
             // Try to construct path from category
             let categoryPath = module.category.rawValue.lowercased()
@@ -173,22 +175,8 @@ struct SectionView: View {
             if !section.items.isEmpty {
                 VStack(alignment: .leading, spacing: AppSpacing.sm) {
                     ForEach(Array(section.items.enumerated()), id: \.offset) { itemIndex, item in
-                        HStack(alignment: .top, spacing: AppSpacing.sm) {
-                            Text("•")
-                                .font(AppTypography.body)
-                                .foregroundColor(AppColors.lavenderBlue)
-                            VStack(alignment: .leading, spacing: AppSpacing.xs) {
-                                Text(attributedString(from: item.title))
-                                    .font(AppTypography.body)
-                                    .foregroundColor(AppColors.textPrimary)
-                                if let itemContent = item.content {
-                                    Text(attributedString(from: itemContent))
-                                        .font(AppTypography.caption)
-                                        .foregroundColor(AppColors.textSecondary)
-                                }
-                            }
-                        }
-                        .padding(.horizontal, AppSpacing.screenPadding)
+                        ListItemView(item: item, level: 0)
+                            .padding(.horizontal, AppSpacing.screenPadding)
                     }
                 }
             }
@@ -217,6 +205,74 @@ struct SectionView: View {
         case 2: return .bold
         case 3: return .semibold
         default: return .regular
+        }
+    }
+    
+    private func attributedString(from markdown: String) -> AttributedString {
+        var result = AttributedString(markdown)
+        
+        // Apply bold formatting for **text**
+        let boldPattern = #"\*\*([^*]+)\*\*"#
+        if let regex = try? NSRegularExpression(pattern: boldPattern, options: []) {
+            let nsString = markdown as NSString
+            let matches = regex.matches(in: markdown, options: [], range: NSRange(location: 0, length: nsString.length))
+            
+            // Process matches in reverse to maintain correct indices
+            for match in matches.reversed() {
+                if let contentRange = Range(match.range(at: 1), in: markdown),
+                   let fullRange = Range(match.range, in: markdown) {
+                    let boldText = String(markdown[contentRange])
+                    
+                    // Find the range in AttributedString
+                    if let attrRange = result.range(of: "**\(boldText)**") {
+                        var boldAttrString = AttributedString(boldText)
+                        boldAttrString.font = .body.weight(.bold)
+                        result.replaceSubrange(attrRange, with: boldAttrString)
+                    }
+                }
+            }
+        }
+        
+        return result
+    }
+}
+
+// MARK: - List Item View Component
+
+struct ListItemView: View {
+    let item: MarkdownItem
+    let level: Int
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: AppSpacing.xs) {
+            // Main item
+            HStack(alignment: .top, spacing: AppSpacing.sm) {
+                Text("•")
+                    .font(AppTypography.body)
+                    .foregroundColor(AppColors.lavenderBlue)
+                
+                VStack(alignment: .leading, spacing: AppSpacing.xs) {
+                    Text(attributedString(from: item.title))
+                        .font(AppTypography.body)
+                        .foregroundColor(AppColors.textPrimary)
+                    
+                    if let itemContent = item.content {
+                        Text(attributedString(from: itemContent))
+                            .font(AppTypography.caption)
+                            .foregroundColor(AppColors.textSecondary)
+                    }
+                }
+            }
+            
+            // Nested subitems
+            if !item.subitems.isEmpty {
+                VStack(alignment: .leading, spacing: AppSpacing.xs) {
+                    ForEach(Array(item.subitems.enumerated()), id: \.offset) { index, subitem in
+                        ListItemView(item: subitem, level: level + 1)
+                            .padding(.leading, AppSpacing.md)
+                    }
+                }
+            }
         }
     }
     

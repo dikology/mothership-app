@@ -1,106 +1,104 @@
-# mothership Tests
+# Mothership Tests
 
-This directory contains unit tests for the mothership app.
-
-## Adding Tests to Xcode
-
-To run these tests in Xcode, you need to add a test target to your project:
-
-### Option 1: Using Xcode GUI
-
-1. Open `mothership.xcodeproj` in Xcode
-2. Select the project in the Project Navigator
-3. Click the **+** button at the bottom of the targets list
-4. Choose **Unit Testing Bundle**
-5. Name it `mothershipTests`
-6. Make sure the target is set to test `mothership`
-7. In the Project Navigator, right-click on `mothershipTests` folder
-8. Choose **Add Files to "mothership"...**
-9. Select the test files (`CharterTests.swift` and `CharterStoreTests.swift`)
-10. Make sure they are added to the `mothershipTests` target
-
-### Option 2: Using Command Line (Swift Package Manager)
-
-If your project uses SPM, add the test target to your `Package.swift`:
-
-```swift
-.testTarget(
-    name: "mothershipTests",
-    dependencies: ["mothership"]
-)
-```
+This directory contains unit tests for the Mothership app.
 
 ## Running Tests
 
-### In Xcode
-- Press `⌘U` (Command + U) to run all tests
-- Click the diamond icon next to any test method to run a single test
-- Use the Test Navigator (`⌘6`) to view all tests
+### From Xcode
+1. Open `mothership.xcodeproj` in Xcode
+2. Press `⌘+U` to run all tests
+3. Or use the Test Navigator (⌘+6) to run specific tests
 
-### From Command Line
+### From Terminal
 ```bash
-# Using xcodebuild
+cd mothership
 xcodebuild test -scheme mothership -destination 'platform=iOS Simulator,name=iPhone 15'
-
-# If using SPM
-swift test
 ```
 
-## Test Structure
+## Test Files
+
+### MarkdownParserTests.swift
+Comprehensive tests for the MarkdownParser to prevent regression during refactoring.
+
+**Test Coverage:**
+- ✅ Title parsing (H1 headers)
+- ✅ Section parsing (H2, H3, H4)
+- ✅ Flat list items
+- ✅ **Nested list items** (multi-level, with indentation)
+- ✅ List items with content/descriptions
+- ✅ Checkbox list items
+- ✅ Real-world complex examples (e.g., аптечка.md structure)
+- ✅ Frontmatter parsing (YAML)
+- ✅ Inline formatting (bold text)
+- ✅ Wikilinks (with and without display text)
+- ✅ Images (Obsidian and standard markdown)
+- ✅ Animated media (GIF, MP4, WebM)
+- ✅ Videos (YouTube)
+- ✅ Edge cases (empty markdown, whitespace, special characters)
+- ✅ Performance tests
+
+**Key Tests for New Features:**
+- `testParseListItems_NestedList`: Validates 2-level nesting
+- `testParseListItems_DeeplyNestedList`: Validates 3+ level nesting
+- `testParseListItems_RealWorldExample`: Tests actual аптечка.md structure
+- `testParseListItems_WithContent`: Tests list items with descriptions
 
 ### CharterTests.swift
-Tests for the `Charter` model:
-- `isActive` property logic (date-based active status)
-- Charter initialization
-- Codable conformance (JSON encoding/decoding)
+Tests for the Charter model including date logic and encoding/decoding.
 
 ### CharterStoreTests.swift
-Tests for the `CharterStore`:
-- Adding charters
-- Updating charters
-- Deleting charters
-- Date-based active charter detection
-- Persistence (UserDefaults)
-- Sorting by start date
+Tests for Charter storage and retrieval.
 
-## Writing New Tests
+### ChecklistStoreTests.swift
+Tests for Checklist storage operations.
 
-Follow these patterns when adding new tests:
+## Best Practices
 
-1. **Arrange-Act-Assert**: Structure tests with Given-When-Then comments
-2. **Test naming**: Use descriptive names like `test<MethodName>_<Condition>_<ExpectedResult>`
-3. **One assertion per concept**: Keep tests focused on a single behavior
-4. **Setup and teardown**: Use `setUp()` and `tearDown()` for common initialization
+### When Refactoring MarkdownParser
+1. Run all tests before starting: `⌘+U`
+2. Make your changes incrementally
+3. Run tests after each significant change
+4. If a test fails, understand why before modifying the test
+5. Add new tests for new functionality
+6. Keep tests focused and independent
 
-### Example:
+### Test Naming Convention
+- Use descriptive names: `test<WhatIsBeingTested>_<Scenario>`
+- Example: `testParseListItems_NestedList`
 
+### Test Structure (AAA Pattern)
 ```swift
-func testAddCharter_AddsCharterToStore() {
-    // Given: An empty store
-    XCTAssertTrue(sut.charters.isEmpty)
+func testSomething() {
+    // Given: Setup test data and context
+    let markdown = "..."
     
-    // When: Adding a charter
-    let charter = Charter(name: "Test", startDate: Date())
-    sut.addCharter(charter)
+    // When: Execute the action being tested
+    let result = MarkdownParser.parse(markdown)
     
-    // Then: Charter should be in the store
-    XCTAssertEqual(sut.charters.count, 1)
+    // Then: Assert the expected outcome
+    XCTAssertEqual(result.sections.count, 1)
 }
 ```
 
-## Test Coverage
+## Adding New Tests
 
-Current test coverage includes:
-- ✅ Charter model initialization
-- ✅ Date-based active charter logic
-- ✅ Charter encoding/decoding
-- ✅ CharterStore CRUD operations
-- ✅ CharterStore automatic active charter detection
-- ✅ CharterStore persistence
+When adding new functionality to MarkdownParser:
 
-## Notes
+1. Write the test first (TDD approach recommended)
+2. Run the test and see it fail
+3. Implement the feature
+4. Run the test and see it pass
+5. Refactor if needed, keeping tests green
 
-- Tests use the main app target (`@testable import mothership`)
-- Persistence tests interact with UserDefaults and clean up after themselves
-- Date-based tests use relative dates to avoid time-dependent failures
+## Performance Testing
 
+The `testParsePerformance_LargeDocument` test measures parsing performance for large documents. If you make changes that significantly impact performance, investigate and optimize.
+
+## CI/CD
+
+These tests should be run automatically on:
+- Every commit to main branch
+- Every pull request
+- Before releases
+
+Ensure all tests pass before merging.

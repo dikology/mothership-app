@@ -29,6 +29,7 @@ struct MarkdownItem {
     let title: String
     let content: String?
     let imagePath: String?
+    let subitems: [MarkdownItem]
 }
 
 struct MarkdownWikilink {
@@ -130,20 +131,40 @@ enum MarkdownParser {
         var sections: [MarkdownSection] = []
         var currentH2: SectionBuilder?
         var currentH3: SectionBuilder?
+        var listBuffer: [String] = []
+        var i = 0
         
-        for line in lines {
+        while i < lines.count {
+            let line = lines[i]
             let trimmedLine = line.trimmingCharacters(in: .whitespaces)
             
             // Skip title (H1) and empty lines at the start
             if trimmedLine.hasPrefix("# ") {
+                i += 1
                 continue
             }
             
             // H2 section
             if trimmedLine.hasPrefix("## ") {
+                // Process any pending list items
+                if !listBuffer.isEmpty {
+                    let items = parseListItems(listBuffer)
+                    if let h3 = currentH3 {
+                        h3.items.append(contentsOf: items)
+                    } else if let h2 = currentH2 {
+                        h2.items.append(contentsOf: items)
+                    }
+                    listBuffer.removeAll()
+                }
+                
                 // Save previous H3 if exists
-                if let h3 = currentH3, let h2 = currentH2 {
-                    h2.subsections.append(h3.build())
+                if let h3 = currentH3 {
+                    if let h2 = currentH2 {
+                        h2.subsections.append(h3.build())
+                    } else {
+                        // Add H3 as top-level section if no H2 parent
+                        sections.append(h3.build())
+                    }
                     currentH3 = nil
                 }
                 
@@ -154,23 +175,52 @@ enum MarkdownParser {
                 
                 let sectionTitle = String(trimmedLine.dropFirst(3)).trimmingCharacters(in: .whitespaces)
                 currentH2 = SectionBuilder(level: 2, title: sectionTitle)
+                i += 1
                 continue
             }
             
             // H3 subsection
             if trimmedLine.hasPrefix("### ") {
+                // Process any pending list items
+                if !listBuffer.isEmpty {
+                    let items = parseListItems(listBuffer)
+                    if let h3 = currentH3 {
+                        h3.items.append(contentsOf: items)
+                    } else if let h2 = currentH2 {
+                        h2.items.append(contentsOf: items)
+                    }
+                    listBuffer.removeAll()
+                }
+                
                 // Save previous H3 if exists
-                if let h3 = currentH3, let h2 = currentH2 {
-                    h2.subsections.append(h3.build())
+                if let h3 = currentH3 {
+                    if let h2 = currentH2 {
+                        h2.subsections.append(h3.build())
+                    } else {
+                        // Add H3 as top-level section if no H2 parent
+                        sections.append(h3.build())
+                    }
                 }
                 
                 let sectionTitle = String(trimmedLine.dropFirst(4)).trimmingCharacters(in: .whitespaces)
                 currentH3 = SectionBuilder(level: 3, title: sectionTitle)
+                i += 1
                 continue
             }
             
             // H4+ subsections (treat as H3 for now)
             if trimmedLine.hasPrefix("#### ") {
+                // Process any pending list items
+                if !listBuffer.isEmpty {
+                    let items = parseListItems(listBuffer)
+                    if let h3 = currentH3 {
+                        h3.items.append(contentsOf: items)
+                    } else if let h2 = currentH2 {
+                        h2.items.append(contentsOf: items)
+                    }
+                    listBuffer.removeAll()
+                }
+                
                 // Save previous H3 if exists
                 if let h3 = currentH3, let h2 = currentH2 {
                     h2.subsections.append(h3.build())
@@ -178,47 +228,36 @@ enum MarkdownParser {
                 
                 let sectionTitle = String(trimmedLine.dropFirst(5)).trimmingCharacters(in: .whitespaces)
                 currentH3 = SectionBuilder(level: 4, title: sectionTitle)
+                i += 1
                 continue
             }
             
             // Horizontal rule - treat as section separator
             if trimmedLine.hasPrefix("---") {
+                i += 1
                 continue
             }
             
-            // List items
-            if trimmedLine.hasPrefix("- ") || trimmedLine.hasPrefix("* ") {
-                let itemContent = String(trimmedLine.dropFirst(2)).trimmingCharacters(in: .whitespaces)
-                let processedContent = processInlineFormatting(itemContent)
-                
-                // Check if it's a flashcard format: "Question :: Answer"
-                if processedContent.contains("::") {
-                    let parts = processedContent.components(separatedBy: "::")
-                    if parts.count >= 2 {
-                        let question = parts[0].trimmingCharacters(in: .whitespaces)
-                        let answer = parts[1...].joined(separator: "::").trimmingCharacters(in: .whitespaces)
-                        let item = MarkdownItem(title: question, content: answer, imagePath: nil)
-                        
-                        if let h3 = currentH3 {
-                            h3.items.append(item)
-                        } else if let h2 = currentH2 {
-                            h2.items.append(item)
-                        }
-                    }
-                } else {
-                    let item = MarkdownItem(title: processedContent, content: nil, imagePath: nil)
-                    
-                    if let h3 = currentH3 {
-                        h3.items.append(item)
-                    } else if let h2 = currentH2 {
-                        h2.items.append(item)
-                    }
-                }
+            // List items or block quotes (> ) that might contain list items
+            if isListItem(line) || trimmedLine.hasPrefix(">") {
+                listBuffer.append(line)
+                i += 1
                 continue
             }
             
             // Regular content (paragraphs)
             if !trimmedLine.isEmpty {
+                // Process any pending list items first
+                if !listBuffer.isEmpty {
+                    let items = parseListItems(listBuffer)
+                    if let h3 = currentH3 {
+                        h3.items.append(contentsOf: items)
+                    } else if let h2 = currentH2 {
+                        h2.items.append(contentsOf: items)
+                    }
+                    listBuffer.removeAll()
+                }
+                
                 let processedLine = processInlineFormatting(line)
                 
                 if let h3 = currentH3 {
@@ -226,18 +265,136 @@ enum MarkdownParser {
                 } else if let h2 = currentH2 {
                     h2.content.append(processedLine)
                 }
+            } else if !listBuffer.isEmpty && trimmedLine.isEmpty {
+                // Empty line might end a list block
+                // But keep it in buffer in case list continues
+                listBuffer.append(line)
+            }
+            
+            i += 1
+        }
+        
+        // Process any remaining list items
+        if !listBuffer.isEmpty {
+            let items = parseListItems(listBuffer)
+            if let h3 = currentH3 {
+                h3.items.append(contentsOf: items)
+            } else if let h2 = currentH2 {
+                h2.items.append(contentsOf: items)
             }
         }
         
         // Save remaining sections
-        if let h3 = currentH3, let h2 = currentH2 {
-            h2.subsections.append(h3.build())
+        if let h3 = currentH3 {
+            if let h2 = currentH2 {
+                h2.subsections.append(h3.build())
+            } else {
+                // Add H3 as top-level section if no H2 parent
+                sections.append(h3.build())
+            }
         }
         if let h2 = currentH2 {
             sections.append(h2.build())
         }
         
         return sections
+    }
+    
+    /// Check if a line is a list item
+    private static func isListItem(_ line: String) -> Bool {
+        let trimmed = line.trimmingCharacters(in: .whitespaces)
+        // Check for various list item formats
+        return trimmed.hasPrefix("- ") || 
+               trimmed.hasPrefix("* ") || 
+               trimmed.hasPrefix("+ ") ||
+               trimmed.hasPrefix("- [ ] ") ||
+               trimmed.hasPrefix("- [x] ") ||
+               trimmed.hasPrefix("- [X] ")
+    }
+    
+    /// Parse list items with nesting support
+    private static func parseListItems(_ lines: [String]) -> [MarkdownItem] {
+        struct ListItemBuilder {
+            let indentLevel: Int
+            var title: String
+            var contentLines: [String] = []
+            var subitems: [MarkdownItem] = []
+            
+            func build() -> MarkdownItem {
+                let content = contentLines.isEmpty ? nil : contentLines.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
+                return MarkdownItem(
+                    title: title,
+                    content: content,
+                    imagePath: nil,
+                    subitems: subitems
+                )
+            }
+        }
+        
+        var items: [MarkdownItem] = []
+        var stack: [ListItemBuilder] = []
+        
+        for line in lines {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            
+            // Skip empty lines and blockquotes
+            if trimmed.isEmpty || trimmed.hasPrefix(">") {
+                continue
+            }
+            
+            // Detect indentation level (count leading spaces)
+            let leadingSpaces = line.prefix(while: { $0 == " " }).count
+            let indentLevel = leadingSpaces / 2 // Assume 2 spaces per indent level
+            
+            if isListItem(line) {
+                // Extract list item content
+                var itemText = trimmed
+                
+                // Remove list markers
+                if itemText.hasPrefix("- [ ] ") {
+                    itemText = String(itemText.dropFirst(6))
+                } else if itemText.hasPrefix("- [x] ") || itemText.hasPrefix("- [X] ") {
+                    itemText = String(itemText.dropFirst(6))
+                } else if itemText.hasPrefix("- ") || itemText.hasPrefix("* ") || itemText.hasPrefix("+ ") {
+                    itemText = String(itemText.dropFirst(2))
+                }
+                
+                itemText = itemText.trimmingCharacters(in: .whitespaces)
+                let processedText = processInlineFormatting(itemText)
+                
+                // Create new item builder
+                let newItem = ListItemBuilder(indentLevel: indentLevel, title: processedText)
+                
+                // Handle nesting based on indentation
+                while !stack.isEmpty && stack.last!.indentLevel >= indentLevel {
+                    let completed = stack.removeLast()
+                    if stack.isEmpty {
+                        items.append(completed.build())
+                    } else {
+                        stack[stack.count - 1].subitems.append(completed.build())
+                    }
+                }
+                
+                stack.append(newItem)
+            } else if !stack.isEmpty {
+                // This is a continuation line (content) for the current item
+                // It should belong to the most recent item at this indent level or deeper
+                let processedLine = processInlineFormatting(trimmed)
+                stack[stack.count - 1].contentLines.append(processedLine)
+            }
+        }
+        
+        // Flush remaining items in stack
+        while !stack.isEmpty {
+            let completed = stack.removeLast()
+            if stack.isEmpty {
+                items.append(completed.build())
+            } else {
+                stack[stack.count - 1].subitems.append(completed.build())
+            }
+        }
+        
+        return items
     }
     
     /// Process inline formatting (bold, italic, wikilinks)

@@ -9,6 +9,8 @@ import SwiftUI
 
 struct AppView: View {
     @Bindable var model: AppModel
+    @Environment(\.localization) private var localization
+    @Environment(\.charterStore) private var charterStore
     @State private var selectedTab: MainTab = .home
     
     enum MainTab: String, CaseIterable {
@@ -26,13 +28,8 @@ struct AppView: View {
             }
         }
         
-        func localizedName(using service: LocalizationService) -> String {
-            switch self {
-            case .home: return service.localized(L10n.Tab.home)
-            // case .learn: return service.localized(L10n.Tab.learn)
-            case .practice: return service.localized(L10n.Tab.practice)
-            // case .profile: return service.localized(L10n.Tab.profile)
-            }
+        func localizedName(_ key: String) -> String {
+            return key
         }
     }
     
@@ -54,8 +51,6 @@ struct AppView: View {
                 destinationView(for: path)
             }
         }
-        .environment(\.charterStore, model.charterStore)
-        .environment(\.checklistStore, model.checklistStore)
     }
     
     @ViewBuilder
@@ -76,7 +71,7 @@ struct AppView: View {
     private func destinationView(for path: AppPath) -> some View {
         switch path {
         case .charterDetail(let id):
-            if let charter = model.charterStore.charters.first(where: { $0.id == id }) {
+            if let charter = charterStore.charters.first(where: { $0.id == id }) {
                 CharterDetailView(charter: charter)
             }
         case .charterCreation:
@@ -87,11 +82,11 @@ struct AppView: View {
             if let uuid = UUID(uuidString: moduleID) {
                 PracticeModuleDetailView(moduleID: uuid)
             } else {
-                Text(model.localization.localized(L10n.Common.comingSoon))
+                Text(localization.localized(L10n.Common.comingSoon))
                     .font(AppTypography.title1)
             }
         default:
-            Text(model.localization.localized(L10n.Common.comingSoon))
+            Text(localization.localized(L10n.Common.comingSoon))
                 .font(AppTypography.title1)
         }
     }
@@ -132,6 +127,13 @@ struct TabBarItem: View {
     let localization: LocalizationService
     let action: () -> Void
     
+    private func localizedTabName(for tab: AppView.MainTab) -> String {
+        switch tab {
+        case .home: return localization.localized(L10n.Tab.home)
+        case .practice: return localization.localized(L10n.Tab.practice)
+        }
+    }
+    
     var body: some View {
         Button(action: action) {
             VStack(spacing: 4) {
@@ -151,7 +153,7 @@ struct TabBarItem: View {
                 .frame(width: 46, height: 46)
                 
                 // Text label
-                Text(tab.localizedName(using: localization))
+                Text(localizedTabName(for: tab))
                     .font(AppTypography.tabBar)
                     .foregroundColor(isSelected ? AppColors.tabBarSelected : AppColors.tabBarUnselected)
             }
@@ -161,6 +163,9 @@ struct TabBarItem: View {
 }
 
 #Preview {
-    AppView(model: AppModel(charterStore: CharterStore()))
+    AppView(model: AppModel())
+        .environment(\.localization, LocalizationService())
+        .environment(\.charterStore, CharterStore())
+        .environment(\.checklistStore, ChecklistStore())
 }
 

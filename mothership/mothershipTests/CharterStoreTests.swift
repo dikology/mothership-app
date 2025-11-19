@@ -11,16 +11,22 @@ import XCTest
 final class CharterStoreTests: XCTestCase {
     
     var sut: CharterStore!
+    var testUserDefaults: UserDefaults!
     
     override func setUp() {
         super.setUp()
+        // Create a test-specific UserDefaults suite
+        testUserDefaults = UserDefaults(suiteName: "CharterStoreTests")!
+        testUserDefaults.removePersistentDomain(forName: "CharterStoreTests")
+        
         // Create a fresh store for each test
-        sut = CharterStore()
-        // Clear any existing charters
-        sut.charters = []
+        sut = CharterStore(userDefaults: testUserDefaults)
     }
     
     override func tearDown() {
+        // Clean up test UserDefaults
+        testUserDefaults.removePersistentDomain(forName: "CharterStoreTests")
+        testUserDefaults = nil
         sut = nil
         super.tearDown()
     }
@@ -217,17 +223,19 @@ final class CharterStoreTests: XCTestCase {
             location: "Test Location"
         )
         sut.addCharter(charter)
+        XCTAssertEqual(sut.charters.count, 1)
         
-        // When: Creating a new store (which should load from UserDefaults)
-        let newStore = CharterStore()
+        // When: Clearing the in-memory state and reloading from UserDefaults
+        sut.charters = []
+        XCTAssertTrue(sut.charters.isEmpty, "Charters should be cleared")
         
-        // Then: The charter should be loaded
-        XCTAssertEqual(newStore.charters.count, 1)
-        XCTAssertEqual(newStore.charters.first?.id, charter.id)
-        XCTAssertEqual(newStore.charters.first?.name, charter.name)
+        sut.reload()
         
-        // Cleanup
-        newStore.deleteCharter(charter)
+        // Then: The charter should be loaded from persistence
+        XCTAssertEqual(sut.charters.count, 1)
+        XCTAssertEqual(sut.charters.first?.id, charter.id)
+        XCTAssertEqual(sut.charters.first?.name, charter.name)
+        XCTAssertEqual(sut.charters.first?.location, charter.location)
     }
 }
 
