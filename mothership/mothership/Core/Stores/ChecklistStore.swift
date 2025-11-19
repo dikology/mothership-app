@@ -49,14 +49,16 @@ final class ChecklistStore {
         // Return a copy with charter-specific state applied
         var checklist = baseChecklist
         if let state = getChecklistState(for: charterId, checklistId: baseChecklist.id) {
-            // Apply saved state to items
+            // Apply saved state to items in subsections
             for sectionIndex in checklist.sections.indices {
-                for itemIndex in checklist.sections[sectionIndex].items.indices {
-                    let itemId = checklist.sections[sectionIndex].items[itemIndex].id
-                    if let itemState = state.itemStates[itemId] {
-                        checklist.sections[sectionIndex].items[itemIndex].isChecked = itemState.isChecked
-                        checklist.sections[sectionIndex].items[itemIndex].checkedAt = itemState.checkedAt
-                        checklist.sections[sectionIndex].items[itemIndex].userNote = itemState.userNote
+                for subsectionIndex in checklist.sections[sectionIndex].subsections.indices {
+                    for itemIndex in checklist.sections[sectionIndex].subsections[subsectionIndex].items.indices {
+                        let itemId = checklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].id
+                        if let itemState = state.itemStates[itemId] {
+                            checklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].isChecked = itemState.isChecked
+                            checklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].checkedAt = itemState.checkedAt
+                            checklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].userNote = itemState.userNote
+                        }
                     }
                 }
             }
@@ -81,32 +83,34 @@ final class ChecklistStore {
     func toggleItem(for charterId: UUID?, checklistId: UUID, itemId: UUID) {
         guard var checklist = checklists.first(where: { $0.id == checklistId }) else { return }
         
-        // Find and toggle the item
+        // Find and toggle the item in subsections
         for sectionIndex in checklist.sections.indices {
-            if let itemIndex = checklist.sections[sectionIndex].items.firstIndex(where: { $0.id == itemId }) {
-                checklist.sections[sectionIndex].items[itemIndex].isChecked.toggle()
-                let isChecked = checklist.sections[sectionIndex].items[itemIndex].isChecked
-                checklist.sections[sectionIndex].items[itemIndex].checkedAt = isChecked ? Date() : nil
-                
-                // Update checklist
-                if let index = checklists.firstIndex(where: { $0.id == checklistId }) {
-                    checklists[index] = checklist
+            for subsectionIndex in checklist.sections[sectionIndex].subsections.indices {
+                if let itemIndex = checklist.sections[sectionIndex].subsections[subsectionIndex].items.firstIndex(where: { $0.id == itemId }) {
+                    checklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].isChecked.toggle()
+                    let isChecked = checklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].isChecked
+                    checklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].checkedAt = isChecked ? Date() : nil
+                    
+                    // Update checklist
+                    if let index = checklists.firstIndex(where: { $0.id == checklistId }) {
+                        checklists[index] = checklist
+                    }
+                    
+                    // Save state if charter-scoped
+                    if let charterId = charterId {
+                        var state = getChecklistState(for: charterId, checklistId: checklistId) ?? ChecklistState(checklistId: checklistId)
+                        let userNote = checklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].userNote
+                        state.itemStates[itemId] = ChecklistItemState(
+                            isChecked: isChecked,
+                            checkedAt: checklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].checkedAt,
+                            userNote: userNote
+                        )
+                        updateChecklistState(for: charterId, checklistId: checklistId, state: state)
+                    }
+                    
+                    save()
+                    return
                 }
-                
-                // Save state if charter-scoped
-                if let charterId = charterId {
-                    var state = getChecklistState(for: charterId, checklistId: checklistId) ?? ChecklistState(checklistId: checklistId)
-                    let userNote = checklist.sections[sectionIndex].items[itemIndex].userNote
-                    state.itemStates[itemId] = ChecklistItemState(
-                        isChecked: isChecked,
-                        checkedAt: checklist.sections[sectionIndex].items[itemIndex].checkedAt,
-                        userNote: userNote
-                    )
-                    updateChecklistState(for: charterId, checklistId: checklistId, state: state)
-                }
-                
-                save()
-                return
             }
         }
     }
@@ -115,27 +119,29 @@ final class ChecklistStore {
         guard var checklist = checklists.first(where: { $0.id == checklistId }) else { return }
         
         for sectionIndex in checklist.sections.indices {
-            if let itemIndex = checklist.sections[sectionIndex].items.firstIndex(where: { $0.id == itemId }) {
-                checklist.sections[sectionIndex].items[itemIndex].userNote = note
-                
-                if let index = checklists.firstIndex(where: { $0.id == checklistId }) {
-                    checklists[index] = checklist
+            for subsectionIndex in checklist.sections[sectionIndex].subsections.indices {
+                if let itemIndex = checklist.sections[sectionIndex].subsections[subsectionIndex].items.firstIndex(where: { $0.id == itemId }) {
+                    checklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].userNote = note
+                    
+                    if let index = checklists.firstIndex(where: { $0.id == checklistId }) {
+                        checklists[index] = checklist
+                    }
+                    
+                    if let charterId = charterId {
+                        var state = getChecklistState(for: charterId, checklistId: checklistId) ?? ChecklistState(checklistId: checklistId)
+                        let isChecked = checklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].isChecked
+                        let checkedAt = checklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].checkedAt
+                        state.itemStates[itemId] = ChecklistItemState(
+                            isChecked: isChecked,
+                            checkedAt: checkedAt,
+                            userNote: note
+                        )
+                        updateChecklistState(for: charterId, checklistId: checklistId, state: state)
+                    }
+                    
+                    save()
+                    return
                 }
-                
-                if let charterId = charterId {
-                    var state = getChecklistState(for: charterId, checklistId: checklistId) ?? ChecklistState(checklistId: checklistId)
-                    let isChecked = checklist.sections[sectionIndex].items[itemIndex].isChecked
-                    let checkedAt = checklist.sections[sectionIndex].items[itemIndex].checkedAt
-                    state.itemStates[itemId] = ChecklistItemState(
-                        isChecked: isChecked,
-                        checkedAt: checkedAt,
-                        userNote: note
-                    )
-                    updateChecklistState(for: charterId, checklistId: checklistId, state: state)
-                }
-                
-                save()
-                return
             }
         }
     }
@@ -144,10 +150,12 @@ final class ChecklistStore {
         guard var checklist = checklists.first(where: { $0.id == checklistId }) else { return }
         
         for sectionIndex in checklist.sections.indices {
-            for itemIndex in checklist.sections[sectionIndex].items.indices {
-                checklist.sections[sectionIndex].items[itemIndex].isChecked = false
-                checklist.sections[sectionIndex].items[itemIndex].checkedAt = nil
-                checklist.sections[sectionIndex].items[itemIndex].userNote = nil
+            for subsectionIndex in checklist.sections[sectionIndex].subsections.indices {
+                for itemIndex in checklist.sections[sectionIndex].subsections[subsectionIndex].items.indices {
+                    checklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].isChecked = false
+                    checklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].checkedAt = nil
+                    checklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].userNote = nil
+                }
             }
         }
         

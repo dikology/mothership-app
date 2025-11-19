@@ -14,6 +14,7 @@ struct CheckInChecklistView: View {
     @Environment(\.checklistStore) private var checklistStore
     @State private var checklist: Checklist?
     @State private var expandedSections: Set<UUID> = []
+    @State private var expandedSubsections: Set<UUID> = []
     
     var body: some View {
         ScrollView {
@@ -57,6 +58,7 @@ struct CheckInChecklistView: View {
                         ChecklistSectionView(
                             section: section,
                             isExpanded: expandedSections.contains(section.id),
+                            expandedSubsections: $expandedSubsections,
                             onToggleExpand: {
                                 if expandedSections.contains(section.id) {
                                     expandedSections.remove(section.id)
@@ -107,6 +109,7 @@ struct CheckInChecklistView: View {
 struct ChecklistSectionView: View {
     let section: ChecklistSection
     let isExpanded: Bool
+    @Binding var expandedSubsections: Set<UUID>
     let onToggleExpand: () -> Void
     let onToggleItem: (UUID) -> Void
     let onUpdateNote: (UUID, String?) -> Void
@@ -136,14 +139,22 @@ struct ChecklistSectionView: View {
             }
             .buttonStyle(PlainButtonStyle())
             
-            // Section Items
+            // Subsections
             if isExpanded {
                 VStack(spacing: 0) {
-                    ForEach(section.items) { item in
-                        ChecklistItemRowView(
-                            item: item,
-                            onToggle: { onToggleItem(item.id) },
-                            onUpdateNote: { note in onUpdateNote(item.id, note) }
+                    ForEach(section.subsections) { subsection in
+                        ChecklistSubsectionView(
+                            subsection: subsection,
+                            isExpanded: expandedSubsections.contains(subsection.id),
+                            onToggleExpand: {
+                                if expandedSubsections.contains(subsection.id) {
+                                    expandedSubsections.remove(subsection.id)
+                                } else {
+                                    expandedSubsections.insert(subsection.id)
+                                }
+                            },
+                            onToggleItem: onToggleItem,
+                            onUpdateNote: onUpdateNote
                         )
                     }
                 }
@@ -158,6 +169,57 @@ struct ChecklistSectionView: View {
             y: 2
         )
         .padding(.horizontal, AppSpacing.screenPadding)
+    }
+}
+
+// MARK: - Checklist Subsection View
+
+struct ChecklistSubsectionView: View {
+    let subsection: ChecklistSubsection
+    let isExpanded: Bool
+    let onToggleExpand: () -> Void
+    let onToggleItem: (UUID) -> Void
+    let onUpdateNote: (UUID, String?) -> Void
+    
+    @Environment(\.localization) private var localization
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            // Show subsection header only if it has a title
+            if !subsection.title.isEmpty {
+                Button(action: onToggleExpand) {
+                    HStack {
+                        VStack(alignment: .leading, spacing: AppSpacing.xs) {
+                            Text(subsection.title)
+                                .font(AppTypography.headline)
+                                .foregroundColor(AppColors.textPrimary)
+                            Text("\(subsection.items.count) \(localization.localized(L10n.Checklist.items))")
+                                .font(AppTypography.caption)
+                                .foregroundColor(AppColors.textSecondary)
+                        }
+                        Spacer()
+                        Image(systemName: isExpanded ? "chevron.up.circle" : "chevron.down.circle")
+                            .foregroundColor(AppColors.lavenderBlue)
+                            .font(.system(size: 16, weight: .medium))
+                    }
+                    .padding(.horizontal, AppSpacing.md)
+                    .padding(.vertical, AppSpacing.sm)
+                    .background(AppColors.cardBackground.opacity(0.5))
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+            
+            // Subsection Items
+            if isExpanded || subsection.title.isEmpty {
+                ForEach(subsection.items) { item in
+                    ChecklistItemRowView(
+                        item: item,
+                        onToggle: { onToggleItem(item.id) },
+                        onUpdateNote: { note in onUpdateNote(item.id, note) }
+                    )
+                }
+            }
+        }
     }
 }
 

@@ -78,8 +78,9 @@ struct CharterEditView: View {
                                 selection: $startDate,
                                 displayedComponents: [.date]
                             )
-                            .datePickerStyle(.compact)
+                            .datePickerStyle(.graphical)
                             .labelsHidden()
+                            .environment(\.calendar, Calendar.current)
                             .padding(.horizontal, AppSpacing.md)
                             .padding(.vertical, AppSpacing.sm)
                             .background(AppColors.cardBackground)
@@ -109,8 +110,9 @@ struct CharterEditView: View {
                                     in: startDate...,
                                     displayedComponents: [.date]
                                 )
-                                .datePickerStyle(.compact)
+                                .datePickerStyle(.graphical)
                                 .labelsHidden()
+                                .environment(\.calendar, Calendar.current)
                                 .padding(.horizontal, AppSpacing.md)
                                 .padding(.vertical, AppSpacing.sm)
                                 .background(AppColors.cardBackground)
@@ -160,6 +162,9 @@ struct CharterEditView: View {
                                 .foregroundColor(AppColors.textPrimary)
                             TextEditor(text: $notes)
                                 .frame(minHeight: 100)
+                                .font(AppTypography.body)
+                                .foregroundColor(AppColors.textPrimary)
+                                .scrollContentBackground(.hidden)
                                 .padding(AppSpacing.md)
                                 .background(AppColors.cardBackground)
                                 .cornerRadius(AppSpacing.cardCornerRadiusSmall)
@@ -203,9 +208,7 @@ struct CharterEditView: View {
         // Validation
         if name.trimmingCharacters(in: .whitespaces).isEmpty {
             // Generate a generic name like "Charter <today's date>"
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateStyle = .medium
-            let todayString = dateFormatter.string(from: Date())
+            let todayString = Date().formattedMedium()
             name = "\(localization.localized(L10n.Charter.charter)) \(todayString)"
         }
         

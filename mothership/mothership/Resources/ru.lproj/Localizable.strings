@@ -50,7 +50,7 @@
 
 // MARK: - Checklist
 
-"checklist.check_in_checklist" = "Чек-лист приема яхты / Check-in Checklist";
+"checklist.check_in_checklist" = "Чек-лист приемки яхты";
 "checklist.check_all_items_when_receiving_yacht" = "Проверьте все пункты при приеме яхты";
 "checklist.progress" = "Прогресс";
 "checklist.items" = "пунктов";
