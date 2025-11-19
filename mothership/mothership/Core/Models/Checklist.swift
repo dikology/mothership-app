@@ -179,7 +179,7 @@ struct CharterChecklistStates: Codable {
 extension Checklist {
     static func defaultCheckInChecklist() -> Checklist {
         Checklist(
-            title: "Yacht Check-in Checklist / Чек-лист приема яхты",
+            title: "Yacht Check-in Checklist / Чек-лист приемки яхты",
             type: .charterScoped,
             charterType: .checkIn,
             sections: CheckInChecklistData.defaultSections,
