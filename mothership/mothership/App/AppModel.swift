@@ -3,18 +3,12 @@ import SwiftUI
 @Observable
 final class AppModel {
     var path: [AppPath] = []
-    var localization = LocalizationService()
 
-    // Core stores
-    var charterStore: CharterStore
-    var checklistStore: ChecklistStore
+    // Note: Stores and services are passed via environment, not stored here
+    // to avoid nested @Observable objects which cause memory issues
 
-    init(
-        charterStore: CharterStore = CharterStore(),
-        checklistStore: ChecklistStore = ChecklistStore()
-    ) {
-        self.charterStore = charterStore
-        self.checklistStore = checklistStore
+    init() {
+        // All dependencies are created at app level and passed via environment
     }
 
 }

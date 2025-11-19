@@ -10,20 +10,23 @@ import XCTest
 
 final class ChecklistStoreTests: XCTestCase {
     var sut: ChecklistStore!
+    var testUserDefaults: UserDefaults!
     
     override func setUp() {
         super.setUp()
-        sut = ChecklistStore()
-        // Clear any persisted data
-        UserDefaults.standard.removeObject(forKey: "ChecklistStore.v1")
-        UserDefaults.standard.removeObject(forKey: "CharterChecklistStates.v1")
-        sut = ChecklistStore()
+        // Create a test-specific UserDefaults suite
+        testUserDefaults = UserDefaults(suiteName: "ChecklistStoreTests")!
+        testUserDefaults.removePersistentDomain(forName: "ChecklistStoreTests")
+        
+        // Create a fresh store for each test
+        sut = ChecklistStore(userDefaults: testUserDefaults)
     }
     
     override func tearDown() {
+        // Clean up test UserDefaults
+        testUserDefaults.removePersistentDomain(forName: "ChecklistStoreTests")
+        testUserDefaults = nil
         sut = nil
-        UserDefaults.standard.removeObject(forKey: "ChecklistStore.v1")
-        UserDefaults.standard.removeObject(forKey: "CharterChecklistStates.v1")
         super.tearDown()
     }
     
@@ -300,11 +303,16 @@ final class ChecklistStoreTests: XCTestCase {
         sut.updateItemNote(for: charterId, checklistId: checklist.id, itemId: firstItem.id, note: "Persisted note")
         
         // When
-        // Create new store instance (simulates app restart)
-        let newStore = ChecklistStore()
+        // Clear in-memory state and reload from UserDefaults (simulates app restart)
+        sut.checklists = []
+        sut.charterChecklistStates = [:]
+        XCTAssertTrue(sut.checklists.isEmpty, "Checklists should be cleared")
+        XCTAssertTrue(sut.charterChecklistStates.isEmpty, "States should be cleared")
+        
+        sut.reload()
         
         // Then
-        let persistedChecklist = newStore.getCheckInChecklist(for: charterId)
+        let persistedChecklist = sut.getCheckInChecklist(for: charterId)
         let persistedItem = persistedChecklist?.sections.first?.items.first
         XCTAssertTrue(persistedItem?.isChecked ?? false, "Checked state should persist")
         XCTAssertEqual(persistedItem?.userNote, "Persisted note", "Note should persist")

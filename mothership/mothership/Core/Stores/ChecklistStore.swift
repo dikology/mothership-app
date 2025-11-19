@@ -15,8 +15,10 @@ final class ChecklistStore {
     
     private let userDefaultsKey = "ChecklistStore.v1"
     private let charterStatesKey = "CharterChecklistStates.v1"
+    private let userDefaults: UserDefaults
     
-    init() {
+    init(userDefaults: UserDefaults = .standard) {
+        self.userDefaults = userDefaults
         load()
         // Ensure default check-in checklist exists
         ensureDefaultCheckInChecklist()
@@ -81,34 +83,37 @@ final class ChecklistStore {
     }
     
     func toggleItem(for charterId: UUID?, checklistId: UUID, itemId: UUID) {
-        guard var checklist = checklists.first(where: { $0.id == checklistId }) else { return }
+        guard let checklist = checklists.first(where: { $0.id == checklistId }) else { return }
         
-        // Find and toggle the item in subsections
+        // Find the item in subsections
         for sectionIndex in checklist.sections.indices {
             for subsectionIndex in checklist.sections[sectionIndex].subsections.indices {
                 if let itemIndex = checklist.sections[sectionIndex].subsections[subsectionIndex].items.firstIndex(where: { $0.id == itemId }) {
-                    checklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].isChecked.toggle()
-                    let isChecked = checklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].isChecked
-                    checklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].checkedAt = isChecked ? Date() : nil
+                    let item = checklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex]
                     
-                    // Update checklist
-                    if let index = checklists.firstIndex(where: { $0.id == checklistId }) {
-                        checklists[index] = checklist
-                    }
-                    
-                    // Save state if charter-scoped
                     if let charterId = charterId {
+                        // Charter-scoped: only update the charter-specific state
                         var state = getChecklistState(for: charterId, checklistId: checklistId) ?? ChecklistState(checklistId: checklistId)
-                        let userNote = checklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].userNote
+                        let currentIsChecked = state.itemStates[itemId]?.isChecked ?? item.isChecked
+                        let newIsChecked = !currentIsChecked
                         state.itemStates[itemId] = ChecklistItemState(
-                            isChecked: isChecked,
-                            checkedAt: checklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].checkedAt,
-                            userNote: userNote
+                            isChecked: newIsChecked,
+                            checkedAt: newIsChecked ? Date() : nil,
+                            userNote: state.itemStates[itemId]?.userNote ?? item.userNote
                         )
                         updateChecklistState(for: charterId, checklistId: checklistId, state: state)
+                    } else {
+                        // Reference checklist: update the base checklist
+                        var mutableChecklist = checklist
+                        mutableChecklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].isChecked.toggle()
+                        let isChecked = mutableChecklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].isChecked
+                        mutableChecklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].checkedAt = isChecked ? Date() : nil
+                        
+                        if let index = checklists.firstIndex(where: { $0.id == checklistId }) {
+                            checklists[index] = mutableChecklist
+                        }
+                        save()
                     }
-                    
-                    save()
                     return
                 }
             }
@@ -116,30 +121,33 @@ final class ChecklistStore {
     }
     
     func updateItemNote(for charterId: UUID?, checklistId: UUID, itemId: UUID, note: String?) {
-        guard var checklist = checklists.first(where: { $0.id == checklistId }) else { return }
+        guard let checklist = checklists.first(where: { $0.id == checklistId }) else { return }
         
         for sectionIndex in checklist.sections.indices {
             for subsectionIndex in checklist.sections[sectionIndex].subsections.indices {
                 if let itemIndex = checklist.sections[sectionIndex].subsections[subsectionIndex].items.firstIndex(where: { $0.id == itemId }) {
-                    checklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].userNote = note
-                    
-                    if let index = checklists.firstIndex(where: { $0.id == checklistId }) {
-                        checklists[index] = checklist
-                    }
+                    let item = checklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex]
                     
                     if let charterId = charterId {
+                        // Charter-scoped: only update the charter-specific state
                         var state = getChecklistState(for: charterId, checklistId: checklistId) ?? ChecklistState(checklistId: checklistId)
-                        let isChecked = checklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].isChecked
-                        let checkedAt = checklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].checkedAt
+                        let existingState = state.itemStates[itemId]
                         state.itemStates[itemId] = ChecklistItemState(
-                            isChecked: isChecked,
-                            checkedAt: checkedAt,
+                            isChecked: existingState?.isChecked ?? item.isChecked,
+                            checkedAt: existingState?.checkedAt ?? item.checkedAt,
                             userNote: note
                         )
                         updateChecklistState(for: charterId, checklistId: checklistId, state: state)
+                    } else {
+                        // Reference checklist: update the base checklist
+                        var mutableChecklist = checklist
+                        mutableChecklist.sections[sectionIndex].subsections[subsectionIndex].items[itemIndex].userNote = note
+                        
+                        if let index = checklists.firstIndex(where: { $0.id == checklistId }) {
+                            checklists[index] = mutableChecklist
+                        }
+                        save()
                     }
-                    
-                    save()
                     return
                 }
             }
@@ -186,24 +194,28 @@ final class ChecklistStore {
     
     // MARK: - Persistence
     
+    func reload() {
+        load()
+    }
+    
     private func save() {
         if let data = try? JSONEncoder().encode(checklists) {
-            UserDefaults.standard.set(data, forKey: userDefaultsKey)
+            userDefaults.set(data, forKey: userDefaultsKey)
         }
         
         // Save charter states
         if let statesData = try? JSONEncoder().encode(charterChecklistStates) {
-            UserDefaults.standard.set(statesData, forKey: charterStatesKey)
+            userDefaults.set(statesData, forKey: charterStatesKey)
         }
     }
     
     private func load() {
-        if let data = UserDefaults.standard.data(forKey: userDefaultsKey),
+        if let data = userDefaults.data(forKey: userDefaultsKey),
            let decoded = try? JSONDecoder().decode([Checklist].self, from: data) {
             checklists = decoded
         }
         
-        if let statesData = UserDefaults.standard.data(forKey: charterStatesKey),
+        if let statesData = userDefaults.data(forKey: charterStatesKey),
            let decoded = try? JSONDecoder().decode([UUID: CharterChecklistStates].self, from: statesData) {
             charterChecklistStates = decoded
         }
@@ -213,7 +225,9 @@ final class ChecklistStore {
 // MARK: - Environment Key
 
 private struct ChecklistStoreKey: EnvironmentKey {
-    static let defaultValue = ChecklistStore()
+    static var defaultValue: ChecklistStore {
+        ChecklistStore()
+    }
 }
 
 extension EnvironmentValues {

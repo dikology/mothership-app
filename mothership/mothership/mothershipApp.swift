@@ -10,11 +10,16 @@ import SwiftUI
 @main
 struct mothershipApp: App {
     @State private var model = AppModel()
+    @State private var localization = LocalizationService()
+    @State private var charterStore = CharterStore()
+    @State private var checklistStore = ChecklistStore()
 
     var body: some Scene {
         WindowGroup {
             AppView(model: model)
-                .environment(\.localization, model.localization)
+                .environment(\.localization, localization)
+                .environment(\.charterStore, charterStore)
+                .environment(\.checklistStore, checklistStore)
         }
     }
 }

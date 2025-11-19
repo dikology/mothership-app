@@ -8,7 +8,9 @@
 import SwiftUI
 
 private struct CharterStoreKey: EnvironmentKey {
-    static let defaultValue = CharterStore()
+    static var defaultValue: CharterStore {
+        CharterStore()
+    }
 }
 
 extension EnvironmentValues {

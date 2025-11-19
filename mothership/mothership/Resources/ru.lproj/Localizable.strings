@@ -46,6 +46,7 @@
 "practice.knots" = "Узлы";
 "practice.maneuvering" = "Маневрирование";
 "practice.mooring" = "Швартовка";
+"practice.safety" = "Безопасность";
 "practice.all" = "Все";
 
 // MARK: - Checklist

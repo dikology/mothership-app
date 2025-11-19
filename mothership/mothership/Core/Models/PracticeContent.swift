@@ -21,6 +21,7 @@ enum PracticeCategory: String, Codable, CaseIterable {
     case knots = "knots"
     case maneuvering = "maneuvering"
     case mooring = "mooring"
+    case safety = "safety"
 }
 
 struct PracticeModule: Identifiable, Hashable, Codable {

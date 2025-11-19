@@ -14,8 +14,10 @@ final class CharterStore {
     var charters: [Charter] = []
     
     private let userDefaultsKey = "CharterStore.v1"
+    private let userDefaults: UserDefaults
     
-    init() {
+    init(userDefaults: UserDefaults = .standard) {
+        self.userDefaults = userDefaults
         load()
     }
     
@@ -45,16 +47,20 @@ final class CharterStore {
         save()
     }
     
+    func reload() {
+        load()
+    }
+    
     private func save() {
         // Save charters
         if let data = try? JSONEncoder().encode(charters) {
-            UserDefaults.standard.set(data, forKey: userDefaultsKey)
+            userDefaults.set(data, forKey: userDefaultsKey)
         }
     }
     
     private func load() {
         // Load charters
-        if let data = UserDefaults.standard.data(forKey: userDefaultsKey),
+        if let data = userDefaults.data(forKey: userDefaultsKey),
            let decoded = try? JSONDecoder().decode([Charter].self, from: data) {
             charters = decoded.sorted { $0.startDate > $1.startDate }
         }

@@ -105,6 +105,8 @@ struct PracticeModuleCard: View {
             return AppColors.basicsCardColor
         case .mooring:
             return AppColors.recommendedCardGreen
+        case .safety:
+            return AppColors.recommendedCardRed
         }
     }
     
@@ -120,6 +122,8 @@ struct PracticeModuleCard: View {
             return .dailyThought
         case .mooring:
             return .basics
+        case .safety:
+            return .dailyThought
         }
     }
 }
@@ -221,6 +225,13 @@ extension PracticeModule {
             category: .briefing,
             type: .document,
             source: .remote
+        ),
+        PracticeModule(
+            title: "Аптечка",
+            subtitle: "Аптечка",
+            category: .safety,
+            type: .document,
+            source: .remote
         )
     ]
 }
@@ -233,6 +244,7 @@ extension PracticeCategory {
         case .knots: return localization.localized(L10n.Practice.knots)
         case .maneuvering: return localization.localized(L10n.Practice.maneuvering)
         case .mooring: return localization.localized(L10n.Practice.mooring)
+        case .safety: return localization.localized(L10n.Practice.safety)
         }
     }
     
@@ -243,8 +255,12 @@ extension PracticeCategory {
         case .knots: return "figure.walk"
         case .maneuvering: return "arrow.triangle.2.circlepath"
         case .mooring: return "anchor"
+        case .safety: return "shield"
         }
     }
 }
 
 
+#Preview {
+    PracticeView()
+}

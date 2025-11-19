@@ -58,6 +58,7 @@ enum L10n {
         static let knots = "practice.knots"
         static let maneuvering = "practice.maneuvering"
         static let mooring = "practice.mooring"
+        static let safety = "practice.safety"
         static let all = "practice.all"
     }
     

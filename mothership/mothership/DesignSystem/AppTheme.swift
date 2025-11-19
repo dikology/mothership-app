@@ -13,9 +13,7 @@ import SwiftUI
 final class AppTheme {
     var colorScheme: ColorScheme = .light
     
-    static let shared = AppTheme()
-    
-    private init() {}
+    init() {}
     
     func toggleColorScheme() {
         colorScheme = colorScheme == .light ? .dark : .light

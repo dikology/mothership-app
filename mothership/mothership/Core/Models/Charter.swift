@@ -26,10 +26,8 @@ struct Charter: Identifiable, Hashable, Codable {
         let now = Date()
         
         // Normalize dates to start of day for comparison
-        guard let todayStart = calendar.startOfDay(for: now) as Date?,
-              let charterStart = calendar.startOfDay(for: startDate) as Date? else {
-            return false
-        }
+        let todayStart = calendar.startOfDay(for: now)
+        let charterStart = calendar.startOfDay(for: startDate)
         
         // Check if today is on or after the charter start date
         guard todayStart >= charterStart else {
@@ -42,9 +40,7 @@ struct Charter: Identifiable, Hashable, Codable {
         }
         
         // Normalize end date and check if today is on or before it
-        guard let charterEnd = calendar.startOfDay(for: endDate) as Date? else {
-            return false
-        }
+        let charterEnd = calendar.startOfDay(for: endDate)
         
         return todayStart <= charterEnd
     }
