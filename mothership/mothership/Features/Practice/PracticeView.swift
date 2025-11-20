@@ -232,34 +232,58 @@ extension PracticeModule {
             category: .safety,
             type: .document,
             source: .remote
+        ),
+        PracticeModule(
+            title: "Сход на берег",
+            subtitle: "Сход на берег",
+            category: .safety,
+            type: .document,
+            source: .remote
+        ),
+        PracticeModule(
+            title: "Швартовка и отход",
+            subtitle: "Швартовка и отход",
+            category: .safety,
+            type: .document,
+            source: .remote
+        ),
+        PracticeModule(
+            title: "Штык со шлагом",
+            subtitle: "Штык со шлагом",
+            category: .knots,
+            type: .document,
+            source: .remote
+        ),
+        PracticeModule(
+            title: "Подготовка к выходу",
+            subtitle: "Подготовка к выходу",
+            category: .briefing,
+            type: .checklist,
+            source: .remote
+        ),
+        PracticeModule(
+            title: "Отход от пирса",
+            subtitle: "Отход от пирса",
+            category: .mooring,
+            type: .document,
+            source: .remote
+        ),
+        PracticeModule(
+            title: "Швартовка по средиземноморски",
+            subtitle: "Швартовка по средиземноморски",
+            category: .mooring,
+            type: .document,
+            source: .remote
+        ),
+        PracticeModule(
+            title: "Постановка на якорь",
+            subtitle: "Постановка на якорь",
+            category: .mooring,
+            type: .document,
+            source: .remote
         )
     ]
 }
-
-extension PracticeCategory {
-    func displayName(using localization: LocalizationService) -> String {
-        switch self {
-        case .all: return localization.localized(L10n.Practice.all)
-        case .briefing: return localization.localized(L10n.Practice.briefing)
-        case .knots: return localization.localized(L10n.Practice.knots)
-        case .maneuvering: return localization.localized(L10n.Practice.maneuvering)
-        case .mooring: return localization.localized(L10n.Practice.mooring)
-        case .safety: return localization.localized(L10n.Practice.safety)
-        }
-    }
-    
-    var icon: String {
-        switch self {
-        case .all: return "square.grid.2x2"
-        case .briefing: return "shield"
-        case .knots: return "figure.walk"
-        case .maneuvering: return "arrow.triangle.2.circlepath"
-        case .mooring: return "anchor"
-        case .safety: return "shield"
-        }
-    }
-}
-
 
 #Preview {
     PracticeView()

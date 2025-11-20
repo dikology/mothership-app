@@ -57,3 +57,44 @@ enum ContentSource: String, Codable {
     case remote
     case userCreated
 }
+
+// MARK: - Localization Helpers
+
+extension PracticeCategory {
+    private var localizationKey: String {
+        switch self {
+        case .all:
+            return L10n.Practice.all
+        case .briefing:
+            return L10n.Practice.briefing
+        case .knots:
+            return L10n.Practice.knots
+        case .maneuvering:
+            return L10n.Practice.maneuvering
+        case .mooring:
+            return L10n.Practice.mooring
+        case .safety:
+            return L10n.Practice.safety
+        }
+    }
+    
+    func displayName(using localization: LocalizationService) -> String {
+        localization.localized(localizationKey)
+    }
+    
+    func localizedContentDirectory(using localization: LocalizationService) -> String {
+        displayName(using: localization)
+            .lowercased()
+    }
+    
+    var icon: String {
+        switch self {
+        case .all: return "square.grid.2x2"
+        case .briefing: return "shield"
+        case .knots: return "figure.walk"
+        case .maneuvering: return "arrow.triangle.2.circlepath"
+        case .mooring: return "anchor"
+        case .safety: return "shield"
+        }
+    }
+}
