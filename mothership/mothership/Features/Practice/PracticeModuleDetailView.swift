@@ -9,6 +9,7 @@ import SwiftUI
 
 struct PracticeModuleDetailView: View {
     let moduleID: PracticeModule.ID
+    @Environment(\.localization) private var localization
     @State private var content: MarkdownContent?
     @State private var isLoading = true
     @State private var errorMessage: String?
@@ -83,6 +84,7 @@ struct PracticeModuleDetailView: View {
         }
         
         await loadArticleContent(module: module)
+        
     }
     
     private func loadArticleContent(module: PracticeModule) async {
@@ -136,11 +138,11 @@ struct PracticeModuleDetailView: View {
             return "безопасность/брифинг по безопасности.md"
         case "Жизнь на яхте":
             return "команда/жизнь на лодке.md"
-        case "Аптечка":
-            return "безопасность/аптечка.md"
+        case "Подготовка к выходу":
+            return "чеклисты/подготовка к выходу.md"
         default:
             // Try to construct path from category
-            let categoryPath = module.category.rawValue.lowercased()
+            let categoryPath = module.category.localizedContentDirectory(using: localization)
             return "\(categoryPath)/\(module.title.lowercased()).md"
         }
     }
