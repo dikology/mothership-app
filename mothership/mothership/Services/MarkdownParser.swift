@@ -131,6 +131,7 @@ enum MarkdownParser {
         var sections: [MarkdownSection] = []
         var currentH2: SectionBuilder?
         var currentH3: SectionBuilder?
+        var prefaceSection: SectionBuilder?
         var listBuffer: [String] = []
         var i = 0
         
@@ -149,11 +150,7 @@ enum MarkdownParser {
                 // Process any pending list items
                 if !listBuffer.isEmpty {
                     let items = parseListItems(listBuffer)
-                    if let h3 = currentH3 {
-                        h3.items.append(contentsOf: items)
-                    } else if let h2 = currentH2 {
-                        h2.items.append(contentsOf: items)
-                    }
+                    append(items: items, to: currentH3, currentH2, prefaceSection: &prefaceSection)
                     listBuffer.removeAll()
                 }
                 
@@ -184,11 +181,7 @@ enum MarkdownParser {
                 // Process any pending list items
                 if !listBuffer.isEmpty {
                     let items = parseListItems(listBuffer)
-                    if let h3 = currentH3 {
-                        h3.items.append(contentsOf: items)
-                    } else if let h2 = currentH2 {
-                        h2.items.append(contentsOf: items)
-                    }
+                    append(items: items, to: currentH3, currentH2, prefaceSection: &prefaceSection)
                     listBuffer.removeAll()
                 }
                 
@@ -213,11 +206,7 @@ enum MarkdownParser {
                 // Process any pending list items
                 if !listBuffer.isEmpty {
                     let items = parseListItems(listBuffer)
-                    if let h3 = currentH3 {
-                        h3.items.append(contentsOf: items)
-                    } else if let h2 = currentH2 {
-                        h2.items.append(contentsOf: items)
-                    }
+                    append(items: items, to: currentH3, currentH2, prefaceSection: &prefaceSection)
                     listBuffer.removeAll()
                 }
                 
@@ -250,11 +239,7 @@ enum MarkdownParser {
                 // Process any pending list items first
                 if !listBuffer.isEmpty {
                     let items = parseListItems(listBuffer)
-                    if let h3 = currentH3 {
-                        h3.items.append(contentsOf: items)
-                    } else if let h2 = currentH2 {
-                        h2.items.append(contentsOf: items)
-                    }
+                    append(items: items, to: currentH3, currentH2, prefaceSection: &prefaceSection)
                     listBuffer.removeAll()
                 }
                 
@@ -264,6 +249,11 @@ enum MarkdownParser {
                     h3.content.append(processedLine)
                 } else if let h2 = currentH2 {
                     h2.content.append(processedLine)
+                } else {
+                    if prefaceSection == nil {
+                        prefaceSection = SectionBuilder(level: 1, title: nil)
+                    }
+                    prefaceSection?.content.append(processedLine)
                 }
             } else if !listBuffer.isEmpty && trimmedLine.isEmpty {
                 // Empty line might end a list block
@@ -277,11 +267,7 @@ enum MarkdownParser {
         // Process any remaining list items
         if !listBuffer.isEmpty {
             let items = parseListItems(listBuffer)
-            if let h3 = currentH3 {
-                h3.items.append(contentsOf: items)
-            } else if let h2 = currentH2 {
-                h2.items.append(contentsOf: items)
-            }
+            append(items: items, to: currentH3, currentH2, prefaceSection: &prefaceSection)
         }
         
         // Save remaining sections
@@ -297,7 +283,24 @@ enum MarkdownParser {
             sections.append(h2.build())
         }
         
+        if let preface = prefaceSection {
+            sections.insert(preface.build(), at: 0)
+        }
+        
         return sections
+    }
+    
+    private static func append(items: [MarkdownItem], to currentH3: SectionBuilder?, _ currentH2: SectionBuilder?, prefaceSection: inout SectionBuilder?) {
+        if let h3 = currentH3 {
+            h3.items.append(contentsOf: items)
+        } else if let h2 = currentH2 {
+            h2.items.append(contentsOf: items)
+        } else {
+            if prefaceSection == nil {
+                prefaceSection = SectionBuilder(level: 1, title: nil)
+            }
+            prefaceSection?.items.append(contentsOf: items)
+        }
     }
     
     /// Check if a line is a list item

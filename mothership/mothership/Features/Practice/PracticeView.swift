@@ -255,13 +255,6 @@ extension PracticeModule {
             source: .remote
         ),
         PracticeModule(
-            title: "Штык со шлагом",
-            subtitle: "Штык со шлагом",
-            category: .knots,
-            type: .document,
-            source: .remote
-        ),
-        PracticeModule(
             title: "Подготовка к выходу",
             subtitle: "Подготовка к выходу",
             category: .briefing,
