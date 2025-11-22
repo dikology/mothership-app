@@ -87,29 +87,8 @@ struct Flashcard: Identifiable, Hashable, Codable {
         return Date() >= nextReview
     }
     
-    /// Get display title from markdown (first line or H1)
+    /// Get display title from fileName (without .md)
     var displayTitle: String {
-        let lines = markdownContent.components(separatedBy: .newlines)
-        for line in lines {
-            let trimmed = line.trimmingCharacters(in: .whitespaces)
-            // Skip frontmatter
-            if trimmed == "---" { continue }
-            if trimmed.hasPrefix("---") { continue }
-            // Check for H1
-            if trimmed.hasPrefix("# ") {
-                return String(trimmed.dropFirst(2)).trimmingCharacters(in: .whitespaces)
-            }
-            // Use first non-empty line
-            if !trimmed.isEmpty && !trimmed.hasPrefix("created:") && !trimmed.hasPrefix("modified:") {
-                // Remove markdown formatting
-                var title = trimmed
-                title = title.replacingOccurrences(of: "**", with: "")
-                title = title.replacingOccurrences(of: "[[", with: "")
-                title = title.replacingOccurrences(of: "]]", with: "")
-                return title.trimmingCharacters(in: .whitespaces)
-            }
-        }
-        // Fallback to filename without extension
         return (fileName as NSString).deletingPathExtension
     }
 }

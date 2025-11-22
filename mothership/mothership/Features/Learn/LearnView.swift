@@ -87,10 +87,14 @@ struct LearnView: View {
         defer { isLoading = false }
         
         do {
-            let decks = try await FlashcardFetcher.fetchAllDecks(using: localization)
+            // Pass existing decks to preserve IDs and SRS progress
+            let fetchedDecks = try await FlashcardFetcher.fetchAllDecks(
+                using: localization,
+                existingDecks: flashcardStore.decks
+            )
             
-            // Update store with fetched decks
-            for deck in decks {
+            // Update store with fetched decks (preserves existing SRS progress)
+            for deck in fetchedDecks {
                 flashcardStore.updateDeck(deck)
             }
         } catch {

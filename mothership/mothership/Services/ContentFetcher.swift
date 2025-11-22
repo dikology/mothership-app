@@ -116,7 +116,7 @@ enum ContentFetcher {
     
     /// Fetch flashcards from a GitHub folder
     /// Uses GitHub API v3 to list files in directory, then fetches each markdown file
-    static func fetchFlashcardsFromFolder(folderName: String) async throws -> [Flashcard] {
+    static func fetchFlashcardsFromFolder(folderName: String, deckID: UUID) async throws -> [Flashcard] {
         // Use GitHub API v3 to list directory contents
         // Properly encode folder name for URL (handles Cyrillic characters)
         let encodedFolderName = folderName.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? folderName
@@ -141,7 +141,6 @@ enum ContentFetcher {
         
         // Filter markdown files and fetch each
         var flashcards: [Flashcard] = []
-        let deckID = UUID() // Temporary ID, will be set by caller
         
         for fileInfo in json {
             guard let fileName = fileInfo["name"] as? String,

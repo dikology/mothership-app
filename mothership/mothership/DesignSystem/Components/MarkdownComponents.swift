@@ -27,6 +27,10 @@ struct MarkdownSectionView: View {
             }
             
             // Section content
+            // NOTE: Content renders before items. This matches the parser behavior where
+            // content lines are processed before list items when they appear first in markdown.
+            // However, this means if lists come before content in markdown, they'll render after content.
+            // This is a limitation of separating content into two buckets (content vs items).
             if !section.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 if showAttributedText {
                     Text(attributedString(from: section.content))

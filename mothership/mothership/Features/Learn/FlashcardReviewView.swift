@@ -2,7 +2,7 @@
 //  FlashcardReviewView.swift
 //  mothership
 //
-//  Flashcard review interface with flip card and SRS
+//  Flashcard review interface with SRS
 //
 
 import SwiftUI
@@ -15,7 +15,6 @@ struct FlashcardReviewView: View {
     @Environment(\.dismiss) var dismiss
     
     @State private var currentIndex = 0
-    @State private var isFlipped = false
     @State private var showingCompletion = false
     
     private var deck: FlashcardDeck? {
@@ -86,45 +85,15 @@ struct FlashcardReviewView: View {
             Spacer()
             
             // Flashcard
-            FlashcardView(
-                card: card,
-                isFlipped: $isFlipped
-            )
-            .padding(.horizontal, AppSpacing.screenPadding)
+            FlashcardView(card: card)
+                .padding(.horizontal, AppSpacing.screenPadding)
             
             Spacer()
             
-            // Action buttons
-            if isFlipped {
-                qualityButtons
-                    .padding(.horizontal, AppSpacing.screenPadding)
-                    .padding(.bottom, AppSpacing.lg)
-            } else {
-                flipButton
-                    .padding(.horizontal, AppSpacing.screenPadding)
-                    .padding(.bottom, AppSpacing.lg)
-            }
-        }
-    }
-    
-    // MARK: - Flip Button
-    
-    private var flipButton: some View {
-        Button {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                isFlipped = true
-            }
-        } label: {
-            HStack {
-                Image(systemName: "eye.fill")
-                Text(localization.localized(L10n.Learn.showAnswer))
-            }
-            .font(AppTypography.button)
-            .foregroundColor(.white)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, AppSpacing.md)
-            .background(AppColors.lavenderBlue)
-            .cornerRadius(AppSpacing.buttonCornerRadius)
+            // Quality buttons (always visible)
+            qualityButtons
+                .padding(.horizontal, AppSpacing.screenPadding)
+                .padding(.bottom, AppSpacing.lg)
         }
     }
     
@@ -166,7 +135,6 @@ struct FlashcardReviewView: View {
         withAnimation(.easeInOut) {
             if currentIndex < dueCards.count - 1 {
                 currentIndex += 1
-                isFlipped = false
             } else {
                 showingCompletion = true
             }
@@ -253,46 +221,40 @@ struct FlashcardReviewView: View {
 
 struct FlashcardView: View {
     let card: Flashcard
-    @Binding var isFlipped: Bool
     
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                // Card background
-                RoundedRectangle(cornerRadius: AppSpacing.cardCornerRadius)
-                    .fill(AppColors.cardBackground)
-                    .shadow(
-                        color: Color.black.opacity(0.1),
-                        radius: 10,
-                        x: 0,
-                        y: 5
-                    )
+        ZStack {
+            // Card background
+            RoundedRectangle(cornerRadius: AppSpacing.cardCornerRadius)
+                .fill(AppColors.cardBackground)
+                .shadow(
+                    color: Color.black.opacity(0.1),
+                    radius: 10,
+                    x: 0,
+                    y: 5
+                )
+            
+            // Content
+            VStack(spacing: AppSpacing.md) {
+                // Title
+                Text(card.displayTitle)
+                    .font(AppTypography.title2)
+                    .foregroundColor(AppColors.textPrimary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, AppSpacing.md)
+                    .padding(.top, AppSpacing.md)
                 
-                // Content
-                VStack(spacing: AppSpacing.md) {
-                    // Title
-                    Text(card.displayTitle)
-                        .font(AppTypography.title2)
-                        .foregroundColor(AppColors.textPrimary)
-                        .multilineTextAlignment(.center)
+                Divider()
+                    .padding(.horizontal, AppSpacing.md)
+                
+                // Markdown content
+                ScrollView {
+                    MarkdownContentView(content: card.markdownContent)
                         .padding(.horizontal, AppSpacing.md)
-                    
-                    Divider()
-                        .padding(.horizontal, AppSpacing.md)
-                    
-                    // Markdown content
-                    ScrollView {
-                        MarkdownContentView(content: card.markdownContent)
-                            .padding(.horizontal, AppSpacing.md)
-                    }
                 }
-                .padding(AppSpacing.lg)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .rotation3DEffect(
-                .degrees(isFlipped ? 180 : 0),
-                axis: (x: 0, y: 1, z: 0)
-            )
+            .padding(AppSpacing.lg)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .frame(height: 400)
     }
@@ -311,7 +273,7 @@ struct MarkdownContentView: View {
             // Display sections
             ForEach(parsed.sections.indices, id: \.self) { index in
                 let section = parsed.sections[index]
-                MarkdownSectionView(section: section, showPadding: false, showAttributedText: false)
+                MarkdownSectionView(section: section, showPadding: false, showAttributedText: true)
             }
         }
     }

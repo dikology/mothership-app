@@ -30,14 +30,20 @@ enum FlashcardFetcher {
     ]
     
     /// Fetch a flashcard deck from GitHub folder
+    /// Note: deckID will be set when merging with existing deck in FlashcardStore
     static func fetchDeck(
         folderName: String,
         displayName: String,
-        description: String? = nil
+        description: String? = nil,
+        existingDeckID: UUID? = nil
     ) async throws -> FlashcardDeck {
-        let flashcards = try await ContentFetcher.fetchFlashcardsFromFolder(folderName: folderName)
+        let flashcards = try await ContentFetcher.fetchFlashcardsFromFolder(
+            folderName: folderName,
+            deckID: existingDeckID ?? UUID()
+        )
         
         let deck = FlashcardDeck(
+            id: existingDeckID ?? UUID(),
             folderName: folderName,
             displayName: displayName,
             description: description,
@@ -49,7 +55,11 @@ enum FlashcardFetcher {
     }
     
     /// Fetch all configured decks
-    static func fetchAllDecks(using localization: LocalizationService) async throws -> [FlashcardDeck] {
+    /// Note: This should be called with existing decks from store to preserve IDs
+    static func fetchAllDecks(
+        using localization: LocalizationService,
+        existingDecks: [FlashcardDeck] = []
+    ) async throws -> [FlashcardDeck] {
         var decks: [FlashcardDeck] = []
         
         for config in deckConfigurations {
@@ -57,10 +67,14 @@ enum FlashcardFetcher {
                 let displayName = localization.localized(config.displayNameKey)
                 let description = config.descriptionKey.map { localization.localized($0) }
                 
+                // Find existing deck by folderName to preserve its ID
+                let existingDeck = existingDecks.first { $0.folderName == config.folderName }
+                
                 let deck = try await fetchDeck(
                     folderName: config.folderName,
                     displayName: displayName,
-                    description: description
+                    description: description,
+                    existingDeckID: existingDeck?.id
                 )
                 decks.append(deck)
             } catch {

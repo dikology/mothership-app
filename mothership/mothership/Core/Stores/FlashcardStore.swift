@@ -35,10 +35,37 @@ final class FlashcardStore {
     }
     
     /// Add or update deck
+    /// Matches by folderName to preserve SRS progress when refreshing content
     func updateDeck(_ deck: FlashcardDeck) {
-        if let index = decks.firstIndex(where: { $0.id == deck.id }) {
-            decks[index] = deck
+        if let index = decks.firstIndex(where: { $0.folderName == deck.folderName }) {
+            // Merge: preserve existing deck ID and SRS progress, update content
+            var existingDeck = decks[index]
+            
+            // Update metadata
+            existingDeck.displayName = deck.displayName
+            existingDeck.description = deck.description
+            existingDeck.lastFetched = deck.lastFetched
+            
+            // Merge flashcards: preserve SRS data for existing cards
+            var mergedFlashcards: [Flashcard] = []
+            
+            for newFlashcard in deck.flashcards {
+                // Try to find existing flashcard by fileName
+                if let existingIndex = existingDeck.flashcards.firstIndex(where: { $0.fileName == newFlashcard.fileName }) {
+                    // Preserve existing flashcard with SRS data, but update content if changed
+                    var existingFlashcard = existingDeck.flashcards[existingIndex]
+                    existingFlashcard.markdownContent = newFlashcard.markdownContent
+                    mergedFlashcards.append(existingFlashcard)
+                } else {
+                    // New flashcard, use as-is
+                    mergedFlashcards.append(newFlashcard)
+                }
+            }
+            
+            existingDeck.flashcards = mergedFlashcards
+            decks[index] = existingDeck
         } else {
+            // New deck, add it
             decks.append(deck)
         }
         save()
