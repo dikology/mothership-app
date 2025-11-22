@@ -220,5 +220,102 @@ struct MarkdownParserTests {
         #expect(result.sections[0].items[0].title.contains("⚓"))
         #expect(result.sections[0].items[1].title.contains("🌊"))
     }
+    
+    // MARK: - Content Order Preservation Tests
+    
+    @Test("Preserve order when lists come before content")
+    func contentOrder_ListsBeforeContent() async throws {
+        // Given: Markdown with lists before content (wikilink)
+        let markdown = """
+        ### Section
+        
+        - List item 1
+        - List item 2
+        
+        [[SomeLink]]
+        """
+        
+        // When: Parsing the markdown
+        let result = MarkdownParser.parse(markdown)
+        
+        // Then: Content blocks should preserve order
+        #expect(result.sections.count == 1)
+        let section = result.sections[0]
+        #expect(section.contentBlocks.count == 2)
+        
+        // First block should be items
+        if case .items(let items) = section.contentBlocks[0] {
+            #expect(items.count == 2)
+            #expect(items[0].title == "List item 1")
+        } else {
+            Issue.record("First block should be items")
+        }
+        
+        // Second block should be text (wikilink)
+        if case .text(let text) = section.contentBlocks[1] {
+            #expect(text.contains("SomeLink"))
+        } else {
+            Issue.record("Second block should be text")
+        }
+    }
+    
+    @Test("Preserve order when content comes before lists")
+    func contentOrder_ContentBeforeLists() async throws {
+        // Given: Markdown with content before lists
+        let markdown = """
+        ### Section
+        
+        Some paragraph text here.
+        
+        - List item 1
+        - List item 2
+        """
+        
+        // When: Parsing the markdown
+        let result = MarkdownParser.parse(markdown)
+        
+        // Then: Content blocks should preserve order
+        #expect(result.sections.count == 1)
+        let section = result.sections[0]
+        #expect(section.contentBlocks.count == 2)
+        
+        // First block should be text
+        if case .text(let text) = section.contentBlocks[0] {
+            #expect(text.contains("Some paragraph text here"))
+        } else {
+            Issue.record("First block should be text")
+        }
+        
+        // Second block should be items
+        if case .items(let items) = section.contentBlocks[1] {
+            #expect(items.count == 2)
+            #expect(items[0].title == "List item 1")
+        } else {
+            Issue.record("Second block should be items")
+        }
+    }
+    
+    @Test("Legacy properties still work for backward compatibility")
+    func legacyProperties_BackwardCompatibility() async throws {
+        // Given: Markdown with mixed content
+        let markdown = """
+        ### Section
+        
+        Some text.
+        - Item 1
+        More text.
+        """
+        
+        // When: Parsing the markdown
+        let result = MarkdownParser.parse(markdown)
+        
+        // Then: Legacy properties should still work
+        let section = result.sections[0]
+        #expect(!section.content.isEmpty)
+        #expect(section.content.contains("Some text"))
+        #expect(section.content.contains("More text"))
+        #expect(section.items.count == 1)
+        #expect(section.items[0].title == "Item 1")
+    }
 }
 

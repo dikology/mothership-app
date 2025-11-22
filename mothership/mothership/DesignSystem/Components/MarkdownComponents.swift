@@ -26,31 +26,30 @@ struct MarkdownSectionView: View {
                     .padding(.top, section.level == 2 ? AppSpacing.sm : 0)
             }
             
-            // Section content
-            // NOTE: Content renders before items. This matches the parser behavior where
-            // content lines are processed before list items when they appear first in markdown.
-            // However, this means if lists come before content in markdown, they'll render after content.
-            // This is a limitation of separating content into two buckets (content vs items).
-            if !section.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                if showAttributedText {
-                    Text(attributedString(from: section.content))
-                        .font(AppTypography.body)
-                        .foregroundColor(AppColors.textSecondary)
-                        .padding(.horizontal, showPadding ? AppSpacing.screenPadding : 0)
-                } else {
-                    Text(section.content)
-                        .font(AppTypography.body)
-                        .foregroundColor(AppColors.textSecondary)
-                        .padding(.horizontal, showPadding ? AppSpacing.screenPadding : 0)
-                }
-            }
-            
-            // Section items (lists)
-            if !section.items.isEmpty {
-                VStack(alignment: .leading, spacing: AppSpacing.sm) {
-                    ForEach(Array(section.items.enumerated()), id: \.offset) { itemIndex, item in
-                        MarkdownListItemView(item: item, level: 0, showAttributedText: showAttributedText)
-                            .padding(.horizontal, showPadding ? AppSpacing.screenPadding : 0)
+            // Render content blocks in order (preserves markdown order)
+            ForEach(Array(section.contentBlocks.enumerated()), id: \.offset) { index, block in
+                switch block {
+                case .text(let text):
+                    if !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        if showAttributedText {
+                            Text(attributedString(from: text))
+                                .font(AppTypography.body)
+                                .foregroundColor(AppColors.textSecondary)
+                                .padding(.horizontal, showPadding ? AppSpacing.screenPadding : 0)
+                        } else {
+                            Text(text)
+                                .font(AppTypography.body)
+                                .foregroundColor(AppColors.textSecondary)
+                                .padding(.horizontal, showPadding ? AppSpacing.screenPadding : 0)
+                        }
+                    }
+                    
+                case .items(let items):
+                    VStack(alignment: .leading, spacing: AppSpacing.sm) {
+                        ForEach(Array(items.enumerated()), id: \.offset) { itemIndex, item in
+                            MarkdownListItemView(item: item, level: 0, showAttributedText: showAttributedText)
+                                .padding(.horizontal, showPadding ? AppSpacing.screenPadding : 0)
+                        }
                     }
                 }
             }
