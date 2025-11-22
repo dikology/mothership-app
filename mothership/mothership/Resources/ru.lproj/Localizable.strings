@@ -97,6 +97,29 @@
 "learn.deck.colregs" = "МППСС";
 "learn.deck.colregs.description" = "Международные правила предупреждения столкновений судов";
 
+// MARK: - Auth
+
+"auth.welcome_message" = "Добро пожаловать в Mothership\nВаш помощник для управления чартерами и изучения парусного дела";
+"auth.sign_in_with_apple" = "Войти через Apple";
+"auth.continue_as_guest" = "Продолжить как гость";
+"auth.privacy_policy" = "Политика конфиденциальности";
+"auth.sign_out" = "Выйти";
+"auth.not_signed_in" = "Не выполнен вход";
+
+// MARK: - Profile
+
+"profile.user_type" = "Тип пользователя";
+"profile.communities" = "Сообщества";
+"profile.no_communities" = "Вы не состоите ни в одном сообществе";
+"profile.add_community" = "Добавить сообщество";
+"profile.experience" = "Опыт";
+"profile.certifications" = "Сертификаты";
+"profile.statistics" = "Статистика";
+"profile.contributions" = "Вклад";
+"profile.reputation" = "Репутация";
+"profile.edit_profile" = "Редактировать профиль";
+"profile.select_user_type" = "Выберите тип пользователя";
+
 // MARK: - Settings
 
 "settings.title" = "Настройки";

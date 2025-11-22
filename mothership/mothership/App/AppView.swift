@@ -11,20 +11,21 @@ struct AppView: View {
     @Bindable var model: AppModel
     @Environment(\.localization) private var localization
     @Environment(\.charterStore) private var charterStore
+    @Environment(\.userStore) private var userStore
     @State private var selectedTab: MainTab = .home
     
     enum MainTab: String, CaseIterable {
         case home
         case learn
         case practice
-        // case profile
+        case profile
         
         var icon: String {
             switch self {
             case .home: return "house.fill"
             case .learn: return "book.fill"
             case .practice: return "checklist"
-            // case .profile: return "person.fill"  
+            case .profile: return "person.fill"
             }
         }
         
@@ -34,21 +35,27 @@ struct AppView: View {
     }
     
     var body: some View {
-        NavigationStack(path: $model.path) {
-            ZStack(alignment: .bottom) {
-                // Content view
-                selectedTabView
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding(.bottom, AppSpacing.tabBarHeight)
-                
-                // Custom tab bar
-                VStack {
-                    Spacer()
-                    CustomTabBar(selectedTab: $selectedTab)
+        Group {
+            if userStore.isAuthenticated {
+                NavigationStack(path: $model.path) {
+                    ZStack(alignment: .bottom) {
+                        // Content view
+                        selectedTabView
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .padding(.bottom, AppSpacing.tabBarHeight)
+                        
+                        // Custom tab bar
+                        VStack {
+                            Spacer()
+                            CustomTabBar(selectedTab: $selectedTab)
+                        }
+                    }
+                    .navigationDestination(for: AppPath.self) { path in
+                        destinationView(for: path)
+                    }
                 }
-            }
-            .navigationDestination(for: AppPath.self) { path in
-                destinationView(for: path)
+            } else {
+                SignInView()
             }
         }
     }
@@ -62,8 +69,8 @@ struct AppView: View {
             LearnView()
         case .practice:
             PracticeView()
-        // case .profile:
-        //     ProfileView()
+        case .profile:
+            ProfileView()
         }
     }
     
@@ -135,6 +142,7 @@ struct TabBarItem: View {
         case .home: return localization.localized(L10n.Tab.home)
         case .learn: return localization.localized(L10n.Tab.learn)
         case .practice: return localization.localized(L10n.Tab.practice)
+        case .profile: return localization.localized(L10n.Tab.profile)
         }
     }
     
@@ -172,5 +180,6 @@ struct TabBarItem: View {
         .environment(\.charterStore, CharterStore())
         .environment(\.checklistStore, ChecklistStore())
         .environment(\.flashcardStore, FlashcardStore())
+        .environment(\.userStore, UserStore())
 }
 
