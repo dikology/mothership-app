@@ -19,11 +19,13 @@ struct ProfileView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            List {
-                if let user = user {
-                    // Profile Header
-                    Section {
+        Group {
+            if userStore.isAuthenticated {
+                NavigationStack {
+                    List {
+                        if let user = user {
+                            // Profile Header
+                            Section {
                         HStack(spacing: AppSpacing.md) {
                             // Avatar
                             ZStack {
@@ -172,20 +174,19 @@ struct ProfileView: View {
                             }
                         }
                     }
-                } else {
-                    Section {
-                        Text(localization.localized(L10n.Auth.notSignedIn))
-                            .foregroundColor(AppColors.textSecondary)
+                        }
+                    }
+                    .navigationTitle(localization.localized(L10n.Tab.profile))
+                    .navigationBarTitleDisplayMode(.inline)
+                    .sheet(isPresented: $showUserTypePicker) {
+                        UserTypePickerView()
                     }
                 }
-            }
-            .navigationTitle(localization.localized(L10n.Tab.profile))
-            .navigationBarTitleDisplayMode(.inline)
-            .sheet(isPresented: $showUserTypePicker) {
-                UserTypePickerView()
+                .appBackground()
+            } else {
+                SignInView()
             }
         }
-        .appBackground()
     }
 }
 

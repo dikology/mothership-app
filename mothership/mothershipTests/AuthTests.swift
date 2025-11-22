@@ -7,6 +7,7 @@
 
 import Testing
 @testable import mothership
+import Foundation
 
 @MainActor
 struct AuthTests {

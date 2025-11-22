@@ -41,17 +41,6 @@
                ReferencedContainer = "container:mothership.xcodeproj">
             </BuildableReference>
          </TestableReference>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "922295952ECE44330090AB65"
-               BuildableName = "MarkdownParserTests.xctest"
-               BlueprintName = "MarkdownParserTests"
-               ReferencedContainer = "container:mothership.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

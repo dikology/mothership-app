@@ -35,27 +35,21 @@ struct AppView: View {
     }
     
     var body: some View {
-        Group {
-            if userStore.isAuthenticated {
-                NavigationStack(path: $model.path) {
-                    ZStack(alignment: .bottom) {
-                        // Content view
-                        selectedTabView
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .padding(.bottom, AppSpacing.tabBarHeight)
-                        
-                        // Custom tab bar
-                        VStack {
-                            Spacer()
-                            CustomTabBar(selectedTab: $selectedTab)
-                        }
-                    }
-                    .navigationDestination(for: AppPath.self) { path in
-                        destinationView(for: path)
-                    }
+        NavigationStack(path: $model.path) {
+            ZStack(alignment: .bottom) {
+                // Content view
+                selectedTabView
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding(.bottom, AppSpacing.tabBarHeight)
+                
+                // Custom tab bar
+                VStack {
+                    Spacer()
+                    CustomTabBar(selectedTab: $selectedTab)
                 }
-            } else {
-                SignInView()
+            }
+            .navigationDestination(for: AppPath.self) { path in
+                destinationView(for: path)
             }
         }
     }

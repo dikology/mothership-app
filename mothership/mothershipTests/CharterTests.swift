@@ -7,7 +7,9 @@
 
 import Testing
 @testable import mothership
+import Foundation
 
+@MainActor
 struct CharterTests {
     
     // MARK: - isActive Tests

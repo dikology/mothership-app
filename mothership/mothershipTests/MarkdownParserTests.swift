@@ -8,6 +8,7 @@
 import Testing
 @testable import mothership
 
+@MainActor
 struct MarkdownParserTests {
     
     // MARK: - Title Parsing Tests
