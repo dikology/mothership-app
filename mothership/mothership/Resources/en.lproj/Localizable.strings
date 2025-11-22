@@ -97,6 +97,29 @@
 "learn.deck.colregs" = "COLREGS";
 "learn.deck.colregs.description" = "International Regulations for Preventing Collisions at Sea";
 
+// MARK: - Auth
+
+"auth.welcome_message" = "Welcome to Mothership\nYour companion for charter management and sailing education";
+"auth.sign_in_with_apple" = "Sign in with Apple";
+"auth.continue_as_guest" = "Continue as Guest";
+"auth.privacy_policy" = "Privacy Policy";
+"auth.sign_out" = "Sign Out";
+"auth.not_signed_in" = "Not signed in";
+
+// MARK: - Profile
+
+"profile.user_type" = "User Type";
+"profile.communities" = "Communities";
+"profile.no_communities" = "You're not part of any communities";
+"profile.add_community" = "Add Community";
+"profile.experience" = "Experience";
+"profile.certifications" = "Certifications";
+"profile.statistics" = "Statistics";
+"profile.contributions" = "Contributions";
+"profile.reputation" = "Reputation";
+"profile.edit_profile" = "Edit Profile";
+"profile.select_user_type" = "Select User Type";
+
 // MARK: - Settings
 
 "settings.title" = "Settings";

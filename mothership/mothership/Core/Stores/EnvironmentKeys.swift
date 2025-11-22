@@ -19,6 +19,12 @@ private struct FlashcardStoreKey: EnvironmentKey {
     }
 }
 
+private struct UserStoreKey: EnvironmentKey {
+    static var defaultValue: UserStore {
+        UserStore()
+    }
+}
+
 extension EnvironmentValues {
     var charterStore: CharterStore {
         get { self[CharterStoreKey.self] }
@@ -28,6 +34,11 @@ extension EnvironmentValues {
     var flashcardStore: FlashcardStore {
         get { self[FlashcardStoreKey.self] }
         set { self[FlashcardStoreKey.self] = newValue }
+    }
+    
+    var userStore: UserStore {
+        get { self[UserStoreKey.self] }
+        set { self[UserStoreKey.self] = newValue }
     }
 }
 

@@ -120,6 +120,33 @@ enum L10n {
         }
     }
     
+    // MARK: - Auth
+    
+    enum Auth {
+        static let welcomeMessage = "auth.welcome_message"
+        static let signInWithApple = "auth.sign_in_with_apple"
+        static let continueAsGuest = "auth.continue_as_guest"
+        static let privacyPolicy = "auth.privacy_policy"
+        static let signOut = "auth.sign_out"
+        static let notSignedIn = "auth.not_signed_in"
+    }
+    
+    // MARK: - Profile
+    
+    enum Profile {
+        static let userType = "profile.user_type"
+        static let communities = "profile.communities"
+        static let noCommunities = "profile.no_communities"
+        static let addCommunity = "profile.add_community"
+        static let experience = "profile.experience"
+        static let certifications = "profile.certifications"
+        static let statistics = "profile.statistics"
+        static let contributions = "profile.contributions"
+        static let reputation = "profile.reputation"
+        static let editProfile = "profile.edit_profile"
+        static let selectUserType = "profile.select_user_type"
+    }
+    
     // MARK: - Settings (for future use)
     
     enum Settings {
