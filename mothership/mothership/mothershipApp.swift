@@ -13,6 +13,7 @@ struct mothershipApp: App {
     @State private var localization = LocalizationService()
     @State private var charterStore = CharterStore()
     @State private var checklistStore = ChecklistStore()
+    @State private var flashcardStore = FlashcardStore()
 
     var body: some Scene {
         WindowGroup {
@@ -20,6 +21,7 @@ struct mothershipApp: App {
                 .environment(\.localization, localization)
                 .environment(\.charterStore, charterStore)
                 .environment(\.checklistStore, checklistStore)
+                .environment(\.flashcardStore, flashcardStore)
         }
     }
 }

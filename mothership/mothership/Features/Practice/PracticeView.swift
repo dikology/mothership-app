@@ -123,7 +123,7 @@ struct PracticeModuleCard: View {
         case .mooring:
             return .basics
         case .safety:
-            return .dailyThought
+            return .relaxation
         }
     }
 }

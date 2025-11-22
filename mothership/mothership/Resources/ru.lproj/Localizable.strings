@@ -78,6 +78,23 @@
 "common.edit" = "Редактировать";
 "common.delete" = "Удалить";
 
+// MARK: - Learn
+
+"learn.learn" = "Обучение";
+"learn.study_with_spaced_repetition" = "Изучайте с интервальным повторением";
+"learn.show_answer" = "Показать ответ";
+"learn.review_complete" = "Повторение завершено";
+"learn.great_job" = "Отличная работа! Вы повторили все карточки.";
+"learn.no_cards_due" = "Нет карточек к повторению";
+"learn.all_cards_reviewed" = "Все карточки изучены. Отличная работа!";
+
+"learn.deck.sound_signals" = "Звуковые сигналы";
+"learn.deck.sound_signals.description" = "Изучите звуковые сигналы для маневрирования";
+"learn.deck.navigation_lights" = "Навигационные огни";
+"learn.deck.navigation_lights.description" = "Изучите навигационные огни судов";
+"learn.deck.colregs" = "МППСС";
+"learn.deck.colregs.description" = "Международные правила предупреждения столкновений судов";
+
 // MARK: - Settings
 
 "settings.title" = "Настройки";

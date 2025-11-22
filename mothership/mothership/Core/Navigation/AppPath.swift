@@ -17,5 +17,8 @@ enum AppPath: Hashable {
     
     // Practice paths
     case practiceModule(String)
+    
+    // Learn paths
+    case flashcardDeck(FlashcardDeck.ID)
 }
 

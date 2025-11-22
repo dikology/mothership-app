@@ -24,7 +24,6 @@ struct CardIllustration: View {
         ZStack {
             switch type {
             case .basics:
-                // Basics illustration from Figma - uses SVG with original rendering mode
                 Image("basics-illustration")
                     .renderingMode(.original)
                     .resizable()
@@ -32,16 +31,11 @@ struct CardIllustration: View {
                     .frame(width: size, height: size)
                 
             case .relaxation:
-                // Person with headphones - placeholder
-                ZStack {
-                    Image(systemName: "person.fill")
-                        .font(.system(size: size * 0.5))
-                        .foregroundColor(.white.opacity(0.9))
-                    Image(systemName: "headphones")
-                        .font(.system(size: size * 0.3))
-                        .foregroundColor(.white.opacity(0.7))
-                        .offset(y: -size * 0.1)
-                }
+                Image("safety")
+                    .renderingMode(.original)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: size, height: size)
                 
             case .focus:
                 Image("officeworker")
