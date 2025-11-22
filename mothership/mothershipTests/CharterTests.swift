@@ -2,17 +2,18 @@
 //  CharterTests.swift
 //  mothershipTests
 //
-//  Tests for Charter model
+//  Tests for Charter model - Swift Testing version
 //
 
-import XCTest
+import Testing
 @testable import mothership
 
-final class CharterTests: XCTestCase {
+struct CharterTests {
     
     // MARK: - isActive Tests
     
-    func testCharterIsActive_CurrentDateBetweenStartAndEnd() {
+    @Test("Charter is active when current date is between start and end")
+    func isActive_CurrentDateBetweenStartAndEnd() async throws {
         // Given: A charter that started yesterday and ends tomorrow
         let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
         let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
@@ -23,10 +24,11 @@ final class CharterTests: XCTestCase {
         )
         
         // Then: Charter should be active
-        XCTAssertTrue(charter.isActive, "Charter should be active when current date is between start and end dates")
+        #expect(charter.isActive, "Charter should be active when current date is between start and end dates")
     }
     
-    func testCharterIsActive_NoEndDate_AfterStartDate() {
+    @Test("Charter is active with no end date after start date")
+    func isActive_NoEndDateAfterStartDate() async throws {
         // Given: A charter that started yesterday with no end date
         let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
         let charter = Charter(
@@ -36,10 +38,11 @@ final class CharterTests: XCTestCase {
         )
         
         // Then: Charter should be active
-        XCTAssertTrue(charter.isActive, "Charter should be active when it has no end date and has already started")
+        #expect(charter.isActive, "Charter should be active when it has no end date and has already started")
     }
     
-    func testCharterIsActive_StartDateIsToday() {
+    @Test("Charter is active when start date is today")
+    func isActive_StartDateIsToday() async throws {
         // Given: A charter that starts today
         let today = Date()
         let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
@@ -50,10 +53,11 @@ final class CharterTests: XCTestCase {
         )
         
         // Then: Charter should be active (boundary condition)
-        XCTAssertTrue(charter.isActive, "Charter should be active when start date is today")
+        #expect(charter.isActive, "Charter should be active when start date is today")
     }
     
-    func testCharterIsInactive_BeforeStartDate() {
+    @Test("Charter is inactive before start date")
+    func isInactive_BeforeStartDate() async throws {
         // Given: A charter that starts tomorrow
         let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
         let nextWeek = Calendar.current.date(byAdding: .day, value: 7, to: Date())!
@@ -64,10 +68,11 @@ final class CharterTests: XCTestCase {
         )
         
         // Then: Charter should not be active
-        XCTAssertFalse(charter.isActive, "Charter should not be active when current date is before start date")
+        #expect(!charter.isActive, "Charter should not be active when current date is before start date")
     }
     
-    func testCharterIsInactive_AfterEndDate() {
+    @Test("Charter is inactive after end date")
+    func isInactive_AfterEndDate() async throws {
         // Given: A charter that ended yesterday
         let lastWeek = Calendar.current.date(byAdding: .day, value: -7, to: Date())!
         let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
@@ -78,10 +83,11 @@ final class CharterTests: XCTestCase {
         )
         
         // Then: Charter should not be active
-        XCTAssertFalse(charter.isActive, "Charter should not be active when current date is after end date")
+        #expect(!charter.isActive, "Charter should not be active when current date is after end date")
     }
     
-    func testCharterIsActive_EndDateIsToday() {
+    @Test("Charter is active when end date is today")
+    func isActive_EndDateIsToday() async throws {
         // Given: A charter that ends today
         let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
         let today = Date()
@@ -92,12 +98,13 @@ final class CharterTests: XCTestCase {
         )
         
         // Then: Charter should be active (boundary condition)
-        XCTAssertTrue(charter.isActive, "Charter should be active when end date is today")
+        #expect(charter.isActive, "Charter should be active when end date is today")
     }
     
     // MARK: - Initialization Tests
     
-    func testCharterInitialization_WithAllFields() {
+    @Test("Charter initialization with all fields")
+    func initialization_WithAllFields() async throws {
         // Given: All charter fields
         let name = "Croatia Charter"
         let startDate = Date()
@@ -119,16 +126,17 @@ final class CharterTests: XCTestCase {
         )
         
         // Then: All fields should be set correctly
-        XCTAssertEqual(charter.name, name)
-        XCTAssertEqual(charter.startDate, startDate)
-        XCTAssertEqual(charter.endDate, endDate)
-        XCTAssertEqual(charter.location, location)
-        XCTAssertEqual(charter.yachtName, yachtName)
-        XCTAssertEqual(charter.charterCompany, charterCompany)
-        XCTAssertEqual(charter.notes, notes)
+        #expect(charter.name == name)
+        #expect(charter.startDate == startDate)
+        #expect(charter.endDate == endDate)
+        #expect(charter.location == location)
+        #expect(charter.yachtName == yachtName)
+        #expect(charter.charterCompany == charterCompany)
+        #expect(charter.notes == notes)
     }
     
-    func testCharterInitialization_WithRequiredFieldsOnly() {
+    @Test("Charter initialization with required fields only")
+    func initialization_WithRequiredFieldsOnly() async throws {
         // Given: Only required fields
         let name = "Test Charter"
         let startDate = Date()
@@ -140,27 +148,29 @@ final class CharterTests: XCTestCase {
         )
         
         // Then: Required fields should be set, optional fields should be nil
-        XCTAssertEqual(charter.name, name)
-        XCTAssertEqual(charter.startDate, startDate)
-        XCTAssertNil(charter.endDate)
-        XCTAssertNil(charter.location)
-        XCTAssertNil(charter.yachtName)
-        XCTAssertNil(charter.charterCompany)
-        XCTAssertNil(charter.notes)
+        #expect(charter.name == name)
+        #expect(charter.startDate == startDate)
+        #expect(charter.endDate == nil)
+        #expect(charter.location == nil)
+        #expect(charter.yachtName == nil)
+        #expect(charter.charterCompany == nil)
+        #expect(charter.notes == nil)
     }
     
-    func testCharterInitialization_HasUniqueID() {
+    @Test("Charter initialization has unique ID")
+    func initialization_HasUniqueID() async throws {
         // Given: Two charters with same data
         let charter1 = Charter(name: "Test", startDate: Date())
         let charter2 = Charter(name: "Test", startDate: Date())
         
         // Then: They should have different IDs
-        XCTAssertNotEqual(charter1.id, charter2.id)
+        #expect(charter1.id != charter2.id)
     }
     
     // MARK: - Codable Tests
     
-    func testCharterEncodingAndDecoding() throws {
+    @Test("Charter encoding and decoding")
+    func codable_EncodingAndDecoding() async throws {
         // Given: A charter with all fields
         let originalCharter = Charter(
             name: "Test Charter",
@@ -179,12 +189,11 @@ final class CharterTests: XCTestCase {
         let decodedCharter = try decoder.decode(Charter.self, from: data)
         
         // Then: Decoded charter should match original
-        XCTAssertEqual(decodedCharter.id, originalCharter.id)
-        XCTAssertEqual(decodedCharter.name, originalCharter.name)
-        XCTAssertEqual(decodedCharter.location, originalCharter.location)
-        XCTAssertEqual(decodedCharter.yachtName, originalCharter.yachtName)
-        XCTAssertEqual(decodedCharter.charterCompany, originalCharter.charterCompany)
-        XCTAssertEqual(decodedCharter.notes, originalCharter.notes)
+        #expect(decodedCharter.id == originalCharter.id)
+        #expect(decodedCharter.name == originalCharter.name)
+        #expect(decodedCharter.location == originalCharter.location)
+        #expect(decodedCharter.yachtName == originalCharter.yachtName)
+        #expect(decodedCharter.charterCompany == originalCharter.charterCompany)
+        #expect(decodedCharter.notes == originalCharter.notes)
     }
 }
-

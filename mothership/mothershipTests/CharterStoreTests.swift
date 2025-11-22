@@ -2,52 +2,44 @@
 //  CharterStoreTests.swift
 //  mothershipTests
 //
-//  Tests for CharterStore
+//  Tests for CharterStore - Swift Testing version
 //
 
-import XCTest
+import Testing
 @testable import mothership
 
-final class CharterStoreTests: XCTestCase {
+@MainActor
+struct CharterStoreTests {
     
-    var sut: CharterStore!
-    var testUserDefaults: UserDefaults!
+    // MARK: - Test Fixtures
     
-    override func setUp() {
-        super.setUp()
-        // Create a test-specific UserDefaults suite
-        testUserDefaults = UserDefaults(suiteName: "CharterStoreTests")!
+    func makeTestStore() -> CharterStore {
+        let testUserDefaults = UserDefaults(suiteName: "CharterStoreTests")!
         testUserDefaults.removePersistentDomain(forName: "CharterStoreTests")
-        
-        // Create a fresh store for each test
-        sut = CharterStore(userDefaults: testUserDefaults)
-    }
-    
-    override func tearDown() {
-        // Clean up test UserDefaults
-        testUserDefaults.removePersistentDomain(forName: "CharterStoreTests")
-        testUserDefaults = nil
-        sut = nil
-        super.tearDown()
+        return CharterStore(userDefaults: testUserDefaults)
     }
     
     // MARK: - Add Charter Tests
     
-    func testAddCharter_AddsCharterToStore() {
+    @Test("Add charter adds charter to store")
+    func addCharter_AddsToStore() async throws {
         // Given: An empty store
-        XCTAssertTrue(sut.charters.isEmpty)
+        let sut = makeTestStore()
+        #expect(sut.charters.isEmpty)
         
         // When: Adding a charter
         let charter = Charter(name: "Test Charter", startDate: Date())
         sut.addCharter(charter)
         
         // Then: Charter should be in the store
-        XCTAssertEqual(sut.charters.count, 1)
-        XCTAssertEqual(sut.charters.first?.id, charter.id)
+        #expect(sut.charters.count == 1)
+        #expect(sut.charters.first?.id == charter.id)
     }
     
-    func testAddCharter_SortsChartersByStartDate() {
+    @Test("Add charter sorts charters by start date")
+    func addCharter_SortsByStartDate() async throws {
         // Given: Three charters with different start dates
+        let sut = makeTestStore()
         let today = Date()
         let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: today)!
         let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
@@ -62,16 +54,18 @@ final class CharterStoreTests: XCTestCase {
         sut.addCharter(charter3)
         
         // Then: Charters should be sorted by start date (most recent first)
-        XCTAssertEqual(sut.charters.count, 3)
-        XCTAssertEqual(sut.charters[0].name, "Tomorrow")
-        XCTAssertEqual(sut.charters[1].name, "Today")
-        XCTAssertEqual(sut.charters[2].name, "Yesterday")
+        #expect(sut.charters.count == 3)
+        #expect(sut.charters[0].name == "Tomorrow")
+        #expect(sut.charters[1].name == "Today")
+        #expect(sut.charters[2].name == "Yesterday")
     }
     
     // MARK: - Update Charter Tests
     
-    func testUpdateCharter_UpdatesExistingCharter() {
+    @Test("Update charter updates existing charter")
+    func updateCharter_UpdatesExisting() async throws {
         // Given: A charter in the store
+        let sut = makeTestStore()
         let charter = Charter(name: "Original Name", startDate: Date())
         sut.addCharter(charter)
         
@@ -82,13 +76,15 @@ final class CharterStoreTests: XCTestCase {
         sut.updateCharter(updatedCharter)
         
         // Then: Charter should be updated
-        XCTAssertEqual(sut.charters.count, 1)
-        XCTAssertEqual(sut.charters.first?.name, "Updated Name")
-        XCTAssertEqual(sut.charters.first?.location, "New Location")
+        #expect(sut.charters.count == 1)
+        #expect(sut.charters.first?.name == "Updated Name")
+        #expect(sut.charters.first?.location == "New Location")
     }
     
-    func testUpdateCharter_ResortsList() {
+    @Test("Update charter resorts list")
+    func updateCharter_ResortsList() async throws {
         // Given: Multiple charters
+        let sut = makeTestStore()
         let today = Date()
         let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: today)!
         let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
@@ -105,27 +101,31 @@ final class CharterStoreTests: XCTestCase {
         sut.updateCharter(updatedCharter)
         
         // Then: List should be resorted
-        XCTAssertEqual(sut.charters[0].name, "Charter 1") // Now first because it has the latest date
-        XCTAssertEqual(sut.charters[1].name, "Charter 2")
+        #expect(sut.charters[0].name == "Charter 1") // Now first because it has the latest date
+        #expect(sut.charters[1].name == "Charter 2")
     }
     
     // MARK: - Delete Charter Tests
     
-    func testDeleteCharter_RemovesCharterFromStore() {
+    @Test("Delete charter removes charter from store")
+    func deleteCharter_RemovesFromStore() async throws {
         // Given: A charter in the store
+        let sut = makeTestStore()
         let charter = Charter(name: "Test Charter", startDate: Date())
         sut.addCharter(charter)
-        XCTAssertEqual(sut.charters.count, 1)
+        #expect(sut.charters.count == 1)
         
         // When: Deleting the charter
         sut.deleteCharter(charter)
         
         // Then: Charter should be removed
-        XCTAssertTrue(sut.charters.isEmpty)
+        #expect(sut.charters.isEmpty)
     }
     
-    func testDeleteCharter_OnlyDeletesSpecifiedCharter() {
+    @Test("Delete charter only deletes specified charter")
+    func deleteCharter_OnlyDeletesSpecified() async throws {
         // Given: Multiple charters in the store
+        let sut = makeTestStore()
         let charter1 = Charter(name: "Charter 1", startDate: Date())
         let charter2 = Charter(name: "Charter 2", startDate: Date())
         sut.addCharter(charter1)
@@ -135,14 +135,16 @@ final class CharterStoreTests: XCTestCase {
         sut.deleteCharter(charter1)
         
         // Then: Only the specified charter should be removed
-        XCTAssertEqual(sut.charters.count, 1)
-        XCTAssertEqual(sut.charters.first?.id, charter2.id)
+        #expect(sut.charters.count == 1)
+        #expect(sut.charters.first?.id == charter2.id)
     }
     
     // MARK: - Active Charter Tests
     
-    func testActiveCharter_ReturnsCharterWithCurrentDate() {
+    @Test("Active charter returns charter with current date")
+    func activeCharter_ReturnsCharterWithCurrentDate() async throws {
         // Given: Multiple charters, one with current date between start and end
+        let sut = makeTestStore()
         let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
         let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
         let lastWeek = Calendar.current.date(byAdding: .day, value: -7, to: Date())!
@@ -160,12 +162,14 @@ final class CharterStoreTests: XCTestCase {
         let result = sut.activeCharter
         
         // Then: Should return the active charter
-        XCTAssertNotNil(result)
-        XCTAssertEqual(result?.name, "Active")
+        #expect(result != nil)
+        #expect(result?.name == "Active")
     }
     
-    func testActiveCharter_ReturnsNilWhenNoActiveCharter() {
+    @Test("Active charter returns nil when no active charter")
+    func activeCharter_ReturnsNilWhenNoActive() async throws {
         // Given: Only past charters
+        let sut = makeTestStore()
         let lastWeek = Calendar.current.date(byAdding: .day, value: -7, to: Date())!
         let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
         
@@ -176,11 +180,13 @@ final class CharterStoreTests: XCTestCase {
         let result = sut.activeCharter
         
         // Then: Should return nil
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
     
-    func testActiveCharter_WorksWithNoEndDate() {
+    @Test("Active charter works with no end date")
+    func activeCharter_WorksWithNoEndDate() async throws {
         // Given: A charter that started but has no end date
+        let sut = makeTestStore()
         let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
         let charter = Charter(name: "Ongoing", startDate: yesterday, endDate: nil)
         sut.addCharter(charter)
@@ -189,12 +195,14 @@ final class CharterStoreTests: XCTestCase {
         let result = sut.activeCharter
         
         // Then: Should return the charter
-        XCTAssertNotNil(result)
-        XCTAssertEqual(result?.name, "Ongoing")
+        #expect(result != nil)
+        #expect(result?.name == "Ongoing")
     }
     
-    func testActiveCharter_ReturnsFirstWhenMultipleActive() {
+    @Test("Active charter returns first when multiple active")
+    func activeCharter_ReturnsFirstWhenMultiple() async throws {
         // Given: Two overlapping active charters
+        let sut = makeTestStore()
         let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
         let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
         
@@ -208,34 +216,35 @@ final class CharterStoreTests: XCTestCase {
         let result = sut.activeCharter
         
         // Then: Should return the first one (most recent by start date)
-        XCTAssertNotNil(result)
+        #expect(result != nil)
         // Both have the same start date, so the first added will be returned
-        XCTAssertTrue([charter1.id, charter2.id].contains(result!.id))
+        #expect([charter1.id, charter2.id].contains(result!.id))
     }
     
     // MARK: - Persistence Tests
     
-    func testPersistence_SavesAndLoadsCharters() {
+    @Test("Persistence saves and loads charters")
+    func persistence_SavesAndLoads() async throws {
         // Given: A charter added to the store
+        let sut = makeTestStore()
         let charter = Charter(
             name: "Test Charter",
             startDate: Date(),
             location: "Test Location"
         )
         sut.addCharter(charter)
-        XCTAssertEqual(sut.charters.count, 1)
+        #expect(sut.charters.count == 1)
         
         // When: Clearing the in-memory state and reloading from UserDefaults
         sut.charters = []
-        XCTAssertTrue(sut.charters.isEmpty, "Charters should be cleared")
+        #expect(sut.charters.isEmpty, "Charters should be cleared")
         
         sut.reload()
         
         // Then: The charter should be loaded from persistence
-        XCTAssertEqual(sut.charters.count, 1)
-        XCTAssertEqual(sut.charters.first?.id, charter.id)
-        XCTAssertEqual(sut.charters.first?.name, charter.name)
-        XCTAssertEqual(sut.charters.first?.location, charter.location)
+        #expect(sut.charters.count == 1)
+        #expect(sut.charters.first?.id == charter.id)
+        #expect(sut.charters.first?.name == charter.name)
+        #expect(sut.charters.first?.location == charter.location)
     }
 }
-
