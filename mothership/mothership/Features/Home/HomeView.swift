@@ -119,21 +119,42 @@ struct HomeView: View {
             }
             .padding(.horizontal, AppSpacing.screenPadding)
             
-            // Briefing Modules Grid
-            let columns = [
-                GridItem(.flexible(), spacing: AppSpacing.cardSpacing),
-                GridItem(.flexible(), spacing: AppSpacing.cardSpacing)
-            ]
-            
-            LazyVGrid(columns: columns, spacing: AppSpacing.cardSpacing) {
-                ForEach(briefingModules) { module in
-                    NavigationLink(value: AppPath.practiceModule(module.id.uuidString)) {
-                        PracticeModuleCard(module: module)
+            // Briefing Modules - Daily checklist first (horizontal), then grid
+            VStack(alignment: .leading, spacing: AppSpacing.md) {
+                // Daily Checklist Card (Horizontal, if it's a briefing module with checklist type)
+                if let dailyModule = briefingModules.first(where: { $0.type == .checklist }) {
+                    NavigationLink(value: AppPath.practiceModule(dailyModule.id.uuidString)) {
+                        DailyCard(
+                            title: dailyModule.title,
+                            subtitle: dailyModule.subtitle,
+                            backgroundColor: AppColors.dailyThoughtBackground,
+                            textColor: .white,
+                            showPlayButton: false
+                        )
                     }
                     .buttonStyle(PlainButtonStyle())
+                    .padding(.horizontal, AppSpacing.screenPadding)
+                }
+                
+                // Other Briefing Modules Grid
+                let gridModules = briefingModules.filter { $0.type != .checklist }
+                if !gridModules.isEmpty {
+                    let columns = [
+                        GridItem(.flexible(), spacing: AppSpacing.cardSpacing),
+                        GridItem(.flexible(), spacing: AppSpacing.cardSpacing)
+                    ]
+                    
+                    LazyVGrid(columns: columns, spacing: AppSpacing.cardSpacing) {
+                        ForEach(gridModules) { module in
+                            NavigationLink(value: AppPath.practiceModule(module.id.uuidString)) {
+                                PracticeModuleCard(module: module)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                    }
+                    .padding(.horizontal, AppSpacing.screenPadding)
                 }
             }
-            .padding(.horizontal, AppSpacing.screenPadding)
         }
     }
     

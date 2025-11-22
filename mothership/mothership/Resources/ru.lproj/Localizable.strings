@@ -53,6 +53,8 @@
 
 "checklist.check_in_checklist" = "Чек-лист приемки яхты";
 "checklist.check_all_items_when_receiving_yacht" = "Проверьте все пункты при приеме яхты";
+"checklist.daily_checklist" = "Подготовка к выходу";
+"checklist.daily_checklist_subtitle" = "Ежедневный чеклист";
 "checklist.progress" = "Прогресс";
 "checklist.items" = "пунктов";
 "checklist.information" = "Информация";
@@ -77,6 +79,23 @@
 "common.ok" = "ОК";
 "common.edit" = "Редактировать";
 "common.delete" = "Удалить";
+
+// MARK: - Learn
+
+"learn.learn" = "Обучение";
+"learn.study_with_spaced_repetition" = "Изучайте с интервальным повторением";
+"learn.show_answer" = "Показать ответ";
+"learn.review_complete" = "Повторение завершено";
+"learn.great_job" = "Отличная работа! Вы повторили все карточки.";
+"learn.no_cards_due" = "Нет карточек к повторению";
+"learn.all_cards_reviewed" = "Все карточки изучены. Отличная работа!";
+
+"learn.deck.sound_signals" = "Звуковые сигналы";
+"learn.deck.sound_signals.description" = "Изучите звуковые сигналы для маневрирования";
+"learn.deck.navigation_lights" = "Навигационные огни";
+"learn.deck.navigation_lights.description" = "Изучите навигационные огни судов";
+"learn.deck.colregs" = "МППСС";
+"learn.deck.colregs.description" = "Международные правила предупреждения столкновений судов";
 
 // MARK: - Settings
 

@@ -53,6 +53,8 @@
 
 "checklist.check_in_checklist" = "Check-in Checklist";
 "checklist.check_all_items_when_receiving_yacht" = "Check all items when receiving the yacht";
+"checklist.daily_checklist" = "Pre-departure Preparation";
+"checklist.daily_checklist_subtitle" = "Daily checklist";
 "checklist.progress" = "Progress";
 "checklist.items" = "items";
 "checklist.information" = "Information";
@@ -77,6 +79,23 @@
 "common.ok" = "OK";
 "common.edit" = "Edit";
 "common.delete" = "Delete";
+
+// MARK: - Learn
+
+"learn.learn" = "Learn";
+"learn.study_with_spaced_repetition" = "Study with spaced repetition";
+"learn.show_answer" = "Show Answer";
+"learn.review_complete" = "Review Complete";
+"learn.great_job" = "Great job! You've reviewed all cards.";
+"learn.no_cards_due" = "No Cards Due";
+"learn.all_cards_reviewed" = "All cards reviewed. Great work!";
+
+"learn.deck.sound_signals" = "Sound Signals";
+"learn.deck.sound_signals.description" = "Learn sound signals for maneuvering";
+"learn.deck.navigation_lights" = "Navigation Lights";
+"learn.deck.navigation_lights.description" = "Learn vessel navigation lights";
+"learn.deck.colregs" = "COLREGS";
+"learn.deck.colregs.description" = "International Regulations for Preventing Collisions at Sea";
 
 // MARK: - Settings
 

@@ -15,14 +15,14 @@ struct AppView: View {
     
     enum MainTab: String, CaseIterable {
         case home
-        // case learn
+        case learn
         case practice
         // case profile
         
         var icon: String {
             switch self {
             case .home: return "house.fill"
-            // case .learn: return "book.fill"
+            case .learn: return "book.fill"
             case .practice: return "checklist"
             // case .profile: return "person.fill"  
             }
@@ -58,8 +58,8 @@ struct AppView: View {
         switch selectedTab {
         case .home:
             HomeView()
-        // case .learn:
-        //     LearnView()
+        case .learn:
+            LearnView()
         case .practice:
             PracticeView()
         // case .profile:
@@ -74,6 +74,10 @@ struct AppView: View {
             if let charter = charterStore.charters.first(where: { $0.id == id }) {
                 CharterDetailView(charter: charter)
             }
+        case .charterEdit(let id):
+            if let charter = charterStore.charters.first(where: { $0.id == id }) {
+                CharterEditView(charter: charter)
+            }
         case .charterCreation:
             CharterCreationView()
         case .checkInChecklist(let charterId):
@@ -85,9 +89,8 @@ struct AppView: View {
                 Text(localization.localized(L10n.Common.comingSoon))
                     .font(AppTypography.title1)
             }
-        default:
-            Text(localization.localized(L10n.Common.comingSoon))
-                .font(AppTypography.title1)
+        case .flashcardDeck(let deckID):
+            FlashcardReviewView(deckID: deckID)
         }
     }
 }
@@ -130,6 +133,7 @@ struct TabBarItem: View {
     private func localizedTabName(for tab: AppView.MainTab) -> String {
         switch tab {
         case .home: return localization.localized(L10n.Tab.home)
+        case .learn: return localization.localized(L10n.Tab.learn)
         case .practice: return localization.localized(L10n.Tab.practice)
         }
     }
@@ -167,5 +171,6 @@ struct TabBarItem: View {
         .environment(\.localization, LocalizationService())
         .environment(\.charterStore, CharterStore())
         .environment(\.checklistStore, ChecklistStore())
+        .environment(\.flashcardStore, FlashcardStore())
 }
 

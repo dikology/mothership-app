@@ -111,6 +111,70 @@ enum ContentFetcher {
         // For now, return empty array - content paths should be known/hardcoded
         return []
     }
+    
+    // MARK: - Flashcard Fetching
+    
+    /// Fetch flashcards from a GitHub folder
+    /// Uses GitHub API v3 to list files in directory, then fetches each markdown file
+    static func fetchFlashcardsFromFolder(folderName: String, deckID: UUID) async throws -> [Flashcard] {
+        // Use GitHub API v3 to list directory contents
+        // Properly encode folder name for URL (handles Cyrillic characters)
+        let encodedFolderName = folderName.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? folderName
+        let apiURLString = "https://api.github.com/repos/dikology/captains-locker/contents/\(encodedFolderName)"
+        
+        guard let apiURL = URL(string: apiURLString) else {
+            throw ContentFetchError.invalidURL(apiURLString)
+        }
+        
+        // Fetch directory listing
+        let (data, response) = try await URLSession.shared.data(from: apiURL)
+        
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            throw ContentFetchError.fetchFailed((response as? HTTPURLResponse)?.statusCode, apiURLString)
+        }
+        
+        // Parse JSON response
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] else {
+            throw ContentFetchError.invalidData
+        }
+        
+        // Filter markdown files and fetch each
+        var flashcards: [Flashcard] = []
+        
+        for fileInfo in json {
+            guard let fileName = fileInfo["name"] as? String,
+                  fileName.hasSuffix(".md"),
+                  let downloadURL = fileInfo["download_url"] as? String,
+                  let url = URL(string: downloadURL) else {
+                continue
+            }
+            
+            // Fetch markdown content
+            do {
+                let (fileData, fileResponse) = try await URLSession.shared.data(from: url)
+                
+                guard let fileHttpResponse = fileResponse as? HTTPURLResponse,
+                      fileHttpResponse.statusCode == 200,
+                      let markdownContent = String(data: fileData, encoding: .utf8) else {
+                    continue
+                }
+                
+                let flashcard = Flashcard(
+                    fileName: fileName,
+                    markdownContent: markdownContent,
+                    deckID: deckID
+                )
+                flashcards.append(flashcard)
+            } catch {
+                // Skip files that fail to fetch
+                print("⚠️ Failed to fetch \(fileName): \(error.localizedDescription)")
+                continue
+            }
+        }
+        
+        return flashcards
+    }
 }
 
 enum ContentFetchError: LocalizedError {

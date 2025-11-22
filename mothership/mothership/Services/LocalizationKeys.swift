@@ -76,6 +76,8 @@ enum L10n {
     enum Checklist {
         static let checkInChecklist = "checklist.check_in_checklist"
         static let checkAllItemsWhenReceivingYacht = "checklist.check_all_items_when_receiving_yacht"
+        static let dailyChecklist = "checklist.daily_checklist"
+        static let dailyChecklistSubtitle = "checklist.daily_checklist_subtitle"
         static let progress = "checklist.progress"
         static let items = "checklist.items"
         static let information = "checklist.information"
@@ -95,6 +97,27 @@ enum L10n {
         static let ok = "common.ok"
         static let edit = "common.edit"
         static let delete = "common.delete"
+    }
+    
+    // MARK: - Learn
+    
+    enum Learn {
+        static let learn = "learn.learn"
+        static let studyWithSpacedRepetition = "learn.study_with_spaced_repetition"
+        static let showAnswer = "learn.show_answer"
+        static let reviewComplete = "learn.review_complete"
+        static let greatJob = "learn.great_job"
+        static let noCardsDue = "learn.no_cards_due"
+        static let allCardsReviewed = "learn.all_cards_reviewed"
+        
+        enum Deck {
+            static let soundSignals = "learn.deck.sound_signals"
+            static let soundSignalsDescription = "learn.deck.sound_signals.description"
+            static let navigationLights = "learn.deck.navigation_lights"
+            static let navigationLightsDescription = "learn.deck.navigation_lights.description"
+            static let colregs = "learn.deck.colregs"
+            static let colregsDescription = "learn.deck.colregs.description"
+        }
     }
     
     // MARK: - Settings (for future use)
