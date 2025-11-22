@@ -177,27 +177,44 @@ struct GridCard: View {
     }
     
     var body: some View {
-        VStack(spacing: AppSpacing.sm) {
-            // Illustration at the top
+        ZStack {
+            backgroundColor
+            
+            // Illustration in top right corner (like meditation app)
             if let illustrationType = illustrationType {
-                CardIllustration(
-                    type: illustrationType,
-                    size: AppSpacing.featuredCardIllustrationSize
-                )
+                VStack {
+                    HStack {
+                        Spacer()
+                        CardIllustration(
+                            type: illustrationType,
+                            size: AppSpacing.featuredCardIllustrationSize // Match meditation app grid card size
+                        )
+                        .foregroundColor(textColor.opacity(0.9))
+                        .offset(x: AppSpacing.illustrationCornerOffsetX, y: AppSpacing.illustrationCornerOffsetY)
+                    }
+                    Spacer()
+                }
                 .allowsHitTesting(false)
             }
             
-            // Text content at the bottom (title only for cleaner look)
-            Text(title)
-                .font(AppTypography.cardTitle)
-                .foregroundColor(textColor)
-                .lineLimit(2)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            // Text content at bottom left
+            VStack {
+                Spacer()
+                HStack {
+                    Text(title)
+                        .font(AppTypography.cardTitle)
+                        .foregroundColor(textColor)
+                        .lineLimit(3) // Allow up to 3 lines for better fit
+                        .minimumScaleFactor(0.8) // Scale down if needed
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Spacer()
+                }
+            }
+            .padding(AppSpacing.cardPadding)
         }
-        .padding(AppSpacing.cardPadding)
         .frame(maxWidth: .infinity)
-        .frame(height: 140)
-        .background(backgroundColor)
+        .frame(height: 180) // Increased from 140 to match meditation app grid cards
         .cornerRadius(AppSpacing.cardCornerRadius)
         .shadow(
             color: Color.black.opacity(AppSpacing.cardShadowOpacity),

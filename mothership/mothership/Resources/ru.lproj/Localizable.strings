@@ -53,6 +53,8 @@
 
 "checklist.check_in_checklist" = "Чек-лист приемки яхты";
 "checklist.check_all_items_when_receiving_yacht" = "Проверьте все пункты при приеме яхты";
+"checklist.daily_checklist" = "Подготовка к выходу";
+"checklist.daily_checklist_subtitle" = "Ежедневный чеклист";
 "checklist.progress" = "Прогресс";
 "checklist.items" = "пунктов";
 "checklist.information" = "Информация";

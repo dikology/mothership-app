@@ -163,3 +163,76 @@ struct RecommendedCard<Content: View>: View {
     }
 }
 
+// MARK: - Daily Card Component (Horizontal, like "Daily Calm" in meditation app)
+
+struct DailyCard: View {
+    let title: String
+    let subtitle: String?
+    let backgroundColor: Color
+    let textColor: Color
+    let showPlayButton: Bool
+    
+    init(
+        title: String,
+        subtitle: String? = nil,
+        backgroundColor: Color = AppColors.dailyThoughtBackground,
+        textColor: Color = .white,
+        showPlayButton: Bool = false
+    ) {
+        self.title = title
+        self.subtitle = subtitle
+        self.backgroundColor = backgroundColor
+        self.textColor = textColor
+        self.showPlayButton = showPlayButton
+    }
+    
+    var body: some View {
+        ZStack {
+            backgroundColor
+            
+            // Optional abstract pattern overlay (subtle)
+            // In production, this could be a pattern image
+            
+            // Content
+            HStack(alignment: .center, spacing: AppSpacing.md) {
+                VStack(alignment: .leading, spacing: AppSpacing.xs) {
+                    Text(title)
+                        .font(AppTypography.cardTitle)
+                        .foregroundColor(textColor)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.9)
+                    
+                    if let subtitle = subtitle {
+                        Text(subtitle)
+                            .font(AppTypography.caption)
+                            .foregroundColor(textColor.opacity(0.8))
+                            .lineLimit(1)
+                    }
+                }
+                
+                Spacer()
+                
+                if showPlayButton {
+                    // Play button (like meditation app)
+                    Button(action: {}) {
+                        Image(systemName: "play.circle.fill")
+                            .font(.system(size: 40))
+                            .foregroundColor(textColor)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+            }
+            .padding(AppSpacing.cardPadding)
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: AppSpacing.dailyCardHeight)
+        .cornerRadius(AppSpacing.cardCornerRadius)
+        .shadow(
+            color: Color.black.opacity(AppSpacing.cardShadowOpacity),
+            radius: AppSpacing.cardShadowRadius,
+            x: 0,
+            y: 4
+        )
+    }
+}
+

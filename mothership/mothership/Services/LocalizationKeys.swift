@@ -76,6 +76,8 @@ enum L10n {
     enum Checklist {
         static let checkInChecklist = "checklist.check_in_checklist"
         static let checkAllItemsWhenReceivingYacht = "checklist.check_all_items_when_receiving_yacht"
+        static let dailyChecklist = "checklist.daily_checklist"
+        static let dailyChecklistSubtitle = "checklist.daily_checklist_subtitle"
         static let progress = "checklist.progress"
         static let items = "checklist.items"
         static let information = "checklist.information"
