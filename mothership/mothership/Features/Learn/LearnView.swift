@@ -76,9 +76,13 @@ struct LearnView: View {
     }
     
     private func loadDecksIfNeeded() async {
-        // Only fetch if decks are empty
-        guard flashcardStore.decks.isEmpty else { return }
-        await refreshDecks()
+        // Fetch if decks are empty OR if we don't have all configured decks
+        let configuredDeckCount = FlashcardFetcher.deckConfigurations.count
+        let currentDeckCount = flashcardStore.decks.count
+        
+        if flashcardStore.decks.isEmpty || currentDeckCount < configuredDeckCount {
+            await refreshDecks()
+        }
     }
     
     private func refreshDecks() async {
@@ -88,18 +92,31 @@ struct LearnView: View {
         
         do {
             // Pass existing decks to preserve IDs and SRS progress
+            // Use cache by default, but allow force refresh on pull-to-refresh
             let fetchedDecks = try await FlashcardFetcher.fetchAllDecks(
                 using: localization,
-                existingDecks: flashcardStore.decks
+                existingDecks: flashcardStore.decks,
+                useCache: true,
+                forceRefresh: true // Force refresh on pull-to-refresh
             )
             
             // Update store with fetched decks (preserves existing SRS progress)
             for deck in fetchedDecks {
                 flashcardStore.updateDeck(deck)
             }
+        } catch is CancellationError {
+            errorMessage = "Загрузка была отменена"
+        } catch let error as ContentFetchError {
+            errorMessage = error.userFriendlyMessage
+            
+            // If rate limited, decks may have been loaded from cache
+            // So we don't show a blocking error, just a warning
+            if case .rateLimited = error {
+                // Decks should already be in store from cache fallback
+            }
         } catch {
-            errorMessage = error.localizedDescription
-            print("❌ Failed to fetch decks: \(error)")
+            NSLog("[LearnView] Error refreshing decks: %@", error.localizedDescription)
+            errorMessage = "Ошибка загрузки: \(error.localizedDescription)"
         }
     }
 }
