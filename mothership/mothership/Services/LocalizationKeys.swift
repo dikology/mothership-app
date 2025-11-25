@@ -9,10 +9,10 @@ import Foundation
 
 /// Centralized localization keys
 /// Usage: L10n.greeting.morning
-enum L10n {
+enum L10n: Sendable {
     // MARK: - Greetings
     
-    enum Greeting {
+    enum Greeting: Sendable {
         static let morning = "greeting.morning"
         static let day = "greeting.day"
         static let evening = "greeting.evening"
@@ -22,7 +22,7 @@ enum L10n {
     
     // MARK: - Charter
     
-    enum Charter {
+    enum Charter: Sendable {
         static let createCharter = "charter.create_charter"
         static let createCharterDescription = "charter.create_charter_description"
         static let editCharter = "charter.edit_charter"
@@ -50,7 +50,7 @@ enum L10n {
     
     // MARK: - Practice
     
-    enum Practice {
+    enum Practice: Sendable {
         static let practice = "practice.practice"
         static let essentialChecklistsAndPracticalGuides = "practice.essential_checklists_and_practical_guides"
         static let essentialBriefingsForYourCharter = "practice.essential_briefings_for_your_charter"
@@ -64,7 +64,7 @@ enum L10n {
     
     // MARK: - Tab Bar
     
-    enum Tab {
+    enum Tab: Sendable {
         static let home = "tab.home"
         static let learn = "tab.learn"
         static let practice = "tab.practice"
@@ -73,7 +73,7 @@ enum L10n {
     
     // MARK: - Checklist
     
-    enum Checklist {
+    enum Checklist: Sendable {
         static let checkInChecklist = "checklist.check_in_checklist"
         static let checkAllItemsWhenReceivingYacht = "checklist.check_all_items_when_receiving_yacht"
         static let dailyChecklist = "checklist.daily_checklist"
@@ -87,7 +87,7 @@ enum L10n {
     
     // MARK: - Common
     
-    enum Common {
+    enum Common: Sendable {
         static let comingSoon = "common.coming_soon"
         static let cancel = "common.cancel"
         static let save = "common.save"
@@ -101,7 +101,7 @@ enum L10n {
     
     // MARK: - Learn
     
-    enum Learn {
+    enum Learn: Sendable {
         static let learn = "learn.learn"
         static let studyWithSpacedRepetition = "learn.study_with_spaced_repetition"
         static let showAnswer = "learn.show_answer"
@@ -110,7 +110,7 @@ enum L10n {
         static let noCardsDue = "learn.no_cards_due"
         static let allCardsReviewed = "learn.all_cards_reviewed"
         
-        enum Deck {
+        enum Deck: Sendable {
             static let soundSignals = "learn.deck.sound_signals"
             static let soundSignalsDescription = "learn.deck.sound_signals.description"
             static let navigationLights = "learn.deck.navigation_lights"
@@ -122,7 +122,7 @@ enum L10n {
     
     // MARK: - Auth
     
-    enum Auth {
+    enum Auth: Sendable {
         static let welcomeMessage = "auth.welcome_message"
         static let signInWithApple = "auth.sign_in_with_apple"
         static let continueAsGuest = "auth.continue_as_guest"
@@ -133,7 +133,7 @@ enum L10n {
     
     // MARK: - Profile
     
-    enum Profile {
+    enum Profile: Sendable {
         static let userType = "profile.user_type"
         static let communities = "profile.communities"
         static let noCommunities = "profile.no_communities"
@@ -149,7 +149,7 @@ enum L10n {
     
     // MARK: - Error Handling
     
-    enum Error {
+    enum Error: Sendable {
         static let generic = "error.generic"
         static let networkConnection = "error.network_connection"
         static let timeout = "error.timeout"
@@ -172,7 +172,7 @@ enum L10n {
     
     // MARK: - Settings (for future use)
     
-    enum Settings {
+    enum Settings: Sendable {
         static let title = "settings.title"
         static let language = "settings.language"
         static let systemLanguage = "settings.system_language"

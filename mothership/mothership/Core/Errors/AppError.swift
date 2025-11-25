@@ -8,13 +8,9 @@
 import Foundation
 
 /// Common interface for errors that can be surfaced to the UI layer
-protocol AppErrorType: LocalizedError, Identifiable where ID == String {
-    /// Indicates whether the UI should display a retry action
-    var isRetryable: Bool { get }
-}
 
 /// Unified error that wraps domain-specific failures so views can react consistently
-enum AppError: AppErrorType {
+enum AppError: Error, Identifiable, @unchecked Sendable {
     case network(NetworkError)
     case auth(AuthError)
     case content(ContentError)
@@ -66,10 +62,6 @@ enum AppError: AppErrorType {
         }
     }
     
-    var errorDescription: String? {
-        localizedString(for: localizationKey, arguments: localizationArguments)
-    }
-    
     private var localizationKey: String {
         switch self {
         case .network(let error):
@@ -114,6 +106,13 @@ enum AppError: AppErrorType {
         return String(format: format, locale: locale, arguments: arguments)
     }
 }
+
+// MARK: - Sendable Conformance
+
+extension NetworkError: @unchecked Sendable {}
+extension AuthError: @unchecked Sendable {}
+extension ContentError: @unchecked Sendable {}
+extension ValidationError: @unchecked Sendable {}
 
 // MARK: - Network Errors
 
@@ -173,7 +172,7 @@ enum NetworkError {
             return [statusCode]
         case .rateLimited(let timeUntilReset):
             if let timeUntilReset {
-                return [AppErrorFormatter.shared.format(timeInterval: timeUntilReset)]
+                return [AppErrorFormatter.format(timeInterval: timeUntilReset)]
             }
             return []
         default:
@@ -328,35 +327,20 @@ enum ValidationError {
 
 // MARK: - Formatter
 
-private final class AppErrorFormatter {
-    static let shared = AppErrorFormatter()
-    
-    private let dateComponentsFormatter: DateComponentsFormatter
-    
-    private init() {
+private enum AppErrorFormatter {
+    static func format(timeInterval: TimeInterval) -> String {
         let formatter = DateComponentsFormatter()
         formatter.allowedUnits = [.hour, .minute]
         formatter.unitsStyle = .full
         formatter.maximumUnitCount = 1
-        dateComponentsFormatter = formatter
-    }
-    
-    func format(timeInterval: TimeInterval) -> String {
+        
         let clamped = max(1, timeInterval)
-        if let formatted = dateComponentsFormatter.string(from: clamped) {
+        if let formatted = formatter.string(from: clamped) {
             return formatted
         }
         let minutes = Int(ceil(clamped / 60))
         return "\(minutes) min"
     }
-}
-
-private func localizedString(for key: String, arguments: [CVarArg]) -> String {
-    let format = NSLocalizedString(key, comment: "")
-    guard !arguments.isEmpty else {
-        return format
-    }
-    return String(format: format, arguments: arguments)
 }
 
 // MARK: - Mapping Helpers
@@ -437,5 +421,3 @@ extension ContentFetchError {
         asAppError.localizedDescription(using: localization)
     }
 }
-
-
