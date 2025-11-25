@@ -378,6 +378,10 @@ enum ContentFetcher {
                 )
                 flashcards.append(flashcard)
                 
+                // Pre-parse markdown to cache parsed content (performance optimization)
+                // This avoids re-parsing on each review
+                FlashcardParsedContentCache.shared.preload(flashcards: [flashcard])
+                
                 // Small delay between requests to be respectful
                 try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
             } catch is CancellationError {

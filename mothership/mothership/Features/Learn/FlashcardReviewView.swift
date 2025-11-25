@@ -249,7 +249,7 @@ struct FlashcardView: View {
                 
                 // Markdown content
                 ScrollView {
-                    MarkdownContentView(content: card.markdownContent)
+                    MarkdownContentView(flashcard: card)
                         .padding(.horizontal, AppSpacing.md)
                 }
             }
@@ -263,11 +263,11 @@ struct FlashcardView: View {
 // MARK: - Markdown Content View
 
 struct MarkdownContentView: View {
-    let content: String
+    let flashcard: Flashcard
     
     var body: some View {
-        // Parse markdown and display
-        let parsed = MarkdownParser.parse(content)
+        // Use cached parsed content (parsed once when fetched)
+        let parsed = FlashcardParsedContentCache.shared.getParsedContent(for: flashcard)
         
         VStack(alignment: .leading, spacing: AppSpacing.md) {
             // Display sections
