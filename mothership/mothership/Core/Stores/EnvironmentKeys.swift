@@ -25,6 +25,12 @@ private struct UserStoreKey: EnvironmentKey {
     }
 }
 
+private struct ContentFetcherStoreKey: EnvironmentKey {
+    static var defaultValue: ContentFetcherStore {
+        ContentFetcherStore()
+    }
+}
+
 extension EnvironmentValues {
     var charterStore: CharterStore {
         get { self[CharterStoreKey.self] }
@@ -39,6 +45,11 @@ extension EnvironmentValues {
     var userStore: UserStore {
         get { self[UserStoreKey.self] }
         set { self[UserStoreKey.self] = newValue }
+    }
+    
+    var contentFetcherStore: ContentFetcherStore {
+        get { self[ContentFetcherStoreKey.self] }
+        set { self[ContentFetcherStoreKey.self] = newValue }
     }
 }
 

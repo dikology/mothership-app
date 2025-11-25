@@ -15,6 +15,7 @@ struct mothershipApp: App {
     @State private var checklistStore = ChecklistStore()
     @State private var flashcardStore = FlashcardStore()
     @State private var userStore = UserStore()
+    @State private var contentFetcherStore = ContentFetcherStore()
 
     var body: some Scene {
         WindowGroup {
@@ -24,6 +25,7 @@ struct mothershipApp: App {
                 .environment(\.checklistStore, checklistStore)
                 .environment(\.flashcardStore, flashcardStore)
                 .environment(\.userStore, userStore)
+                .environment(\.contentFetcherStore, contentFetcherStore)
         }
     }
 }

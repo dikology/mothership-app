@@ -10,37 +10,66 @@ import SwiftUI
 
 @Observable
 final class UserStore {
-    var currentUser: User?
+    private(set) var currentUser: User?
+    private(set) var userState: ViewState<User> = .idle
     var isAuthenticated: Bool { currentUser != nil }
     
     private let authService = AuthService()
     
     init() {
-        // Load stored user on initialization
         loadStoredUser()
     }
     
     // MARK: - Authentication
     
     func signInWithApple() async throws {
-        let user = try await authService.signInWithApple()
-        currentUser = user
+        await MainActor.run {
+            userState = .loading
+        }
+        
+        do {
+            let user = try await authService.signInWithApple()
+            await MainActor.run {
+                currentUser = user
+                userState = .loaded(user)
+            }
+        } catch {
+            let appError = AppError.map(error)
+            await MainActor.run {
+                userState = .error(appError)
+            }
+            throw appError
+        }
     }
     
     func signOut() {
         authService.signOut()
         currentUser = nil
+        userState = .empty
     }
     
     func loadStoredUser() {
-        currentUser = authService.loadStoredUser()
+        if let storedUser = authService.loadStoredUser() {
+            currentUser = storedUser
+            userState = .loaded(storedUser)
+        } else {
+            currentUser = nil
+            userState = .empty
+        }
     }
     
     // MARK: - Profile Management
     
     func updateProfile(_ user: User) throws {
-        try authService.updateUser(user)
-        currentUser = user
+        do {
+            try authService.updateUser(user)
+            currentUser = user
+            userState = .loaded(user)
+        } catch {
+            let appError = AppError.map(error)
+            userState = .error(appError)
+            throw appError
+        }
     }
     
     func updateUserType(_ type: UserType) throws {
@@ -81,4 +110,3 @@ final class UserStore {
         try updateProfile(user)
     }
 }
-
