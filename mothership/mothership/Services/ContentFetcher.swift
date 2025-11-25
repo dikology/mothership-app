@@ -460,33 +460,6 @@ enum ContentFetchError: LocalizedError {
         }
     }
     
-    var userFriendlyMessage: String {
-        switch self {
-        case .rateLimited(let timeUntilReset):
-            let hours = Int(timeUntilReset) / 3600
-            let minutes = (Int(timeUntilReset) % 3600) / 60
-            if hours > 0 {
-                return "Превышен лимит запросов. Попробуйте снова через \(hours) час\(hours > 1 ? "а" : "")"
-            } else {
-                return "Превышен лимит запросов. Попробуйте снова через \(minutes) минут\(minutes > 1 ? "ы" : "")"
-            }
-        case .networkError:
-            return "Ошибка сети. Проверьте подключение к интернету."
-        case .fetchFailed(let statusCode, _):
-            if statusCode == 404 {
-                return "Контент не найден"
-            } else if statusCode == 403 {
-                return "Доступ запрещен. Возможно, превышен лимит запросов."
-            }
-            return "Не удалось загрузить контент"
-        case .invalidData:
-            return "Получены некорректные данные"
-        case .invalidURL:
-            return "Некорректный адрес"
-        case .cacheUnavailable:
-            return "Кэшированный контент недоступен"
-        }
-    }
 }
 
 // MARK: - Content Cache Manager

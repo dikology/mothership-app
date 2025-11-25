@@ -126,3 +126,23 @@
 "settings.language" = "Language";
 "settings.system_language" = "System Language";
 
+// MARK: - Error Handling
+
+"error.generic" = "Something went wrong";
+"error.network_connection" = "Please check your internet connection.";
+"error.timeout" = "The request took too long. Try again.";
+"error.server" = "Server error (code %d). Please try again later.";
+"error.not_found" = "Content not found.";
+"error.unauthorized" = "You do not have access. Please sign in.";
+"error.sign_in_failed" = "Could not sign in. Please try again.";
+"error.rate_limit" = "Too many requests. Try again in %@.";
+"error.validation" = "Please check the highlighted fields.";
+"error.invalid_data" = "Received invalid data.";
+"error.cache_unavailable" = "Cached content is unavailable.";
+"error.empty_deck" = "No cards are available in this deck yet.";
+"error.malformed_markdown" = "This content could not be rendered.";
+"error.loading_cancelled" = "Loading was cancelled.";
+"error.module_not_found" = "Module not found.";
+"error.content_unavailable" = "Content for this module is not available yet.";
+"error.cache_fallback" = "Showing cached content.";
+"error.retry" = "Try again";

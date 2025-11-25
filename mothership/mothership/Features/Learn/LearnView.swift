@@ -11,8 +11,11 @@ struct LearnView: View {
     @Environment(\.localization) private var localization
     @Environment(\.flashcardStore) private var flashcardStore
     
-    @State private var isLoading = false
-    @State private var errorMessage: String?
+    @State private var infoMessageKey: String?
+    
+    private var deckState: ViewState<[FlashcardDeck]> {
+        flashcardStore.deckState
+    }
     
     var body: some View {
         ScrollView {
@@ -29,22 +32,31 @@ struct LearnView: View {
                 .padding(.horizontal, AppSpacing.screenPadding)
                 .padding(.top, AppSpacing.md)
                 
-                // Error message
-                if let errorMessage = errorMessage {
-                    Text(errorMessage)
-                        .font(AppTypography.caption)
-                        .foregroundColor(AppColors.dangerRed)
-                        .padding(.horizontal, AppSpacing.screenPadding)
+                // Feedback banners
+                if let infoMessageKey = infoMessageKey {
+                    FeedbackBanner(
+                        severity: .info,
+                        messages: [localization.localized(infoMessageKey)]
+                    )
+                    .padding(.horizontal, AppSpacing.screenPadding)
+                }
+                
+                if let deckError = deckState.errorValue {
+                    FeedbackBanner(
+                        severity: .error,
+                        messages: [deckError.localizedDescription(using: localization)],
+                        action: FeedbackAction(
+                            title: localization.localized(L10n.Error.retry),
+                            action: triggerRefresh
+                        )
+                    )
+                    .padding(.horizontal, AppSpacing.screenPadding)
                 }
                 
                 // Loading indicator
-                if isLoading {
-                    HStack {
-                        Spacer()
-                        ProgressView()
-                            .padding()
-                        Spacer()
-                    }
+                if deckState.isLoading {
+                    LoadingStateView(message: nil, showsBackground: true)
+                        .padding(.horizontal, AppSpacing.screenPadding)
                 }
                 
                 // Decks Grid
@@ -81,14 +93,13 @@ struct LearnView: View {
         let currentDeckCount = flashcardStore.decks.count
         
         if flashcardStore.decks.isEmpty || currentDeckCount < configuredDeckCount {
-        await refreshDecks()
+            await refreshDecks()
         }
     }
     
     private func refreshDecks() async {
-        isLoading = true
-        errorMessage = nil
-        defer { isLoading = false }
+        infoMessageKey = nil
+        flashcardStore.markDecksLoading()
         
         do {
             // Pass existing decks to preserve IDs and SRS progress
@@ -104,19 +115,23 @@ struct LearnView: View {
             for deck in fetchedDecks {
                 flashcardStore.updateDeck(deck)
             }
+            flashcardStore.markDecksLoaded()
         } catch is CancellationError {
-            errorMessage = "Загрузка была отменена"
+            infoMessageKey = L10n.Error.loadingCancelled
+            flashcardStore.markDecksLoaded()
         } catch let error as ContentFetchError {
-            errorMessage = error.userFriendlyMessage
-            
-            // If rate limited, decks may have been loaded from cache
-            // So we don't show a blocking error, just a warning
-            if case .rateLimited = error {
-                // Decks should already be in store from cache fallback
-            }
+            flashcardStore.markDecksError(error.asAppError)
         } catch {
             NSLog("[LearnView] Error refreshing decks: %@", error.localizedDescription)
-            errorMessage = "Ошибка загрузки: \(error.localizedDescription)"
+            flashcardStore.markDecksError(AppError.map(error))
+        }
+    }
+}
+
+private extension LearnView {
+    func triggerRefresh() {
+        Task {
+            await refreshDecks()
         }
     }
 }

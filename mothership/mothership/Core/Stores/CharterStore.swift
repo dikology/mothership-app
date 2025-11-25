@@ -11,13 +11,15 @@ import SwiftUI
 
 @Observable
 final class CharterStore {
-    var charters: [Charter] = []
+    private(set) var charters: [Charter] = []
+    var charterState: ViewState<[Charter]> = .idle
     
     private let userDefaultsKey = "CharterStore.v1"
     private let userDefaults: UserDefaults
     
     init(userDefaults: UserDefaults = .standard) {
         self.userDefaults = userDefaults
+        markChartersLoading()
         load()
     }
     
@@ -32,6 +34,7 @@ final class CharterStore {
         charters.append(charter)
         charters.sort { $0.startDate > $1.startDate }
         save()
+        markChartersLoaded()
     }
     
     func updateCharter(_ charter: Charter) {
@@ -39,15 +42,18 @@ final class CharterStore {
             charters[index] = charter
             charters.sort { $0.startDate > $1.startDate }
             save()
+            markChartersLoaded()
         }
     }
     
     func deleteCharter(_ charter: Charter) {
         charters.removeAll { $0.id == charter.id }
         save()
+        markChartersLoaded()
     }
     
     func reload() {
+        markChartersLoading()
         load()
     }
     
@@ -63,7 +69,28 @@ final class CharterStore {
         if let data = userDefaults.data(forKey: userDefaultsKey),
            let decoded = try? JSONDecoder().decode([Charter].self, from: data) {
             charters = decoded.sorted { $0.startDate > $1.startDate }
+            markChartersLoaded()
+        } else {
+            charterState = .empty
         }
+    }
+    
+    // MARK: - View State Helpers
+    
+    func markChartersLoading() {
+        charterState = .loading
+    }
+    
+    func markChartersLoaded() {
+        if charters.isEmpty {
+            charterState = .empty
+        } else {
+            charterState = .loaded(charters)
+        }
+    }
+    
+    func markChartersError(_ error: AppError) {
+        charterState = .error(error)
     }
 }
 

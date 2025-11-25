@@ -126,3 +126,23 @@
 "settings.language" = "Язык";
 "settings.system_language" = "Системный язык";
 
+// MARK: - Error Handling
+
+"error.generic" = "Что-то пошло не так";
+"error.network_connection" = "Проверьте подключение к интернету.";
+"error.timeout" = "Запрос выполнялся слишком долго. Попробуйте снова.";
+"error.server" = "Ошибка сервера (код %d). Попробуйте позже.";
+"error.not_found" = "Контент не найден.";
+"error.unauthorized" = "Нет доступа. Войдите в аккаунт.";
+"error.sign_in_failed" = "Не удалось выполнить вход. Попробуйте снова.";
+"error.rate_limit" = "Слишком много запросов. Попробуйте через %@.";
+"error.validation" = "Проверьте выделенные поля.";
+"error.invalid_data" = "Получены некорректные данные.";
+"error.cache_unavailable" = "Кэшированный контент недоступен.";
+"error.empty_deck" = "В этой колоде пока нет карточек.";
+"error.malformed_markdown" = "Не удалось отобразить этот контент.";
+"error.loading_cancelled" = "Загрузка была отменена.";
+"error.module_not_found" = "Модуль не найден.";
+"error.content_unavailable" = "Контент для этого модуля пока недоступен.";
+"error.cache_fallback" = "Показан кэшированный контент.";
+"error.retry" = "Повторить";

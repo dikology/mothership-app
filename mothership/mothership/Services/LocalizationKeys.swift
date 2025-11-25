@@ -147,6 +147,29 @@ enum L10n {
         static let selectUserType = "profile.select_user_type"
     }
     
+    // MARK: - Error Handling
+    
+    enum Error {
+        static let generic = "error.generic"
+        static let networkConnection = "error.network_connection"
+        static let timeout = "error.timeout"
+        static let server = "error.server"
+        static let notFound = "error.not_found"
+        static let unauthorized = "error.unauthorized"
+        static let signInFailed = "error.sign_in_failed"
+        static let rateLimit = "error.rate_limit"
+        static let validation = "error.validation"
+        static let invalidData = "error.invalid_data"
+        static let cacheUnavailable = "error.cache_unavailable"
+        static let emptyDeck = "error.empty_deck"
+        static let malformedMarkdown = "error.malformed_markdown"
+        static let loadingCancelled = "error.loading_cancelled"
+        static let moduleNotFound = "error.module_not_found"
+        static let contentUnavailable = "error.content_unavailable"
+        static let cacheFallback = "error.cache_fallback"
+        static let retry = "error.retry"
+    }
+    
     // MARK: - Settings (for future use)
     
     enum Settings {

@@ -16,6 +16,10 @@ struct CheckInChecklistView: View {
     @State private var expandedSections: Set<UUID> = []
     @State private var expandedSubsections: Set<UUID> = []
     
+    private var checklistState: ViewState<[Checklist]> {
+        checklistStore.checklistState
+    }
+    
     var body: some View {
         ScrollView {
             if let checklist = checklist {
@@ -78,9 +82,28 @@ struct CheckInChecklistView: View {
                     }
                 }
                 .padding(.bottom, AppSpacing.xl)
+            } else if checklistState.isLoading {
+                LoadingStateView(message: nil, showsBackground: true)
+                    .padding(.horizontal, AppSpacing.screenPadding)
+                    .padding(.top, AppSpacing.lg)
+            } else if let error = checklistState.errorValue {
+                FeedbackBanner(
+                    severity: .error,
+                    messages: [error.localizedDescription(using: localization)],
+                    action: FeedbackAction(
+                        title: localization.localized(L10n.Error.retry),
+                        action: reloadChecklist
+                    )
+                )
+                .padding(.horizontal, AppSpacing.screenPadding)
+                .padding(.top, AppSpacing.lg)
             } else {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                FeedbackBanner(
+                    severity: .info,
+                    messages: [localization.localized(L10n.Error.contentUnavailable)]
+                )
+                .padding(.horizontal, AppSpacing.screenPadding)
+                .padding(.top, AppSpacing.lg)
             }
         }
         .appBackground()
@@ -91,11 +114,22 @@ struct CheckInChecklistView: View {
     }
     
     private func loadChecklist() {
-        checklist = checklistStore.getCheckInChecklist(for: charterId)
+        checklistStore.markChecklistsLoading()
+        let loadedChecklist = checklistStore.getCheckInChecklist(for: charterId)
+        checklist = loadedChecklist
+        if loadedChecklist != nil {
+            checklistStore.markChecklistsLoaded()
+        } else {
+            checklistStore.markChecklistsError(.content(.notFound))
+        }
     }
     
     private func updateChecklist() {
         checklist = checklistStore.getCheckInChecklist(for: charterId)
+    }
+    
+    private func reloadChecklist() {
+        loadChecklist()
     }
     
     private func calculateProgress() -> Double? {

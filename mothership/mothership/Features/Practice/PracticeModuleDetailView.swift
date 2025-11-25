@@ -12,7 +12,9 @@ struct PracticeModuleDetailView: View {
     @Environment(\.localization) private var localization
     @State private var content: MarkdownContent?
     @State private var isLoading = true
-    @State private var errorMessage: String?
+    @State private var currentError: AppError?
+    @State private var messageKeys: [String] = []
+    @State private var bannerSeverity: FeedbackSeverity?
     @State private var isUsingCache = false
     
     private var module: PracticeModule? {
@@ -23,25 +25,20 @@ struct PracticeModuleDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: AppSpacing.sectionSpacing) {
                 if isLoading {
-                    ProgressView()
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, AppSpacing.xl)
-                } else if let errorMessage = errorMessage {
-                    VStack(spacing: AppSpacing.md) {
-                        Image(systemName: "exclamationmark.triangle")
-                            .font(.system(size: 48))
-                            .foregroundColor(AppColors.warningOrange)
-                        Text("Ошибка загрузки")
-                            .font(AppTypography.title2)
-                            .foregroundColor(AppColors.textPrimary)
-                        Text(errorMessage)
-                            .font(AppTypography.body)
-                            .foregroundColor(AppColors.textSecondary)
-                            .multilineTextAlignment(.center)
-                    }
-                    .padding(AppSpacing.screenPadding)
-                } 
-                else if let content = content {
+                    LoadingStateView(message: nil, showsBackground: true)
+                        .padding(.horizontal, AppSpacing.screenPadding)
+                }
+                
+                if let severity = bannerSeverity, !bannerMessages.isEmpty {
+                    FeedbackBanner(
+                        severity: severity,
+                        messages: bannerMessages,
+                        action: bannerAction
+                    )
+                    .padding(.horizontal, AppSpacing.screenPadding)
+                }
+                
+                if let content = content, !isLoading {
                     // Title
                     if !content.title.isEmpty {
                         Text(content.title)
@@ -72,11 +69,14 @@ struct PracticeModuleDetailView: View {
     
     private func loadContent() async {
         isLoading = true
-        errorMessage = nil
+        currentError = nil
+        messageKeys = []
+        bannerSeverity = nil
         
         guard let module = module else {
             await MainActor.run {
-                self.errorMessage = "Модуль не найден"
+                self.messageKeys = [L10n.Error.moduleNotFound]
+                self.bannerSeverity = .error
                 self.isLoading = false
             }
             return
@@ -90,8 +90,11 @@ struct PracticeModuleDetailView: View {
         let contentPath = determineContentPath(for: module)
         
         guard !contentPath.isEmpty else {
-            errorMessage = "Контент для этого модуля еще не доступен"
-            isLoading = false
+            await MainActor.run {
+                self.messageKeys = [L10n.Error.contentUnavailable]
+                self.bannerSeverity = .warning
+                self.isLoading = false
+            }
             return
         }
         
@@ -120,6 +123,9 @@ struct PracticeModuleDetailView: View {
                 self.content = parsedContent
                 self.isLoading = false
                 self.isUsingCache = ContentCache.shared.hasCached(key: "markdown:\(contentPath)")
+                self.currentError = nil
+                self.messageKeys = []
+                self.bannerSeverity = nil
             }
         } catch let error as ContentFetchError {
             // Handle rate limit gracefully - try to use cache
@@ -145,25 +151,53 @@ struct PracticeModuleDetailView: View {
                         self.content = parsedContent
                         self.isLoading = false
                         self.isUsingCache = true
-                        // Show warning but don't block
-                        self.errorMessage = "⚠️ \(error.userFriendlyMessage)\nПоказан кэшированный контент."
+                        self.currentError = error.asAppError
+                        self.messageKeys = [L10n.Error.cacheFallback]
+                        self.bannerSeverity = .warning
                     }
                     return
                 }
             }
             
             await MainActor.run {
-                self.errorMessage = error.userFriendlyMessage
+                self.currentError = error.asAppError
+                self.messageKeys = []
+                self.bannerSeverity = .error
                 self.isLoading = false
+                self.content = nil
             }
         } catch {
             await MainActor.run {
-                self.errorMessage = "Не удалось загрузить контент:\n\(error.localizedDescription)"
+                self.currentError = AppError.map(error)
+                self.messageKeys = []
+                self.bannerSeverity = .error
                 self.isLoading = false
+                self.content = nil
             }
         }
     }
+
+    private var bannerMessages: [String] {
+        var items: [String] = []
+        if let currentError = currentError {
+            items.append(currentError.localizedDescription(using: localization))
+        }
+        messageKeys.forEach { key in
+            items.append(localization.localized(key))
+        }
+        return items
+    }
     
+    private var bannerAction: FeedbackAction? {
+        guard bannerSeverity == .error else {
+            return nil
+        }
+        return FeedbackAction(
+            title: localization.localized(L10n.Error.retry),
+            action: triggerReload
+        )
+    }
+
     private func determineContentPath(for module: PracticeModule) -> String {
         // Map module titles to GitHub paths
         switch module.title {
@@ -181,6 +215,13 @@ struct PracticeModuleDetailView: View {
     }
 }
 
+private extension PracticeModuleDetailView {
+    func triggerReload() {
+        Task {
+            await loadContent()
+        }
+    }
+}
 
 // MARK: - Preview
 

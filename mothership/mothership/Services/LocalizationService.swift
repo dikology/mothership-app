@@ -59,6 +59,15 @@ final class LocalizationService {
         return String(format: format, arguments: arguments)
     }
     
+    /// Get localized string with an arguments array
+    func localized(_ key: String, arguments: [CVarArg]) -> String {
+        guard !arguments.isEmpty else {
+            return localized(key)
+        }
+        let format = localized(key)
+        return String(format: format, arguments: arguments)
+    }
+    
     /// Set language manually (for settings)
     func setLanguage(_ language: AppLanguage?) {
         currentLanguage = language

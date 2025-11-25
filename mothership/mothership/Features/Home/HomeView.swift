@@ -11,12 +11,39 @@ import SwiftUI
 struct HomeView: View {
     @Environment(\.localization) private var localization
     @Environment(\.charterStore) private var charterStore
+    
+    private var charterState: ViewState<[Charter]> {
+        charterStore.charterState
+    }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: AppSpacing.sectionSpacing) {
                 // Header with personalized greeting
                 headerSection
+                
+                if charterState.isLoading {
+                    LoadingStateView(message: nil, showsBackground: true)
+                        .padding(.horizontal, AppSpacing.screenPadding)
+                }
+                
+                if let charterError = charterState.errorValue {
+                    FeedbackBanner(
+                        severity: .error,
+                        messages: [charterError.localizedDescription(using: localization)],
+                        action: FeedbackAction(
+                            title: localization.localized(L10n.Error.retry),
+                            action: retryCharterLoad
+                        )
+                    )
+                    .padding(.horizontal, AppSpacing.screenPadding)
+                } else if charterState.isEmpty {
+                    FeedbackBanner(
+                        severity: .info,
+                        messages: [localization.localized(L10n.Charter.createCharterDescription)]
+                    )
+                    .padding(.horizontal, AppSpacing.screenPadding)
+                }
                 
                 if let activeCharter = charterStore.activeCharter {
                     activeCharterCard(charter: activeCharter)
@@ -162,5 +189,8 @@ struct HomeView: View {
         PracticeModule.defaultModules.filter { $0.category == .briefing }
     }
     
+    private func retryCharterLoad() {
+        charterStore.reload()
+    }
 }
 
