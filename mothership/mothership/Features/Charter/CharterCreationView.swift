@@ -21,8 +21,7 @@ struct CharterCreationView: View {
     @State private var yachtName: String = ""
     @State private var charterCompany: String = ""
     @State private var notes: String = ""
-    @State private var showingError: Bool = false
-    @State private var errorMessage: String = ""
+    @State private var feedbackMessage: String?
     
     var body: some View {
         ScrollView {
@@ -39,6 +38,14 @@ struct CharterCreationView: View {
                 .padding(.horizontal, AppSpacing.screenPadding)
                 .padding(.top, AppSpacing.lg)
                 .padding(.bottom, AppSpacing.sm)
+                
+                if let feedbackMessage {
+                    FeedbackBanner(
+                        severity: .error,
+                        messages: [feedbackMessage]
+                    )
+                    .padding(.horizontal, AppSpacing.screenPadding)
+                }
                 
                 // Form
                 VStack(spacing: AppSpacing.xl) {
@@ -184,11 +191,6 @@ struct CharterCreationView: View {
         }
         .appBackground()
         .navigationBarTitleDisplayMode(.inline)
-        .alert(localization.localized(L10n.Common.error), isPresented: $showingError) {
-            Button("OK", role: .cancel) { }
-        } message: {
-            Text(errorMessage)
-        }
     }
     
     private func createCharter() {
@@ -198,6 +200,13 @@ struct CharterCreationView: View {
             let todayString = Date().formattedMedium()
             name = "\(localization.localized(L10n.Charter.charter)) \(todayString)"
         }
+        
+        if hasEndDate, let endDate, endDate < startDate {
+            feedbackMessage = localization.localized(L10n.Error.validation)
+            return
+        }
+        
+        feedbackMessage = nil
         
         // Create charter
         let charter = Charter(

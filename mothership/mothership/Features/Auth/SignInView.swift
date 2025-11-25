@@ -11,108 +11,98 @@ struct SignInView: View {
     @Environment(\.userStore) private var userStore
     @Environment(\.localization) private var localization
     
-    @State private var isSigningIn = false
-    @State private var showError = false
-    @State private var errorMessage = ""
-    @State private var appleSignInProvider = AppleSignInProvider()
+    private var authState: ViewState<User> {
+        userStore.userState
+    }
     
     var body: some View {
         VStack(spacing: AppSpacing.xl) {
             Spacer()
-            
-            // App branding
-            VStack(spacing: AppSpacing.md) {
-                Image(systemName: "sailboat.fill")
-                    .font(.system(size: 80))
-                    .foregroundColor(AppColors.basicsCardColor)
-                
-                Text("Mothership")
-                    .font(AppTypography.largeTitle)
-                    .foregroundColor(AppColors.textPrimary)
-                
-                Text(localization.localized(L10n.Auth.welcomeMessage))
-                    .font(AppTypography.body)
-                    .foregroundColor(AppColors.textSecondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, AppSpacing.screenPadding)
-            }
-            
+            branding
             Spacer()
-            
-            // Sign in options
-            VStack(spacing: AppSpacing.md) {
-                // Apple Sign In Button
-                Button(action: {
-                    Task {
-                        await performSignIn()
-                    }
-                }) {
-                    HStack {
-                        Image(systemName: "applelogo")
-                            .font(.system(size: 18, weight: .medium))
-                        Text(localization.localized(L10n.Auth.signInWithApple))
-                            .font(AppTypography.button)
-                    }
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: AppSpacing.buttonHeight)
-                    .background(Color.black)
-                    .cornerRadius(AppSpacing.buttonCornerRadius)
-                }
-                .disabled(isSigningIn)
-                .padding(.horizontal, AppSpacing.screenPadding)
-                
-                // Guest mode option
-                Button(action: {
-                    // Guest mode - skip authentication
-                    // For now, we'll still require sign in, but this can be enabled later
-                }) {
-                    Text(localization.localized(L10n.Auth.continueAsGuest))
-                        .font(AppTypography.body)
-                        .foregroundColor(AppColors.textSecondary)
-                }
-                .disabled(true) // Disabled for now - require authentication
-                .opacity(0.5)
-                
-                // Privacy policy link
-                Link(
-                    destination: URL(string: "https://mothership.app/privacy") ?? URL(string: "https://example.com")!,
-                    label: {
-                        Text(localization.localized(L10n.Auth.privacyPolicy))
-                            .font(AppTypography.caption)
-                            .foregroundColor(AppColors.textSecondary)
-                    }
-                )
-            }
-            .padding(.bottom, AppSpacing.xxxl)
+            signInOptions
         }
         .appBackground()
-        .overlay {
-            if isSigningIn {
-                ProgressView()
-                    .scaleEffect(1.5)
-                    .padding()
-                    .background(.ultraThinMaterial)
-                    .cornerRadius(12)
+        .overlay(alignment: .top) {
+            if let error = authState.errorValue {
+                FeedbackBanner(
+                    severity: .error,
+                    messages: [error.localizedDescription(using: localization)]
+                )
+                .padding()
             }
         }
-        .alert("Error", isPresented: $showError) {
-            Button("OK", role: .cancel) { }
-        } message: {
-            Text(errorMessage)
+        .overlay {
+            if authState.isLoading {
+                LoadingStateView(message: nil, showsBackground: true)
+                    .padding()
+            }
         }
     }
     
-    private func performSignIn() async {
-        isSigningIn = true
-        defer { isSigningIn = false }
-        
-        do {
-            // Use AuthService which handles the full flow
-            try await userStore.signInWithApple()
-        } catch {
-            errorMessage = error.localizedDescription
-            showError = true
+    private var branding: some View {
+        VStack(spacing: AppSpacing.md) {
+            Image(systemName: "sailboat.fill")
+                .font(.system(size: 80))
+                .foregroundColor(AppColors.basicsCardColor)
+            
+            Text("Mothership")
+                .font(AppTypography.largeTitle)
+                .foregroundColor(AppColors.textPrimary)
+            
+            Text(localization.localized(L10n.Auth.welcomeMessage))
+                .font(AppTypography.body)
+                .foregroundColor(AppColors.textSecondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, AppSpacing.screenPadding)
+        }
+    }
+    
+    private var signInOptions: some View {
+        VStack(spacing: AppSpacing.md) {
+            Button(action: triggerSignIn) {
+                HStack {
+                    Image(systemName: "applelogo")
+                        .font(.system(size: 18, weight: .medium))
+                    Text(localization.localized(L10n.Auth.signInWithApple))
+                        .font(AppTypography.button)
+                }
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .frame(height: AppSpacing.buttonHeight)
+                .background(Color.black)
+                .cornerRadius(AppSpacing.buttonCornerRadius)
+            }
+            .disabled(authState.isLoading)
+            .padding(.horizontal, AppSpacing.screenPadding)
+            
+            Button(action: {}) {
+                Text(localization.localized(L10n.Auth.continueAsGuest))
+                    .font(AppTypography.body)
+                    .foregroundColor(AppColors.textSecondary)
+            }
+            .disabled(true)
+            .opacity(0.5)
+            
+            Link(
+                destination: URL(string: "https://mothership.app/privacy") ?? URL(string: "https://example.com")!,
+                label: {
+                    Text(localization.localized(L10n.Auth.privacyPolicy))
+                        .font(AppTypography.caption)
+                        .foregroundColor(AppColors.textSecondary)
+                }
+            )
+        }
+        .padding(.bottom, AppSpacing.xxxl)
+    }
+    
+    private func triggerSignIn() {
+        Task {
+            do {
+                try await userStore.signInWithApple()
+            } catch {
+                // State already updated via store
+            }
         }
     }
 }
@@ -122,4 +112,3 @@ struct SignInView: View {
         .environment(\.userStore, UserStore())
         .environment(\.localization, LocalizationService())
 }
-

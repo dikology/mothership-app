@@ -10,7 +10,8 @@ import SwiftUI
 
 @Observable
 final class ChecklistStore {
-    var checklists: [Checklist] = []
+    private(set) var checklists: [Checklist] = []
+    var checklistState: ViewState<[Checklist]> = .idle
     var charterChecklistStates: [UUID: CharterChecklistStates] = [:]
     
     private let userDefaultsKey = "ChecklistStore.v1"
@@ -19,6 +20,7 @@ final class ChecklistStore {
     
     init(userDefaults: UserDefaults = .standard) {
         self.userDefaults = userDefaults
+        markChecklistsLoading()
         load()
         // Ensure default check-in checklist exists
         ensureDefaultCheckInChecklist()
@@ -36,6 +38,7 @@ final class ChecklistStore {
             let defaultCheckIn = Checklist.defaultCheckInChecklist()
             checklists.append(defaultCheckIn)
             save()
+            markChecklistsLoaded()
         }
     }
     
@@ -113,6 +116,7 @@ final class ChecklistStore {
                             checklists[index] = mutableChecklist
                         }
                         save()
+                        markChecklistsLoaded()
                     }
                     return
                 }
@@ -147,6 +151,7 @@ final class ChecklistStore {
                             checklists[index] = mutableChecklist
                         }
                         save()
+                        markChecklistsLoaded()
                     }
                     return
                 }
@@ -179,6 +184,7 @@ final class ChecklistStore {
             lastReset: Date()
         )
         save()
+        markChecklistsLoaded()
     }
     
     // MARK: - Progress Calculation
@@ -195,6 +201,7 @@ final class ChecklistStore {
     // MARK: - Persistence
     
     func reload() {
+        markChecklistsLoading()
         load()
     }
     
@@ -213,12 +220,34 @@ final class ChecklistStore {
         if let data = userDefaults.data(forKey: userDefaultsKey),
            let decoded = try? JSONDecoder().decode([Checklist].self, from: data) {
             checklists = decoded
+            markChecklistsLoaded()
+        } else {
+            checklists = []
+            markChecklistsLoaded()
         }
         
         if let statesData = userDefaults.data(forKey: charterStatesKey),
            let decoded = try? JSONDecoder().decode([UUID: CharterChecklistStates].self, from: statesData) {
             charterChecklistStates = decoded
         }
+    }
+    
+    // MARK: - View State Helpers
+    
+    func markChecklistsLoading() {
+        checklistState = .loading
+    }
+    
+    func markChecklistsLoaded() {
+        if checklists.isEmpty {
+            checklistState = .empty
+        } else {
+            checklistState = .loaded(checklists)
+        }
+    }
+    
+    func markChecklistsError(_ error: AppError) {
+        checklistState = .error(error)
     }
 }
 

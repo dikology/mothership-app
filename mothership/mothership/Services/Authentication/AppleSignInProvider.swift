@@ -38,20 +38,20 @@ final class AppleSignInProvider: NSObject, ASAuthorizationControllerDelegate, AS
     
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         guard let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential else {
-            continuation?.resume(throwing: AuthError.invalidCredential)
+            continuation?.resume(throwing: AppleSignInError.invalidCredential)
             continuation = nil
             return
         }
         
         guard let nonce = currentNonce else {
-            continuation?.resume(throwing: AuthError.missingNonce)
+            continuation?.resume(throwing: AppleSignInError.missingNonce)
             continuation = nil
             return
         }
         
         guard let appleIDToken = appleIDCredential.identityToken,
               let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
-            continuation?.resume(throwing: AuthError.tokenDecodingFailed)
+            continuation?.resume(throwing: AppleSignInError.tokenDecodingFailed)
             continuation = nil
             return
         }
@@ -154,7 +154,7 @@ final class AppleSignInProvider: NSObject, ASAuthorizationControllerDelegate, AS
     }
 }
 
-enum AuthError: LocalizedError {
+enum AppleSignInError: LocalizedError {
     case invalidCredential
     case missingNonce
     case tokenDecodingFailed

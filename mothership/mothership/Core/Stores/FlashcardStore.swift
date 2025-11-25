@@ -10,9 +10,8 @@ import SwiftUI
 
 @Observable
 final class FlashcardStore {
-    var decks: [FlashcardDeck] = []
-    var isLoading = false
-    var error: Error?
+    private(set) var decks: [FlashcardDeck] = []
+    var deckState: ViewState<[FlashcardDeck]> = .idle
     
     private let userDefaultsKey = "FlashcardStore.v1"
     private let userDefaults: UserDefaults
@@ -69,6 +68,7 @@ final class FlashcardStore {
             decks.append(deck)
         }
         save()
+        markDecksLoaded()
     }
     
     /// Get flashcards for a deck
@@ -115,7 +115,28 @@ final class FlashcardStore {
         if let data = userDefaults.data(forKey: userDefaultsKey),
            let decoded = try? JSONDecoder().decode([FlashcardDeck].self, from: data) {
             decks = decoded
+            markDecksLoaded()
+        } else {
+            deckState = .empty
         }
+    }
+    
+    // MARK: - View State Helpers
+    
+    func markDecksLoading() {
+        deckState = .loading
+    }
+    
+    func markDecksLoaded() {
+        if decks.isEmpty {
+            deckState = .empty
+        } else {
+            deckState = .loaded(decks)
+        }
+    }
+    
+    func markDecksError(_ error: AppError) {
+        deckState = .error(error)
     }
 }
 

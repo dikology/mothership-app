@@ -175,5 +175,6 @@ struct TabBarItem: View {
         .environment(\.checklistStore, ChecklistStore())
         .environment(\.flashcardStore, FlashcardStore())
         .environment(\.userStore, UserStore())
+        .environment(\.contentFetcherStore, ContentFetcherStore())
 }
 
