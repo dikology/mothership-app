@@ -9,6 +9,7 @@ import Testing
 @testable import mothership
 import Foundation
 
+@MainActor
 struct RateLimitTrackerTests {
     
     // MARK: - Rate Limit Detection

@@ -73,23 +73,23 @@ enum FlashcardFetcher {
         }
         
         do {
-            let flashcards = try await ContentFetcher.fetchFlashcardsFromFolder(
-                folderName: folderName,
+        let flashcards = try await ContentFetcher.fetchFlashcardsFromFolder(
+            folderName: folderName,
                 deckID: deckID,
                 useCache: useCache,
                 forceRefresh: forceRefresh
-            )
-            
-            let deck = FlashcardDeck(
+        )
+        
+        let deck = FlashcardDeck(
                 id: deckID,
-                folderName: folderName,
-                displayName: displayName,
-                description: description,
-                flashcards: flashcards,
-                lastFetched: Date()
-            )
-            
-            return deck
+            folderName: folderName,
+            displayName: displayName,
+            description: description,
+            flashcards: flashcards,
+            lastFetched: Date()
+        )
+        
+        return deck
         } catch is CancellationError {
             throw CancellationError()
         } catch let error as ContentFetchError {

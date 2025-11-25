@@ -9,6 +9,7 @@ import Testing
 @testable import mothership
 import Foundation
 
+@MainActor
 struct RetryStrategyTests {
     
     // MARK: - Retry Logic

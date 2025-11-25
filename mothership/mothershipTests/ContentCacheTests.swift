@@ -9,6 +9,7 @@ import Testing
 @testable import mothership
 import Foundation
 
+@MainActor
 struct ContentCacheTests {
     
     // MARK: - Cache Operations
@@ -90,13 +91,11 @@ struct ContentCacheTests {
         // Fresh cache should not be stale
         #expect(cache.isStale(key: testKey, maxAge: 3600) == false)
         
-        // Very old cache should be stale - we'll test by waiting or using a very short maxAge
-        // For this test, we'll use a very short maxAge to simulate old cache
-        // In practice, we'd need to manipulate the file system directly or wait
-        // For now, test that fresh cache is not stale with reasonable maxAge
+        // Wait a tiny bit to ensure timestamps differ
+        try await Task.sleep(nanoseconds: 10_000_000) // 0.01 seconds
         
-        // Should be stale with 1 hour max age
-        #expect(cache.isStale(key: testKey, maxAge: 3600) == true)
+        // Should be stale with very short maxAge (effectively 0)
+        #expect(cache.isStale(key: testKey, maxAge: 0.001) == true)
     }
     
     @Test("Cache clears all entries")
@@ -133,25 +132,22 @@ struct ContentCacheTests {
         
         try? cache.clearCache()
         
-        // Save fresh entry
-        try cache.save(data: testData, for: freshKey)
-        
-        // Save stale entry - we'll use a very short maxAge to simulate stale cache
-        // In practice, we'd manipulate the metadata file directly
-        // For this test, we'll verify the clearStale logic works with a short maxAge
+        // Save stale entry first
         try cache.save(data: testData, for: staleKey)
         
-        // Wait a tiny bit to ensure timestamps differ
-        try await Task.sleep(nanoseconds: 10_000_000) // 0.01 seconds
+        // Wait to make it "old"
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
         
-        // Verify both exist
-        #expect(cache.hasCached(key: freshKey) == true)
-        #expect(cache.hasCached(key: staleKey) == true)
+        // Save fresh entry now
+        try cache.save(data: testData, for: freshKey)
         
-        // Clear stale with very short maxAge (0.005 seconds) - should clear staleKey
-        cache.clearStale(maxAge: 0.005)
+        // Clear stale with maxAge that catches the first one but not the second
+        // staleKey age is > 0.1s
+        // freshKey age is ~ 0s
+        // maxAge 0.05s will clear staleKey but keep freshKey
+        cache.clearStale(maxAge: 0.05)
         
-        // Fresh should remain (saved just before), stale should be gone (saved earlier)
+        // Fresh should remain, stale should be gone
         #expect(cache.hasCached(key: freshKey) == true)
         #expect(cache.hasCached(key: staleKey) == false)
     }

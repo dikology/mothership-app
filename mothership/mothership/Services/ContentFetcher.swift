@@ -268,8 +268,8 @@ enum ContentFetcher {
         
         // Fetch directory listing with retry
         let (data, response) = try await retryStrategy.execute {
-            let (data, response) = try await URLSession.shared.data(from: apiURL)
-            
+        let (data, response) = try await URLSession.shared.data(from: apiURL)
+        
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw ContentFetchError.fetchFailed(nil, apiURLString)
             }
@@ -338,7 +338,7 @@ enum ContentFetcher {
             do {
                 let fileData = try await retryStrategy.execute {
                     let (data, response) = try await URLSession.shared.data(from: url)
-                    
+                
                     guard let httpResponse = response as? HTTPURLResponse else {
                         throw ContentFetchError.fetchFailed(nil, downloadURL)
                     }

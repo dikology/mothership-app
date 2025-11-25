@@ -81,7 +81,7 @@ struct LearnView: View {
         let currentDeckCount = flashcardStore.decks.count
         
         if flashcardStore.decks.isEmpty || currentDeckCount < configuredDeckCount {
-            await refreshDecks()
+        await refreshDecks()
         }
     }
     
