@@ -52,6 +52,43 @@ Tests for Charter storage and retrieval.
 ### ChecklistStoreTests.swift
 Tests for Checklist storage operations.
 
+### ContentCacheTests.swift
+Tests for ContentCache - caching strategy and staleness detection.
+
+**Test Coverage:**
+- ✅ Save and load operations
+- ✅ Cache existence detection
+- ✅ Last fetched timestamp tracking
+- ✅ Staleness detection
+- ✅ Cache clearing (all and stale only)
+- ✅ Special character handling in keys
+
+### RateLimitTrackerTests.swift
+Tests for RateLimitTracker - rate limit detection and tracking.
+
+**Test Coverage:**
+- ✅ Initialization with defaults
+- ✅ Updates from API responses
+- ✅ Ignores CDN responses (raw.githubusercontent.com)
+- ✅ Rate limit detection when remaining = 0
+- ✅ Warning when remaining < 10
+- ✅ Time until reset calculation
+- ✅ Reset functionality
+- ✅ User message formatting
+
+### RetryStrategyTests.swift
+Tests for RetryStrategy - exponential backoff and retry logic.
+
+**Test Coverage:**
+- ✅ Success on first attempt
+- ✅ Retries on transient errors
+- ✅ No retry on non-retriable errors
+- ✅ Respects max retries
+- ✅ Exponential backoff calculation
+- ✅ Delay capping at maxDelay
+- ✅ Jitter addition (±20%)
+- ✅ Preset configurations (default, aggressive, conservative)
+
 ## Best Practices
 
 ### When Refactoring MarkdownParser

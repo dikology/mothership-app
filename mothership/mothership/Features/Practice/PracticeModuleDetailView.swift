@@ -13,8 +13,7 @@ struct PracticeModuleDetailView: View {
     @State private var content: MarkdownContent?
     @State private var isLoading = true
     @State private var errorMessage: String?
-    
-    private let contentCache = ContentCache()
+    @State private var isUsingCache = false
     
     private var module: PracticeModule? {
         PracticeModule.defaultModules.first(where: { $0.id == moduleID })
@@ -97,7 +96,12 @@ struct PracticeModuleDetailView: View {
         }
         
         do {
-            let markdown = try await ContentFetcher.fetchMarkdown(path: contentPath)
+            // Try to fetch with cache first, fallback to cached if rate limited
+            let markdown = try await ContentFetcher.fetchMarkdown(
+                path: contentPath,
+                useCache: true,
+                forceRefresh: false
+            )
             var parsedContent = MarkdownParser.parse(markdown, basePath: contentPath)
             
             if parsedContent.title.isEmpty {
@@ -115,17 +119,46 @@ struct PracticeModuleDetailView: View {
             await MainActor.run {
                 self.content = parsedContent
                 self.isLoading = false
+                self.isUsingCache = ContentCache.shared.hasCached(key: "markdown:\(contentPath)")
             }
-        } catch {
-            let errorDetails: String
-            if let fetchError = error as? ContentFetchError {
-                errorDetails = fetchError.errorDescription ?? error.localizedDescription
-            } else {
-                errorDetails = error.localizedDescription
+        } catch let error as ContentFetchError {
+            // Handle rate limit gracefully - try to use cache
+            if case .rateLimited = error {
+                // Try to load from cache even if stale
+                if let cachedData = ContentCache.shared.load(for: "markdown:\(contentPath)"),
+                   let cachedMarkdown = String(data: cachedData, encoding: .utf8) {
+                    var parsedContent = MarkdownParser.parse(cachedMarkdown, basePath: contentPath)
+                    
+                    if parsedContent.title.isEmpty {
+                        parsedContent = MarkdownContent(
+                            title: module.title,
+                            sections: parsedContent.sections,
+                            images: parsedContent.images,
+                            videos: parsedContent.videos,
+                            animatedMedia: parsedContent.animatedMedia,
+                            wikilinks: parsedContent.wikilinks,
+                            metadata: parsedContent.metadata
+                        )
+                    }
+                    
+                    await MainActor.run {
+                        self.content = parsedContent
+                        self.isLoading = false
+                        self.isUsingCache = true
+                        // Show warning but don't block
+                        self.errorMessage = "⚠️ \(error.userFriendlyMessage)\nПоказан кэшированный контент."
+                    }
+                    return
+                }
             }
             
             await MainActor.run {
-                self.errorMessage = "Не удалось загрузить контент:\n\(errorDetails)"
+                self.errorMessage = error.userFriendlyMessage
+                self.isLoading = false
+            }
+        } catch {
+            await MainActor.run {
+                self.errorMessage = "Не удалось загрузить контент:\n\(error.localizedDescription)"
                 self.isLoading = false
             }
         }
