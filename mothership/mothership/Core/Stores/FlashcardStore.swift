@@ -16,6 +16,10 @@ final class FlashcardStore {
     private let userDefaultsKey = "FlashcardStore.v1"
     private let userDefaults: UserDefaults
     
+    // Static flag to prevent loading across all instances (in case multiple instances are created)
+    private static var hasLoadedGlobally = false
+    private var hasLoaded = false // Per-instance flag
+    
     init(userDefaults: UserDefaults = .standard) {
         self.userDefaults = userDefaults
         load()
@@ -36,7 +40,7 @@ final class FlashcardStore {
     /// Add or update deck
     /// Matches by folderName to preserve SRS progress when refreshing content
     func updateDeck(_ deck: FlashcardDeck) {
-        AppLogger.info("📦 Updating deck '\(deck.displayName)' with \(deck.flashcards.count) flashcards")
+            AppLogger.info("Updating deck '\(deck.displayName)' with \(deck.flashcards.count) flashcards")
         
         if let index = decks.firstIndex(where: { $0.folderName == deck.folderName }) {
             // Merge: preserve existing deck ID and SRS progress, update content
@@ -57,6 +61,11 @@ final class FlashcardStore {
                 if let existingIndex = existingDeck.flashcards.firstIndex(where: { $0.fileName == newFlashcard.fileName }) {
                     // Preserve existing flashcard with SRS data, but update content if changed
                     var existingFlashcard = existingDeck.flashcards[existingIndex]
+                    
+                    // Log if we're preserving progress
+                    if existingFlashcard.repetitions > 0 || existingFlashcard.nextReview != nil {
+                        AppLogger.debug("Preserving progress for '\(existingFlashcard.fileName)': repetitions=\(existingFlashcard.repetitions), nextReview=\(existingFlashcard.nextReview?.description ?? "nil")")
+                    }
                     
                     // If content changed, invalidate cache
                     if existingFlashcard.markdownContent != newFlashcard.markdownContent {
@@ -98,11 +107,7 @@ final class FlashcardStore {
     func getDueFlashcards(for deckID: FlashcardDeck.ID) -> [Flashcard] {
         let flashcards = getFlashcards(for: deckID)
         let dueCards = SpacedRepetitionService.getCardsDueToday(from: flashcards)
-        
-        if let deck = getDeck(id: deckID) {
-            AppLogger.info("📋 Deck '\(deck.displayName)': \(dueCards.count) cards due out of \(flashcards.count) total")
-        }
-        
+        // Removed logging - this is called on every view render, too verbose
         return dueCards
     }
     
@@ -111,7 +116,7 @@ final class FlashcardStore {
     /// Update flashcard after review
     func updateFlashcard(_ flashcard: Flashcard, quality: ReviewQuality) {
         guard var deck = getDeck(id: flashcard.deckID) else {
-            AppLogger.warning("⚠️ Cannot update flashcard: deck not found for ID \(flashcard.deckID)")
+            AppLogger.warning("Cannot update flashcard: deck not found for ID \(flashcard.deckID)")
             return
         }
         
@@ -120,11 +125,19 @@ final class FlashcardStore {
         // Update flashcard in deck
         if let index = deck.flashcards.firstIndex(where: { $0.id == flashcard.id }) {
             deck.flashcards[index] = updated
-            updateDeck(deck)
             
-            AppLogger.debug("💾 Saved progress for '\(flashcard.fileName)': quality=\(quality.rawValue), nextReview=\(updated.nextReview?.description ?? "nil"), interval=\(updated.interval)")
+            // Update deck in array
+            if let deckIndex = decks.firstIndex(where: { $0.id == deck.id }) {
+                decks[deckIndex] = deck
+                save()
+                
+                // Log every card to debug progress saving
+                AppLogger.debug("Saved progress for '\(flashcard.fileName)': quality=\(quality.rawValue), repetitions=\(updated.repetitions), interval=\(updated.interval), nextReview=\(updated.nextReview?.description ?? "nil")")
+            } else {
+                AppLogger.error("Cannot find deck in decks array to update")
+            }
         } else {
-            AppLogger.warning("⚠️ Cannot update flashcard: card not found in deck")
+            AppLogger.warning("Cannot update flashcard: card not found in deck")
         }
     }
     
@@ -140,13 +153,28 @@ final class FlashcardStore {
         if let data = try? JSONEncoder().encode(decks) {
             userDefaults.set(data, forKey: userDefaultsKey)
             let totalCards = decks.reduce(0) { $0 + $1.flashcards.count }
-            AppLogger.debug("💾 Saved \(decks.count) deck(s) with \(totalCards) total flashcards to UserDefaults")
+            AppLogger.debug("Saved \(decks.count) deck(s) with \(totalCards) total flashcards to UserDefaults")
         } else {
-            AppLogger.error("❌ Failed to encode flashcard decks for saving")
+            AppLogger.error("Failed to encode flashcard decks for saving")
         }
     }
     
     private func load() {
+        // Prevent multiple loads across all instances
+        // This handles the case where EnvironmentKeys.defaultValue creates new instances
+        guard !Self.hasLoadedGlobally && !hasLoaded else {
+            // If already loaded globally, try to sync this instance with the loaded data
+            if Self.hasLoadedGlobally, let data = userDefaults.data(forKey: userDefaultsKey),
+               let decoded = try? JSONDecoder().decode([FlashcardDeck].self, from: data) {
+                self.decks = decoded
+                markDecksLoaded()
+            }
+            return
+        }
+        
+        Self.hasLoadedGlobally = true
+        hasLoaded = true
+        
         if let data = userDefaults.data(forKey: userDefaultsKey),
            let decoded = try? JSONDecoder().decode([FlashcardDeck].self, from: data) {
             decks = decoded
@@ -154,20 +182,26 @@ final class FlashcardStore {
             // Pre-parse all flashcards to cache parsed content
             let allFlashcards = decoded.flatMap { $0.flashcards }
             if !allFlashcards.isEmpty {
-                AppLogger.info("📚 Loading \(decoded.count) deck(s) with \(allFlashcards.count) total flashcards")
+                AppLogger.info("Loading \(decoded.count) deck(s) with \(allFlashcards.count) total flashcards")
                 FlashcardParsedContentCache.shared.preload(flashcards: allFlashcards)
                 
-                // Log progress statistics
+                // Log progress statistics and verify progress is loaded
                 for deck in decoded {
                     let stats = getReviewStats(for: deck.id)
-                    AppLogger.info("📖 Deck '\(deck.displayName)': \(stats.due) due, \(stats.total) total, \(stats.mastered) mastered")
+                    let cardsWithProgress = deck.flashcards.filter { $0.repetitions > 0 || $0.nextReview != nil }
+                    AppLogger.info("Deck '\(deck.displayName)': \(stats.due) due, \(stats.total) total, \(stats.mastered) mastered, \(cardsWithProgress.count) with saved progress")
+                    
+                    // If we have cards but no progress, that's suspicious
+                    if deck.flashcards.count > 0 && cardsWithProgress.count == 0 {
+                        AppLogger.warning("⚠️ Deck '\(deck.displayName)' has no saved progress - all cards appear new")
+                    }
                 }
             }
             
             markDecksLoaded()
         } else {
             deckState = .empty
-            AppLogger.info("📚 No saved flashcard decks found")
+            AppLogger.info("No saved flashcard decks found")
         }
     }
     

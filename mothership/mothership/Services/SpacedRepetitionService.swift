@@ -49,11 +49,12 @@ enum SpacedRepetitionService {
         
         // Update dates
         updated.lastReviewed = Date()
-        updated.nextReview = Calendar.current.date(
-            byAdding: .day,
-            value: updated.interval,
-            to: Date()
-        )
+        
+        // Calculate nextReview: always use start of day to avoid time-of-day issues
+        // Add interval days to today's start of day
+        let today = Calendar.current.startOfDay(for: Date())
+        updated.nextReview = Calendar.current.date(byAdding: .day, value: updated.interval, to: today)
+        
         updated.lastQuality = q
         
         return updated

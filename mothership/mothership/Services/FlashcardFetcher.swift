@@ -91,6 +91,7 @@ enum FlashcardFetcher {
         
         return deck
         } catch is CancellationError {
+            // Don't log here - let fetchAllDecks handle cancellation logging
             throw CancellationError()
         } catch let error as ContentFetchError {
             // If rate limited and we have cache, try to return cached content
@@ -99,6 +100,7 @@ enum FlashcardFetcher {
                 if let cachedData = ContentCache.shared.load(for: cacheKey),
                    let cachedFlashcards = try? JSONDecoder().decode([CachedFlashcard].self, from: cachedData),
                    !cachedFlashcards.isEmpty {
+                    AppLogger.info("Using cached content for '\(folderName)' (rate limited)")
                     let flashcards = cachedFlashcards.map { $0.toFlashcard(deckID: deckID) }
                     return FlashcardDeck(
                         id: deckID,
@@ -110,9 +112,10 @@ enum FlashcardFetcher {
                     )
                 }
             }
+            // Don't log here - let fetchAllDecks handle error logging to avoid duplicates
             throw error
         } catch {
-            NSLog("[FlashcardFetcher] Unexpected error fetching deck %@: %@", folderName, error.localizedDescription)
+            // Don't log here - let fetchAllDecks handle error logging to avoid duplicates
             throw error
         }
     }
@@ -156,35 +159,59 @@ enum FlashcardFetcher {
                 
                 decks.append(deck)
             } catch is CancellationError {
-                let errorMsg = "Task cancelled while fetching deck \(config.folderName)"
-                errors[config.folderName] = NSError(domain: "FlashcardFetcher", code: -1, userInfo: [NSLocalizedDescriptionKey: errorMsg])
-                throw CancellationError()
+                // Cancellation is expected when user pulls to refresh and releases, or navigates away
+                // Don't treat it as an error - just continue with other decks
+                // Don't log or add to errors - this is normal behavior
+                continue
             } catch let error as ContentFetchError {
                 errors[config.folderName] = error
                 
                 // If rate limited, try to use cached content
-                if case .rateLimited = error, useCache {
+                if case .rateLimited(let timeUntilReset) = error, useCache {
+                    AppLogger.warning("Rate limited for '\(config.folderName)', using cached content (resets in \(Int(timeUntilReset))s)")
                     let existingDeck = existingDecks.first { $0.folderName == config.folderName }
                     if let existingDeck = existingDeck, !existingDeck.flashcards.isEmpty {
                         decks.append(existingDeck)
                     }
+                } else {
+                    AppLogger.error("Failed to fetch deck '\(config.folderName)': \(error.localizedDescription)")
                 }
                 // Continue fetching other decks even if one fails
             } catch {
+                // Check if this is a cancellation error (NSURLErrorCancelled = -999)
+                let nsError = error as NSError
+                if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled {
+                    // Cancellation is expected - don't log as error, just continue
+                    continue
+                }
+                
                 errors[config.folderName] = error
-                NSLog("[FlashcardFetcher] Error fetching deck %@: %@", config.folderName, error.localizedDescription)
+                let errorType = String(describing: type(of: error))
+                AppLogger.error("Error fetching deck '\(config.folderName)': \(error.localizedDescription) (type: \(errorType))")
                 // Continue fetching other decks even if one fails
             }
         }
         
         if !errors.isEmpty {
-            NSLog("[FlashcardFetcher] Fetch summary: %d succeeded, %d failed", decks.count, errors.count)
+            AppLogger.warning("Fetch summary: \(decks.count) deck(s) succeeded, \(errors.count) failed")
+            for (folderName, error) in errors {
+                AppLogger.warning("  - '\(folderName)': \(error.localizedDescription)")
+            }
+        } else if !decks.isEmpty {
+            AppLogger.info("Successfully fetched all \(decks.count) deck(s)")
         }
         
-        // If we got some decks but had errors, that's okay (partial success)
-        // But if we got no decks and all failed, throw an error
+        // If we got some decks, that's a success (even if some were cancelled or failed)
+        // Only throw if we got no decks AND there were actual errors (not just cancellations)
         if decks.isEmpty && !errors.isEmpty {
-            throw errors.values.first!
+            // Check if all errors were cancellations - if so, don't throw
+            let nonCancellationErrors = errors.filter { key, error in
+                !(error is CancellationError) && !(error as NSError).localizedDescription.contains("cancelled")
+            }
+            if !nonCancellationErrors.isEmpty {
+                throw nonCancellationErrors.values.first!
+            }
+            // If all were cancellations, just return empty (caller will handle)
         }
         
         return decks

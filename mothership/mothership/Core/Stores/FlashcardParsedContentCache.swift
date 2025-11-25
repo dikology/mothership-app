@@ -33,7 +33,7 @@ final class FlashcardParsedContentCache {
             // Log performance for large files (> 1KB)
             let contentSize = flashcard.markdownContent.utf8.count
             if contentSize > 1024 || elapsed > 10 {
-                AppLogger.debug("⏱️ Parsed '\(flashcard.fileName)': \(String(format: "%.1f", elapsed))ms (\(contentSize) bytes)")
+                AppLogger.debug("Parsed '\(flashcard.fileName)': \(String(format: "%.1f", elapsed))ms (\(contentSize) bytes)")
             }
             
             return parsed
@@ -71,8 +71,9 @@ final class FlashcardParsedContentCache {
             }
             
             let elapsed = (CFAbsoluteTimeGetCurrent() - startTime) * 1000
-            if parsedCount > 0 {
-                AppLogger.info("⚡ Pre-parsed \(parsedCount) flashcard(s) in \(String(format: "%.1f", elapsed))ms (\(totalSize / 1024)KB total)")
+            // Only log if parsing more than 5 cards or taking significant time
+            if parsedCount > 5 || elapsed > 50 {
+                AppLogger.info("Pre-parsed \(parsedCount) flashcard(s) in \(String(format: "%.1f", elapsed))ms (\(totalSize / 1024)KB total)")
             }
         }
     }

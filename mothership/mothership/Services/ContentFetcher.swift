@@ -378,9 +378,7 @@ enum ContentFetcher {
                 )
                 flashcards.append(flashcard)
                 
-                // Pre-parse markdown to cache parsed content (performance optimization)
-                // This avoids re-parsing on each review
-                FlashcardParsedContentCache.shared.preload(flashcards: [flashcard])
+                // Don't pre-parse individually - batch pre-parse all at once after fetching
                 
                 // Small delay between requests to be respectful
                 try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
@@ -400,6 +398,9 @@ enum ContentFetcher {
             if let cacheData = try? JSONEncoder().encode(cachedFlashcards) {
                 try? cache.save(data: cacheData, for: cacheKey)
             }
+            
+            // Batch pre-parse all flashcards at once (more efficient than one-by-one)
+            FlashcardParsedContentCache.shared.preload(flashcards: flashcards)
         }
         
         if !failedFiles.isEmpty {
