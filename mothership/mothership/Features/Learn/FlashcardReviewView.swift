@@ -16,6 +16,7 @@ struct FlashcardReviewView: View {
     
     @State private var currentIndex = 0
     @State private var showingCompletion = false
+    @State private var hasLoggedEntry = false
     
     private var deck: FlashcardDeck? {
         flashcardStore.getDeck(id: deckID)
@@ -67,6 +68,41 @@ struct FlashcardReviewView: View {
                     Text("\(currentIndex + 1)/\(dueCards.count)")
                         .font(AppTypography.caption)
                         .foregroundColor(AppColors.textSecondary)
+                }
+            }
+        }
+        .onAppear {
+            // Log once when view appears (not on every render)
+            if !hasLoggedEntry, let deck = deck {
+                hasLoggedEntry = true
+                let allCards = flashcardStore.getFlashcards(for: deckID)
+                let cardsWithProgress = allCards.filter { $0.repetitions > 0 || $0.nextReview != nil }
+                let dueCount = dueCards.count
+                
+                AppLogger.info("Entered deck '\(deck.displayName)': \(dueCount) due, \(allCards.count) total, \(cardsWithProgress.count) with progress")
+                
+                if cardsWithProgress.count > 0 && dueCount == allCards.count {
+                    // All cards are due even though some have progress - check if nextReview is today
+                    let sampleCard = cardsWithProgress.first!
+                    if let nextReview = sampleCard.nextReview {
+                        let today = Calendar.current.startOfDay(for: Date())
+                        let reviewDay = Calendar.current.startOfDay(for: nextReview)
+                        if reviewDay > today {
+                            AppLogger.warning("⚠️ Progress issue: Card '\(sampleCard.fileName)' has nextReview=\(nextReview) (future), but is still due")
+                        } else {
+                            AppLogger.debug("Card '\(sampleCard.fileName)' is due because nextReview=\(nextReview) is today or past")
+                        }
+                    }
+                }
+                
+                // Log sample of cards with progress for debugging
+                if cardsWithProgress.count > 0 {
+                    let sample = cardsWithProgress.prefix(2)
+                    for card in sample {
+                        AppLogger.debug("Sample: '\(card.fileName)' - repetitions=\(card.repetitions), nextReview=\(card.nextReview?.description ?? "nil"), interval=\(card.interval)")
+                    }
+                } else if allCards.count > 0 {
+                    AppLogger.warning("⚠️ No saved progress found for deck '\(deck.displayName)' - all cards appear new")
                 }
             }
         }
@@ -249,7 +285,7 @@ struct FlashcardView: View {
                 
                 // Markdown content
                 ScrollView {
-                    MarkdownContentView(content: card.markdownContent)
+                    MarkdownContentView(flashcard: card)
                         .padding(.horizontal, AppSpacing.md)
                 }
             }
@@ -263,11 +299,11 @@ struct FlashcardView: View {
 // MARK: - Markdown Content View
 
 struct MarkdownContentView: View {
-    let content: String
+    let flashcard: Flashcard
     
     var body: some View {
-        // Parse markdown and display
-        let parsed = MarkdownParser.parse(content)
+        // Use cached parsed content (parsed once when fetched)
+        let parsed = FlashcardParsedContentCache.shared.getParsedContent(for: flashcard)
         
         VStack(alignment: .leading, spacing: AppSpacing.md) {
             // Display sections

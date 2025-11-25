@@ -117,7 +117,11 @@ struct LearnView: View {
             }
             flashcardStore.markDecksLoaded()
         } catch is CancellationError {
-            infoMessageKey = L10n.Error.loadingCancelled
+            // If we got some decks before cancellation, that's still a success
+            // Only show cancellation message if we got nothing
+            if flashcardStore.decks.isEmpty {
+                infoMessageKey = L10n.Error.loadingCancelled
+            }
             flashcardStore.markDecksLoaded()
         } catch let error as ContentFetchError {
             flashcardStore.markDecksError(error.asAppError)

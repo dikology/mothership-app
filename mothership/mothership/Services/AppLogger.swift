@@ -28,26 +28,28 @@ enum AppLogger {
     
     /// Log errors
     static func error(_ message: String) {
-        logger.error("\(message)")
-        NSLog("❌ Error: %@", message)
+        // Only use NSLog to avoid duplicate logs
+        // Remove emoji from message since NSLog format already includes it
+        NSLog("❌ %@", message.replacingOccurrences(of: "❌ ", with: ""))
     }
     
     /// Log warnings
     static func warning(_ message: String) {
-        logger.warning("\(message)")
-        NSLog("⚠️ Warning: %@", message)
+        // Only use NSLog to avoid duplicate logs
+        NSLog("⚠️ %@", message.replacingOccurrences(of: "⚠️ ", with: ""))
     }
     
     /// Log general info
     static func info(_ message: String) {
-        logger.info("\(message)")
-        NSLog("ℹ️ Info: %@", message)
+        // Only use NSLog to avoid duplicate logs
+        // Remove emoji from message since NSLog format already includes it
+        NSLog("ℹ️ %@", message.replacingOccurrences(of: "ℹ️ ", with: ""))
     }
     
     /// Log debug info
     static func debug(_ message: String) {
-        logger.debug("\(message)")
-        NSLog("🔍 Debug: %@", message)
+        // Only use NSLog to avoid duplicate logs
+        NSLog("🔍 %@", message.replacingOccurrences(of: "🔍 ", with: ""))
     }
 }
 
