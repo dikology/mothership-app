@@ -57,6 +57,12 @@ final class CharterStore {
         load()
     }
     
+    /// Clears in-memory charters so tests can simulate a fresh reload from disk.
+    func clearInMemoryStateForTesting() {
+        charters = []
+        markChartersLoading()
+    }
+    
     private func save() {
         // Save charters
         if let data = try? JSONEncoder().encode(charters) {

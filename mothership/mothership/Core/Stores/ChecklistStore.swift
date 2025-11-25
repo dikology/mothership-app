@@ -205,6 +205,14 @@ final class ChecklistStore {
         load()
     }
     
+    /// Clears in-memory state to allow a fresh reload from persistence.
+    /// Primarily used by tests to simulate an application restart.
+    func clearInMemoryStateForTesting() {
+        checklists = []
+        charterChecklistStates = [:]
+        markChecklistsLoading()
+    }
+    
     private func save() {
         if let data = try? JSONEncoder().encode(checklists) {
             userDefaults.set(data, forKey: userDefaultsKey)

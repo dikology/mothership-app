@@ -352,9 +352,8 @@ struct ChecklistStoreTests {
         
         // When
         // Clear in-memory state and reload from UserDefaults (simulates app restart)
-        sut.checklists = []
-        sut.charterChecklistStates = [:]
-        #expect(sut.checklists.isEmpty, "Checklists should be cleared")
+        sut.clearInMemoryStateForTesting()
+        #expect(sut.getCheckInChecklist() == nil, "Checklists should be cleared")
         #expect(sut.charterChecklistStates.isEmpty, "States should be cleared")
         
         sut.reload()

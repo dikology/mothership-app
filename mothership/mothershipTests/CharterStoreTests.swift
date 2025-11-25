@@ -237,7 +237,7 @@ struct CharterStoreTests {
         #expect(sut.charters.count == 1)
         
         // When: Clearing the in-memory state and reloading from UserDefaults
-        sut.charters = []
+        sut.clearInMemoryStateForTesting()
         #expect(sut.charters.isEmpty, "Charters should be cleared")
         
         sut.reload()
