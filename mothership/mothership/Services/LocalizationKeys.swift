@@ -60,6 +60,29 @@ enum L10n: Sendable {
         static let mooring = "practice.mooring"
         static let safety = "practice.safety"
         static let all = "practice.all"
+        
+        enum Module: Sendable {
+            static let safetyBriefingTitle = "practice.module.safety_briefing.title"
+            static let safetyBriefingSubtitle = "practice.module.safety_briefing.subtitle"
+            static let lifeOnYachtTitle = "practice.module.life_on_yacht.title"
+            static let lifeOnYachtSubtitle = "practice.module.life_on_yacht.subtitle"
+            static let firstAidKitTitle = "practice.module.first_aid_kit.title"
+            static let firstAidKitSubtitle = "practice.module.first_aid_kit.subtitle"
+            static let goingAshoreTitle = "practice.module.going_ashore.title"
+            static let goingAshoreSubtitle = "practice.module.going_ashore.subtitle"
+            static let mooringAndDepartureTitle = "practice.module.mooring_and_departure.title"
+            static let mooringAndDepartureSubtitle = "practice.module.mooring_and_departure.subtitle"
+            static let roundTurnTitle = "practice.module.round_turn.title"
+            static let roundTurnSubtitle = "practice.module.round_turn.subtitle"
+            static let preDepartureTitle = "practice.module.pre_departure.title"
+            static let preDepartureSubtitle = "practice.module.pre_departure.subtitle"
+            static let departureFromPierTitle = "practice.module.departure_from_pier.title"
+            static let departureFromPierSubtitle = "practice.module.departure_from_pier.subtitle"
+            static let mediterraneanMooringTitle = "practice.module.mediterranean_mooring.title"
+            static let mediterraneanMooringSubtitle = "practice.module.mediterranean_mooring.subtitle"
+            static let anchoringTitle = "practice.module.anchoring.title"
+            static let anchoringSubtitle = "practice.module.anchoring.subtitle"
+        }
     }
     
     // MARK: - Tab Bar

@@ -49,6 +49,29 @@
 "practice.safety" = "Safety";
 "practice.all" = "All";
 
+// MARK: - Practice Modules
+
+"practice.module.safety_briefing.title" = "Safety";
+"practice.module.safety_briefing.subtitle" = "Safety briefing on yacht";
+"practice.module.life_on_yacht.title" = "Life on Yacht";
+"practice.module.life_on_yacht.subtitle" = "Life on yacht briefing";
+"practice.module.first_aid_kit.title" = "First Aid Kit";
+"practice.module.first_aid_kit.subtitle" = "First Aid Kit";
+"practice.module.going_ashore.title" = "Going Ashore";
+"practice.module.going_ashore.subtitle" = "Going Ashore";
+"practice.module.mooring_and_departure.title" = "Mooring and Departure";
+"practice.module.mooring_and_departure.subtitle" = "Mooring and Departure";
+"practice.module.round_turn.title" = "Round Turn and Two Half Hitches";
+"practice.module.round_turn.subtitle" = "Round Turn and Two Half Hitches";
+"practice.module.pre_departure.title" = "Pre-departure Preparation";
+"practice.module.pre_departure.subtitle" = "Pre-departure Preparation";
+"practice.module.departure_from_pier.title" = "Departure from Pier";
+"practice.module.departure_from_pier.subtitle" = "Departure from Pier";
+"practice.module.mediterranean_mooring.title" = "Mediterranean Mooring";
+"practice.module.mediterranean_mooring.subtitle" = "Mediterranean Mooring";
+"practice.module.anchoring.title" = "Anchoring";
+"practice.module.anchoring.subtitle" = "Anchoring";
+
 // MARK: - Checklist
 
 "checklist.check_in_checklist" = "Check-in Checklist";

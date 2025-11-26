@@ -49,6 +49,29 @@
 "practice.safety" = "Безопасность";
 "practice.all" = "Все";
 
+// MARK: - Practice Modules
+
+"practice.module.safety_briefing.title" = "Безопасность";
+"practice.module.safety_briefing.subtitle" = "Брифинг по безопасности на яхте";
+"practice.module.life_on_yacht.title" = "Жизнь на яхте";
+"practice.module.life_on_yacht.subtitle" = "Брифинг по жизни на яхте";
+"practice.module.first_aid_kit.title" = "Аптечка";
+"practice.module.first_aid_kit.subtitle" = "Аптечка";
+"practice.module.going_ashore.title" = "Сход на берег";
+"practice.module.going_ashore.subtitle" = "Сход на берег";
+"practice.module.mooring_and_departure.title" = "Швартовка и отход";
+"practice.module.mooring_and_departure.subtitle" = "Швартовка и отход";
+"practice.module.round_turn.title" = "Штык со шлагом";
+"practice.module.round_turn.subtitle" = "Штык со шлагом";
+"practice.module.pre_departure.title" = "Подготовка к выходу";
+"practice.module.pre_departure.subtitle" = "Подготовка к выходу";
+"practice.module.departure_from_pier.title" = "Отход от пирса";
+"practice.module.departure_from_pier.subtitle" = "Отход от пирса";
+"practice.module.mediterranean_mooring.title" = "Швартовка по средиземноморски";
+"practice.module.mediterranean_mooring.subtitle" = "Швартовка по средиземноморски";
+"practice.module.anchoring.title" = "Постановка на якорь";
+"practice.module.anchoring.subtitle" = "Постановка на якорь";
+
 // MARK: - Checklist
 
 "checklist.check_in_checklist" = "Чек-лист приемки яхты";

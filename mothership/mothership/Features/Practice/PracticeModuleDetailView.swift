@@ -13,7 +13,7 @@ struct PracticeModuleDetailView: View {
     @Environment(\.contentFetcherStore) private var contentFetcherStore
     
     private var module: PracticeModule? {
-        PracticeModule.defaultModules.first(where: { $0.id == moduleID })
+        PracticeModule.defaultModules(using: localization).first(where: { $0.id == moduleID })
     }
     
     private var contentState: ViewState<MarkdownContent> {
@@ -123,9 +123,11 @@ private extension PracticeModuleDetailView {
 
 struct PracticeModuleDetailView_Previews: PreviewProvider {
     static var previews: some View {
+        let localization = LocalizationService()
         NavigationStack {
-            PracticeModuleDetailView(moduleID: PracticeModule.defaultModules.first!.id)
+            PracticeModuleDetailView(moduleID: PracticeModule.defaultModules(using: localization).first!.id)
                 .environment(\.contentFetcherStore, ContentFetcherStore())
+                .environment(\.localization, localization)
         }
     }
 }

@@ -37,12 +37,6 @@ struct HomeView: View {
                         )
                     )
                     .padding(.horizontal, AppSpacing.screenPadding)
-                } else if charterState.isEmpty {
-                    FeedbackBanner(
-                        severity: .info,
-                        messages: [localization.localized(L10n.Charter.createCharterDescription)]
-                    )
-                    .padding(.horizontal, AppSpacing.screenPadding)
                 }
                 
                 if let activeCharter = charterStore.activeCharter {
@@ -186,7 +180,7 @@ struct HomeView: View {
     }
     
     private var briefingModules: [PracticeModule] {
-        PracticeModule.defaultModules.filter { $0.category == .briefing }
+        PracticeModule.defaultModules(using: localization).filter { $0.category == .briefing }
     }
     
     private func retryCharterLoad() {
@@ -194,3 +188,8 @@ struct HomeView: View {
     }
 }
 
+#Preview {
+    HomeView()
+        .environment(\.charterStore, CharterStore())
+        .environment(\.localization, LocalizationService())
+}
