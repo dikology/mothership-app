@@ -25,14 +25,14 @@ final class LocalizationService {
     
     /// System language detected from device settings
     private var systemLanguage: AppLanguage {
-        let preferredLanguage = Locale.preferredLanguages.first ?? "ru"
+        // let preferredLanguage = Locale.preferredLanguages.first ?? "ru"
         
-        // Check if it starts with a supported language code
-        if preferredLanguage.hasPrefix("ru") {
-            return .russian
-        } else if preferredLanguage.hasPrefix("en") {
-            return .english
-        }
+        // // Check if it starts with a supported language code
+        // if preferredLanguage.hasPrefix("ru") {
+        //     return .russian
+        // } else if preferredLanguage.hasPrefix("en") {
+        //     return .english
+        // }
         
         // Default to Russian
         return .russian
