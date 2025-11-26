@@ -168,6 +168,8 @@ enum L10n: Sendable {
         static let reputation = "profile.reputation"
         static let editProfile = "profile.edit_profile"
         static let selectUserType = "profile.select_user_type"
+        static let deleteAccount = "profile.delete_account"
+        static let deleteAccountConfirmation = "profile.delete_account_confirmation"
     }
     
     // MARK: - Error Handling

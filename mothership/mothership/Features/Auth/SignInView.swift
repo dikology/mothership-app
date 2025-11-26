@@ -76,6 +76,7 @@ struct SignInView: View {
             .disabled(authState.isLoading)
             .padding(.horizontal, AppSpacing.screenPadding)
             
+            /*
             Button(action: {}) {
                 Text(localization.localized(L10n.Auth.continueAsGuest))
                     .font(AppTypography.body)
@@ -83,9 +84,10 @@ struct SignInView: View {
             }
             .disabled(true)
             .opacity(0.5)
+            */
             
             Link(
-                destination: URL(string: "https://mothership.app/privacy") ?? URL(string: "https://example.com")!,
+                destination: URL(string: "https://dikology.com/mothership-app")!,
                 label: {
                     Text(localization.localized(L10n.Auth.privacyPolicy))
                         .font(AppTypography.caption)
