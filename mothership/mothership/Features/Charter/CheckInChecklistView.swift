@@ -115,7 +115,7 @@ struct CheckInChecklistView: View {
     
     private func loadChecklist() {
         checklistStore.markChecklistsLoading()
-        let loadedChecklist = checklistStore.getCheckInChecklist(for: charterId)
+        let loadedChecklist = checklistStore.getCheckInChecklist(for: charterId, using: localization)
         checklist = loadedChecklist
         if loadedChecklist != nil {
             checklistStore.markChecklistsLoaded()
@@ -125,7 +125,7 @@ struct CheckInChecklistView: View {
     }
     
     private func updateChecklist() {
-        checklist = checklistStore.getCheckInChecklist(for: charterId)
+        checklist = checklistStore.getCheckInChecklist(for: charterId, using: localization)
     }
     
     private func reloadChecklist() {

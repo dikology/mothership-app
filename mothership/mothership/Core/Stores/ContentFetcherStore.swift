@@ -108,17 +108,93 @@ final class ContentFetcherStore {
     }
     
     private func determineContentPath(for module: PracticeModule, localization: LocalizationService) -> String {
-        switch module.title {
-        case "Безопасность":
-            return "безопасность/брифинг по безопасности.md"
-        case "Жизнь на яхте":
-            return "команда/жизнь на лодке.md"
-        case "Подготовка к выходу":
-            return "чеклисты/подготовка к выходу.md"
-        default:
-            let categoryPath = module.category.localizedContentDirectory(using: localization)
-            return "\(categoryPath)/\(module.title.lowercased()).md"
+        // Get language code (ru or en)
+        let languageCode = localization.effectiveLanguage.code
+        
+        // Check if module has a language-specific path mapping
+        if let languagePaths = modulePathMapping[module.id.uuidString],
+           let modulePath = languagePaths[languageCode] {
+            // Use language-specific path: {language}/{path}
+            return "\(languageCode)/\(modulePath)"
         }
+        
+        // Fallback: use default path generation
+        let modulePath = defaultModulePath(for: module, localization: localization)
+        return "\(languageCode)/\(modulePath)"
+    }
+    
+    /// Mapping from module ID to language-specific file paths (relative to language folder)
+    /// Modules that don't follow the default category/filename structure need explicit mappings
+    private var modulePathMapping: [String: [String: String]] {
+        [
+            // Safety Briefing
+            "00000000-0000-0000-0000-000000000001": [
+                "ru": "безопасность/брифинг по безопасности.md",
+                "en": "safety/safety briefing.md"
+            ],
+            // Life on Yacht
+            "00000000-0000-0000-0000-000000000002": [
+                "ru": "команда/жизнь на лодке.md",
+                "en": "crew/life on board.md"
+            ],
+            // First Aid Kit
+            "00000000-0000-0000-0000-000000000003": [
+                "ru": "безопасность/аптечка.md",
+                "en": "safety/first aid kit.md"
+            ],
+            // Going Ashore
+            "00000000-0000-0000-0000-000000000004": [
+                "ru": "безопасность/сход на берег.md",
+                "en": "safety/going ashore.md"
+            ],
+            // Mooring and Departure
+            "00000000-0000-0000-0000-000000000005": [
+                "ru": "безопасность/швартовка и отход.md",
+                "en": "safety/mooring and departure.md"
+            ],
+            // Round Turn (Knot)
+            "00000000-0000-0000-0000-000000000006": [
+                "ru": "узлы/штык со шлагом.md",
+                "en": "knots/round turn and two half hitches.md"
+            ],
+            // Pre-departure Preparation
+            "00000000-0000-0000-0000-000000000007": [
+                "ru": "чеклисты/подготовка к выходу.md",
+                "en": "checklists/pre-departure checklist.md"
+            ],
+            // Departure from Pier
+            "00000000-0000-0000-0000-000000000008": [
+                "ru": "швартовки/отход от пирса.md",
+                "en": "mooring/departure from pier.md"
+            ],
+            // Mediterranean Mooring
+            "00000000-0000-0000-0000-000000000009": [
+                "ru": "швартовки/швартовка по средиземноморски.md",
+                "en": "mooring/mediterranean mooring.md"
+            ],
+            // Anchoring
+            "00000000-0000-0000-0000-000000000010": [
+                "ru": "швартовки/постановка на якорь.md",
+                "en": "mooring/anchoring.md"
+            ]
+        ]
+    }
+    
+    /// Default path generation for modules not in the mapping
+    /// Uses category name and sanitized title based on the provided localization
+    private func defaultModulePath(for module: PracticeModule, localization: LocalizationService) -> String {
+        // Get localized category directory name
+        let categoryPath = module.category.localizedContentDirectory(using: localization)
+        
+        // Sanitize title for filename
+        let fileName = module.title
+            .lowercased()
+            .replacingOccurrences(of: " ", with: "_")
+            .replacingOccurrences(of: "/", with: "_")
+            .replacingOccurrences(of: ":", with: "_")
+            .replacingOccurrences(of: ",", with: "_")
+        
+        return "\(categoryPath)/\(fileName).md"
     }
 }
 

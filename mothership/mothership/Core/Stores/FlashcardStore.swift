@@ -38,15 +38,16 @@ final class FlashcardStore {
     }
     
     /// Add or update deck
-    /// Matches by folderName to preserve SRS progress when refreshing content
+    /// Matches by deck ID or folder name to preserve SRS progress when refreshing content
     func updateDeck(_ deck: FlashcardDeck) {
             AppLogger.info("Updating deck '\(deck.displayName)' with \(deck.flashcards.count) flashcards")
         
-        if let index = decks.firstIndex(where: { $0.folderName == deck.folderName }) {
+        if let index = decks.firstIndex(where: { $0.id == deck.id || $0.folderName == deck.folderName }) {
             // Merge: preserve existing deck ID and SRS progress, update content
             var existingDeck = decks[index]
             
             // Update metadata
+            existingDeck.folderName = deck.folderName
             existingDeck.displayName = deck.displayName
             existingDeck.description = deck.description
             existingDeck.lastFetched = deck.lastFetched

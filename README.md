@@ -1,97 +1,57 @@
 # Mothership App
 
-A comprehensive sailing charter management and education application for iOS.
+_EN · Native iOS companion for charter management and onboard education._
 
-## Overview
+_RU · Нативное iOS‑приложение для управления чартером и обучения экипажа._
 
-Mothership is a native iOS app designed to help sailing enthusiasts manage their charter experiences and access essential sailing knowledge. The app combines practical charter management with educational content, making it the perfect companion for both novice and experienced sailors.
+---
 
-## Features
+## Overview · Обзор
 
-### 🛥️ Charter Management
-- **Create & Manage Charters**: Track multiple sailing charters with dates, locations, yacht details
-- **Active Charter Detection**: Automatically identifies current charters based on dates
-- **Charter Details**: Store yacht name, charter company, location, and custom notes
-- **CRUD Operations**: Full create, read, update, and delete functionality
+**EN** · Mothership keeps charter logistics, acceptance checklists, and practice content together so skippers and crews can plan, brief, and sail with confidence.
 
-### ✅ Check-in Checklist
-- **Comprehensive Yacht Acceptance**: 60+ items across 7 essential sections
-  - Equipment and Documents
-  - 12V Panel Systems
-  - Engine Inspection
-  - Sails Check
-  - Navigation Equipment
-  - Safety Equipment
-  - Charter Manager Communication
-- **Expandable Sections**: Tap to collapse/expand checklist sections
-- **Item Notes**: 
-  - Static informational notes for guidance
-  - User-editable notes on any item
-- **Progress Tracking**: Visual progress indicator showing completion percentage
-- **Charter-Scoped State**: Each charter maintains independent checklist progress
-- **Persistent Storage**: Checklist state saved between app sessions
+**RU** · Mothership объединяет планирование рейса, чек-листы приёмки и учебный контент, чтобы шкипер и экипаж могли готовиться и идти в море уверенно.
 
-### 📚 Practice Modules
-- **Safety Briefings**: Essential safety procedures and protocols
-- **Yacht Life Guide**: Living aboard best practices
-- **Category Filtering**: Browse by briefing, knots, maneuvering, mooring
-- **Rich Content Display**: 
-  - Hierarchical sections (H2 → H3 → H4)
-  - Bullet lists with formatting
-  - Bold text support
-  - Wikilinks for cross-references
+---
 
-### 🏠 Home Dashboard
-- **Personalized Greeting**: Time-based greetings (morning, afternoon, evening, night)
-- **Charter Quick Access**: View and access active charter details
-- **Context-Aware Briefings**: Displays relevant briefing modules when charter is active
+## Feature Highlights · Основные возможности
 
-### 🌍 Localization
-- **Bilingual Support**: Russian (default) and English
-- **System Language Detection**: Automatically adapts to device language
-- **International Terms**: Russian text includes English sailing terms as reference
-- **Type-Safe Keys**: Compile-time checked localization strings
+### 🛥️ Charter Management · Управление чартерами
+- **EN** · Create, edit, and archive multiple charters with yacht data, charter company, location, and notes. Active trips are detected automatically from date ranges.
+- **RU** · Создавайте и редактируйте несколько чартера с данными яхты, чартерной компании, локацией и заметками. Текущий рейс определяется автоматически по датам.
 
-### 📄 Content Management
-- **GitHub Integration**: Fetches practice content from remote repository
-- **Obsidian Compatibility**: Supports Obsidian-style markdown formatting
-- **Markdown Parser**: 
-  - Hierarchical sections
-  - Wikilinks with custom display text
-  - Frontmatter metadata (YAML)
-  - Bold formatting
-  - Emoji support
-- **Offline Caching**: Content cached for offline access
+### ✅ Check-in Checklist · Чек-листы приёмки
+- **EN** · 60+ acceptance points across Equipment & Docs, Electrical, Engine, Sails, Navigation, Safety, and Handover communication. Sections collapse, each item stores guidance and crew notes, and completion is tracked per charter.
+- **RU** · Более 60 пунктов по разделам: документы и оборудование, 12V панель, двигатель, паруса, навигация, безопасность и передача яхты. Разделы сворачиваются, у каждого пункта есть подсказки и заметки экипажа, прогресс фиксируется отдельно для каждого чартера.
 
-## Technical Highlights
+### 📚 Practice Modules · Практика и брифинги
+- **EN** · Safety briefings, knots, maneuvering, mooring, and yacht-life docs fetched from the Captain's Locker vault (Obsidian markdown). Supports section hierarchy (H2→H4), bullet formatting, bold text, and wikilinks.
+- **RU** · Брифинги по безопасности, узлы, манёвры, швартовка и быт на борту загружаются из репозитория Captain's Locker (формат Obsidian). Поддерживаются заголовки H2–H4, списки, жирное начертание и вики‑ссылки.
 
-### Architecture
-- **SwiftUI**: Modern declarative UI framework
-- **Observation Framework**: SwiftUI @Observable for reactive state management
-- **MVVM Pattern**: Clear separation of concerns
-- **Environment-Based DI**: Clean dependency injection via SwiftUI environment
-- **Type-Safe Navigation**: Enum-based navigation paths
+### 🏠 Home Dashboard · Домашний экран
+- **EN** · Shows time-based greeting, quick access card for the active charter, plus contextual practice modules when a trip is underway.
+- **RU** · Отображает приветствие по времени суток, карточку текущего чартера и релевантные брифинги при активном рейсе.
 
-### Data Persistence
-- **UserDefaults**: Charter and checklist state storage
-- **Codable Models**: JSON encoding/decoding for all data models
-- **Charter Isolation**: Independent state per charter
+### 🌍 Localization · Локализация
+- **EN** · Russian default + English fallback, system language auto-detection, and type-safe localization keys. Russian copy includes English sailing terms for clarity.
+- **RU** · Русский по умолчанию и английский при необходимости, автоматическое определение языка системы и типобезопасные ключи локализации. В русском тексте при необходимости приводятся английские термины.
 
-### Testing
-- **Unit Tests**: Comprehensive ChecklistStore test coverage
-- **Test Isolation**: Proper setup/teardown for reliable tests
-- **Persistence Testing**: Validates state retention across app sessions
+### 📄 Content Management · Контент
+- **EN** · GitHub integration keeps practice content up to date, YAML frontmatter is parsed, wikilinks resolve custom titles, and markdown is cached offline.
+- **RU** · Интеграция с GitHub обновляет учебный контент, поддерживается YAML-фронтматтер, вики‑ссылки с кастомными подписями и офлайн-кеширование.
 
-### Content System
-- **ContentFetcher**: Asynchronous GitHub content retrieval
-- **MarkdownParser**: 
-  - Two-pass parsing for accuracy
-  - Recursive section hierarchy
-  - Wikilink resolution
-  - Rich text processing
-- **Error Handling**: Graceful error states with user feedback
+---
 
-## Project Structure
+## Technical Highlights · Технические особенности
+
+- **Architecture / Архитектура** · SwiftUI + MVVM, Observation framework (`@Observable`), environment-based DI, and enum-powered type-safe navigation via `AppPath`.
+- **Data Persistence / Хранение данных** · `UserDefaults` + `Codable` модели держат чартеры, чек-листы и кеш контента. Прогресс изолирован на уровне отдельного чартера.
+- **Testing / Тестирование** · ChecklistStore покрыт юнит-тестами (создание, прогресс, сохранение). Фикстуры полностью изолированы для детерминированных прогонов.
+- **Content System / Контентная система** · `ContentFetcher` загружает Markdown из GitHub асинхронно, `MarkdownParser` выполняет двухпроходный разбор, строит вложенные секции, разрешает вики‑ссылки и обрабатывает ошибки с понятной обратной связью.
+
+---
+
+## Project Structure · Структура проекта
 
 ```
 mothership/
@@ -142,57 +102,56 @@ mothership/
         └── Localizable.strings     # English translations
 ```
 
-## Development
+## Development · Сборка и запуск
 
-### Requirements
+### Requirements · Требования
 
-- **iOS**: 18.0+
-- **Xcode**: 16.0+
-- **Swift**: 5.10+
+- **EN** · iOS 18.0+, Xcode 16.0+, Swift 5.10+
+- **RU** · Требуется iOS 18.0+, Xcode 16.0+ и Swift 5.10+
 
-### Getting Started
+### Getting Started · Быстрый старт
 
-1. Clone the repository
+1. **EN** · Clone the repo  
+   **RU** · Клонируйте репозиторий  
    ```bash
    git clone <repository-url>
    cd mothership-app
    ```
-
-2. Open in Xcode
+2. **EN** · Open the project in Xcode  
+   **RU** · Откройте проект в Xcode  
    ```bash
    open mothership/mothership.xcodeproj
    ```
+3. **EN** · Choose a target device or simulator  
+   **RU** · Выберите устройство или симулятор
+4. **EN** · Build & Run (⌘R)  
+   **RU** · Соберите и запустите (⌘R)
 
-3. Select your target device or simulator
+### Testing · Тестирование
 
-4. Build and run (⌘R)
+- **EN** · Run ⌘U for the full suite, ⌘⌃U for coverage.  
+- **RU** · Запустите ⌘U для всех тестов или ⌘⌃U для покрытия.
 
-### Testing
-
-Run unit tests in Xcode:
-- **All Tests**: ⌘U
-- **Test with Coverage**: ⌘⌃U
-
-Or via command line:
 ```bash
 cd mothership
 xcodebuild test -scheme mothership -destination 'platform=iOS Simulator,name=iPhone 15'
 ```
 
-### Testing Different Languages
+### Language Testing · Проверка локализации
 
-1. **System Language**: Settings → General → Language & Region
-2. **Xcode**: Edit Scheme → Run → Options → App Language
-3. **Runtime**: Switch language in app settings (when implemented)
+1. **System** · Settings → General → Language & Region  
+   _RU · Настройки → Основные → Язык и регион_
+2. **Xcode** · Edit Scheme → Run → Options → App Language  
+   _RU · Edit Scheme → Run → Options → App Language_
+3. **Runtime** · Switch inside the app (upcoming UI toggle)  
+   _RU · Переключение языка внутри приложения (фича в разработке)_
 
-## Content Sources
+## Content Sources · Источники контента
 
-Practice content is fetched from the Captain's Locker repository:
-- Repository: `captains-locker`
-- Format: Obsidian-style Markdown
-- Sections: Safety briefings, yacht procedures, sailing techniques
+- **EN** · Practice modules sync from the `captains-locker` Obsidian vault containing safety briefings, onboard life guides, and seamanship tutorials.  
+- **RU** · Практические материалы синхронизируются с репозиторием `captains-locker` в формате Obsidian: брифинги по безопасности, жизнь на борту и материалы по судовождению.
 
-## Localization
+## Localization · Работа со строками
 
 ### Quick Start
 
@@ -229,52 +188,44 @@ struct MyView: View {
    Text(localization.localized(L10n.MyFeature.newString))
    ```
 
-## Design System
+## Design System · Дизайн-система
 
-The app uses a comprehensive design system with:
-- **Color Palette**: Maritime-themed colors (ocean blue, lavender, sunset orange)
-- **Typography Scale**: Consistent font sizes and weights
-- **Spacing System**: 4px-based spacing scale
-- **Card Components**: Reusable featured and grid cards
-- **Illustrations**: Custom maritime illustrations
+- **EN** · Maritime color palette, typography scale, 4pt spacing, reusable cards, and custom illustrations provide visual consistency.  
+- **RU** · Морская цветовая палитра, типографика, 4‑пиксельная сетка отступов, переиспользуемые карточки и кастомные иллюстрации поддерживают единый стиль.
 
-## Contributing
+## Contributing · Вклад в проект
 
-When adding new features:
+**Flow / Процесс**
+1. **Models / Модели** · `Core/Models/`
+2. **Stores / Хранилища** · `Core/Stores/`
+3. **Views / Представления** · `Features/`
+4. **Localization / Локализация** · `LocalizationKeys` + `Localizable.strings`
+5. **Tests / Тесты** · Добавляйте юнит-тесты для бизнес-логики
+6. **Docs / Документация** · Обновляйте README и комментарии
 
-1. **Models**: Create data models in `Core/Models/`
-2. **Stores**: Add state management in `Core/Stores/`
-3. **Views**: Implement UI in `Features/`
-4. **Localization**: Add keys and translations
-5. **Tests**: Write unit tests for business logic
-6. **Documentation**: Update README and inline documentation
+**Code Style / Стиль**
+- SwiftUI everywhere · SwiftUI во всех экранах
+- MVVM structure · Архитектура MVVM
+- `@Observable` stores · Стора на Observation
+- Environment-based DI · DI через Environment
+- Type-safe navigation via `AppPath` · Безопасная навигация через `AppPath`
+- Thorough error handling · Продуманная обработка ошибок
 
-### Code Style
+## Known Limitations · Ограничения
 
-- Use SwiftUI for all UI
-- Follow MVVM architecture
-- Use `@Observable` for stores
-- Environment-based dependency injection
-- Type-safe navigation with `AppPath`
-- Comprehensive error handling
+- **EN** · First content load needs network • Cache not synced across devices • CloudKit not yet integrated • Manual in-app language switch pending UI.  
+- **RU** · Первая загрузка контента требует сети • Кеш не синхронизируется между устройствами • CloudKit ещё не подключён • Переключатель языка в приложении в работе.
 
-## Known Limitations
+## Future Enhancements · Планы
 
-- Practice content requires network connection for first load
-- Content is cached but not synced across devices
-- No CloudKit integration yet
-- Manual language switching not yet implemented in UI
-
-## Future Enhancements
-
-- [ ] Daily checklists for ongoing charter management
-- [ ] Photo attachments for checklist items
-- [ ] Export checklist as PDF
-- [ ] Additional practice content categories
-- [ ] UGC system for content
+- [ ] **EN** Daily checklists · **RU** Ежедневные чек-листы
+- [ ] **EN** Photos per checklist item · **RU** Фото к пунктам чек-листа
+- [ ] **EN** Export checklist to PDF · **RU** Экспорт чек-листа в PDF
+- [ ] **EN** More practice categories · **RU** Новые категории практики
+- [ ] **EN** UGC system for content · **RU** Пользовательский контент
 
 
-## License
+## License · Лицензия
 
 MIT
 

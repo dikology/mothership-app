@@ -177,550 +177,576 @@ struct CharterChecklistStates: Codable {
 // MARK: - Default Check-in Checklist Data
 
 extension Checklist {
-    static func defaultCheckInChecklist() -> Checklist {
+    static func defaultCheckInChecklist(using localization: LocalizationService) -> Checklist {
         Checklist(
-            title: "Yacht Check-in Checklist / Чек-лист приемки яхты",
+            title: formatTitleLabel(english: "Yacht Check-in Checklist", russian: "Чек-лист приемки яхты", using: localization),
             type: .charterScoped,
             charterType: .checkIn,
-            sections: CheckInChecklistData.defaultSections,
+            sections: CheckInChecklistData.defaultSections(using: localization),
             source: .bundled
         )
     }
 }
 
+// MARK: - Localization Helpers
+
+/// Formats a bilingual title label based on language:
+/// - Russian: "English / Russian"
+/// - English: "English"
+private func formatTitleLabel(english: String, russian: String, using localization: LocalizationService) -> String {
+    let languageCode = localization.effectiveLanguage.code
+    if languageCode == "ru" {
+        return "\(english) / \(russian)"
+    } else {
+        return english
+    }
+}
+
+/// Formats note labels so Russian locale sees only Russian text
+private func formatNoteLabel(english: String, russian: String, using localization: LocalizationService) -> String {
+    let languageCode = localization.effectiveLanguage.code
+    if languageCode == "ru" {
+        return russian
+    } else {
+        return english
+    }
+}
+
 enum CheckInChecklistData {
-    static let defaultSections: [ChecklistSection] = [
+    static func defaultSections(using localization: LocalizationService) -> [ChecklistSection] {
+        [
         ChecklistSection(
-            title: "Equipment and Documents / Оборудование и документы",
+            title: formatTitleLabel(english: "Equipment and Documents", russian: "Оборудование и документы", using: localization),
             subsections: [
                 ChecklistSubsection(
-                    title: "Boat documents / Документы",
+                    title: formatTitleLabel(english: "Boat documents", russian: "Документы", using: localization),
                     items: [
-                        ChecklistItem(title: "Registration / Регистрация"),
-                        ChecklistItem(title: "Insurance / Страховка"),
-                        ChecklistItem(title: "Charter agreement / Чартерный договор"),
-                        ChecklistItem(title: "Transit log / Судовой журнал"),
-                        ChecklistItem(title: "Crew list / Список экипажа"),
-                        ChecklistItem(title: "Skipper's licence / Права шкипера"),
-                        ChecklistItem(title: "VHF Radio licence / Лицензия радиооператора")
+                        ChecklistItem(title: formatTitleLabel(english: "Registration", russian: "Регистрация", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Insurance", russian: "Страховка", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Charter agreement", russian: "Чартерный договор", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Transit log", russian: "Судовой журнал", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Crew list", russian: "Список экипажа", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Skipper's licence", russian: "Права шкипера", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "VHF Radio licence", russian: "Лицензия радиооператора", using: localization))
                     ]
                 ),
                 ChecklistSubsection(
-                    title: "Safety Equipment / Безопасность",
+                    title: formatTitleLabel(english: "Safety Equipment", russian: "Безопасность", using: localization),
                     items: [
-                        ChecklistItem(title: "First aid kit / Аптечка"),
-                        ChecklistItem(title: "Life jackets / Спасательные жилеты"),
-                        ChecklistItem(title: "Life lines / Страховочные стропы"),
-                        ChecklistItem(title: "Fire extinguishers / Огнетушители"),
-                        ChecklistItem(title: "Fire blanket / Противопожарная кошма"),
-                        ChecklistItem(title: "Life raft / Спасательный плот"),
-                        ChecklistItem(title: "Horsseshoe safety ring with light / Спасательный круг и MOB маячок"),
-                        ChecklistItem(title: "Floating line / Плавучий линь"),
-                        ChecklistItem(title: "Red rockets, hand flares, fogs / Сигнальная пиротехника"),
-                        ChecklistItem(title: "EPIRB / АРБ"),
-                        ChecklistItem(title: "VHF radio / УКВ-радио"),
-                        ChecklistItem(title: "Fog horn / Туманный горн"),
-                        ChecklistItem(title: "Searchlight / Прожектор"),
-                        ChecklistItem(title: "Radar reflector / Радарный отражатель"),
-                        ChecklistItem(title: "Automatic bilge pump / Автоматическая трюмная помпа"),
-                        ChecklistItem(title: "Manual bilge pump / Ручная трюмная помпа"),
-                        ChecklistItem(title: "Snorkeling equipment / Снаряжение для снорклинга"),
-                        ChecklistItem(title: "Emergency tiller / Аварийный румпель")
+                        ChecklistItem(title: formatTitleLabel(english: "First aid kit", russian: "Аптечка", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Life jackets", russian: "Спасательные жилеты", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Life lines", russian: "Страховочные стропы", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Fire extinguishers", russian: "Огнетушители", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Fire blanket", russian: "Противопожарная кошма", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Life raft", russian: "Спасательный плот", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Horsseshoe safety ring with light", russian: "Спасательный круг и MOB маячок", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Floating line", russian: "Плавучий линь", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Red rockets, hand flares, fogs", russian: "Сигнальная пиротехника", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "EPIRB", russian: "АРБ", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "VHF radio", russian: "УКВ-радио", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Fog horn", russian: "Туманный горн", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Searchlight", russian: "Прожектор", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Radar reflector", russian: "Радарный отражатель", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Automatic bilge pump", russian: "Автоматическая трюмная помпа", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Manual bilge pump", russian: "Ручная трюмная помпа", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Snorkeling equipment", russian: "Снаряжение для снорклинга", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Emergency tiller", russian: "Аварийный румпель", using: localization))
                     ]
                 ),
                 ChecklistSubsection(
-                    title: "Engine / Двигатель",
+                    title: formatTitleLabel(english: "Engine", russian: "Двигатель", using: localization),
                     items: [
-                        ChecklistItem(title: "Impeller / Запасная рыльчатка"),
-                        ChecklistItem(title: "Alternator belt / Запасной ремень"),
-                        ChecklistItem(title: "Diesel can / Канистра для дизеля")
+                        ChecklistItem(title: formatTitleLabel(english: "Impeller", russian: "Запасная рыльчатка", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Alternator belt", russian: "Запасной ремень", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Diesel can", russian: "Канистра для дизеля", using: localization))
                     ]
                 ),
                 ChecklistSubsection(
-                    title: "Sails / Паруса",
+                    title: formatTitleLabel(english: "Sails", russian: "Паруса", using: localization),
                     items: [
-                        ChecklistItem(title: "Winch handles / Ручки лебедок"),
-                        ChecklistItem(title: "Sails repair kit / Ремкомплект парусов")
+                        ChecklistItem(title: formatTitleLabel(english: "Winch handles", russian: "Ручки лебедок", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Sails repair kit", russian: "Ремкомплект парусов", using: localization))
                     ]
                 ),
                 ChecklistSubsection(
-                    title: "Electronic and Navigation / Электроника и навигация",
+                    title: formatTitleLabel(english: "Electronic and Navigation", russian: "Электроника и навигация", using: localization),
                     items: [
-                        ChecklistItem(title: "Chartplotter with charts / Картплоттер с картами"),
-                        ChecklistItem(title: "Navigation indicators with covers / Навигационные индикатор в кокпите с крышками"),
-                        ChecklistItem(title: "Cockpit compass with covers / Компас в кокпите с крышкой"),
-                        ChecklistItem(title: "Nautical charts / Бумажные карты"),
-                        ChecklistItem(title: "Pilots / Лоции"),
-                        ChecklistItem(title: "Parallel ruler / Параллельная линейка"),
-                        ChecklistItem(title: "Breton plotter / Плоттер"),
-                        ChecklistItem(title: "Divider / Циркуль"),
-                        ChecklistItem(title: "Hand bearing compass / Ручной пеленгатор"),
-                        ChecklistItem(title: "Binocular / Бинокль"),
-                        ChecklistItem(title: "FM Radio / Аудиосистема"),
-                        ChecklistItem(title: "Inverter 12-220V / Инвертор 12-220В"),
-                        ChecklistItem(title: "Webasto / Обогреватель"),
-                        ChecklistItem(title: "Fans / Вентиляторы"),
-                        ChecklistItem(title: "Spare fuses and lights / Предохранители и лампы")
+                        ChecklistItem(title: formatTitleLabel(english: "Chartplotter with charts", russian: "Картплоттер с картами", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Navigation indicators with covers", russian: "Навигационные индикатор в кокпите с крышками", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Cockpit compass with covers", russian: "Компас в кокпите с крышкой", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Nautical charts", russian: "Бумажные карты", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Pilots", russian: "Лоции", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Parallel ruler", russian: "Параллельная линейка", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Breton plotter", russian: "Плоттер", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Divider", russian: "Циркуль", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Hand bearing compass", russian: "Ручной пеленгатор", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Binocular", russian: "Бинокль", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "FM Radio", russian: "Аудиосистема", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Inverter 12-220V", russian: "Инвертор 12-220В", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Webasto", russian: "Обогреватель", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Fans", russian: "Вентиляторы", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Spare fuses and lights", russian: "Предохранители и лампы", using: localization))
                     ]
                 ),
                 ChecklistSubsection(
-                    title: "Hull and deck / Корпус и палуба",
+                    title: formatTitleLabel(english: "Hull and deck", russian: "Корпус и палуба", using: localization),
                     items: [
-                        ChecklistItem(title: "Swimming ladder / Лестница для купания"),
-                        ChecklistItem(title: "Cockpit shower / Душ в кокпите"),
-                        ChecklistItem(title: "Gangway / Трап"),
-                        ChecklistItem(title: "Cockpit table / Столик"),
-                        ChecklistItem(title: "Tool box / Инструменты"),
-                        ChecklistItem(title: "Day figures / Дневные фигуры"),
-                        ChecklistItem(title: "Moorings / Швартовые концы"),
-                        ChecklistItem(title: "Cockpit cushions / Подушки"),
-                        ChecklistItem(title: "Boat hook / Багор"),
-                        ChecklistItem(title: "Fenders / Кранцы"),
-                        ChecklistItem(title: "Water hose with connector / Водяной шланг с коннектором"),
-                        ChecklistItem(title: "Water deck fill with opener / Крышки водяных танков с ручкой"),
-                        ChecklistItem(title: "Spare anchor / Запасной якорь"),
-                        ChecklistItem(title: "Bucket / Ведро"),
-                        ChecklistItem(title: "Mop, brushes / Швабра, щетки")
+                        ChecklistItem(title: formatTitleLabel(english: "Swimming ladder", russian: "Лестница для купания", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Cockpit shower", russian: "Душ в кокпите", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Gangway", russian: "Трап", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Cockpit table", russian: "Столик", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Tool box", russian: "Инструменты", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Day figures", russian: "Дневные фигуры", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Moorings", russian: "Швартовые концы", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Cockpit cushions", russian: "Подушки", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Boat hook", russian: "Багор", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Fenders", russian: "Кранцы", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Water hose with connector", russian: "Водяной шланг с коннектором", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Water deck fill with opener", russian: "Крышки водяных танков с ручкой", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Spare anchor", russian: "Запасной якорь", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Bucket", russian: "Ведро", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Mop, brushes", russian: "Швабра, щетки", using: localization))
                     ]
                 ),
                 ChecklistSubsection(
-                    title: "Dinghy / Тузик",
+                    title: formatTitleLabel(english: "Dinghy", russian: "Тузик", using: localization),
                     items: [
-                        ChecklistItem(title: "Air pump / Насос"),
-                        ChecklistItem(title: "Oars / Вёсла"),
-                        ChecklistItem(title: "Spare oil and petrol / Бензин и масло"),
-                        ChecklistItem(title: "Dinghy repair kit / Ремонтный комплект")
+                        ChecklistItem(title: formatTitleLabel(english: "Air pump", russian: "Насос", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Oars", russian: "Вёсла", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Spare oil and petrol", russian: "Бензин и масло", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Dinghy repair kit", russian: "Ремонтный комплект", using: localization))
                     ]
                 )
             ]
         ),
         ChecklistSection(
-            title: "Inside the Boat / Внутри яхты",
+            title: formatTitleLabel(english: "Inside the Boat", russian: "Внутри яхты", using: localization),
             subsections: [
                 ChecklistSubsection(
-                    title: "12V Panel / 12В панель",
+                    title: formatTitleLabel(english: "12V Panel", russian: "12В панель", using: localization),
                     items: [
                         ChecklistItem(
-                            title: "Water pump ON / Водяная помпа включена",
-                            note: "Работает. Узнайте у представителя чартерной компании, как переключать баки"
+                            title: formatTitleLabel(english: "Water pump ON", russian: "Водяная помпа включена", using: localization),
+                            note: formatNoteLabel(english: "Working. Ask the charter company representative how to switch tanks", russian: "Работает. Узнайте у представителя чартерной компании, как переключать баки", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Bilge pump ON / Трюмная помпа ON",
-                            note: "Трюмная помпа ON - ручной и автоматический режим"
+                            title: formatTitleLabel(english: "Bilge pump ON", russian: "Трюмная помпа ON", using: localization),
+                            note: formatNoteLabel(english: "Bilge pump ON - manual and automatic mode", russian: "Трюмная помпа ON - ручной и автоматический режим", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Navigation ON / Навигация ON",
-                            note: "Навигация ON - картплоттер с картами"
+                            title: formatTitleLabel(english: "Navigation ON", russian: "Навигация ON", using: localization),
+                            note: formatNoteLabel(english: "Navigation ON - chartplotter with charts", russian: "Навигация ON - картплоттер с картами", using: localization)
                         ),
                         ChecklistItem(
-                            title: "VHF radio ON / VHF-радио ON",
-                            note: "VHF-радио ON - громкость, проверьте радио"
+                            title: formatTitleLabel(english: "VHF radio ON", russian: "VHF-радио ON", using: localization),
+                            note: formatNoteLabel(english: "VHF radio ON - volume, check the radio", russian: "VHF-радио ON - громкость, проверьте радио", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Cabin lights ON / Освещение внутри ON",
+                            title: formatTitleLabel(english: "Cabin lights ON", russian: "Освещение внутри ON", using: localization)
                         ),
                         ChecklistItem(
-                            title: "All navigation lights ON / Все навигационные огни ON",
-                            note: "Все навигационные огни ON - все индикаторы горят"
+                            title: formatTitleLabel(english: "All navigation lights ON", russian: "Все навигационные огни ON", using: localization),
+                            note: formatNoteLabel(english: "All navigation lights ON - all indicators are on", russian: "Все навигационные огни ON - все индикаторы горят", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Fridge(s) ON / Холодильник(и) ON",
+                            title: formatTitleLabel(english: "Fridge(s) ON", russian: "Холодильник(и) ON", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Windlass ON (if there is) / Якорная лебедка ON",
-                            note: "Спросите у представителя чартерной компании про запасной предохранитель"
+                            title: formatTitleLabel(english: "Windlass ON (if there is)", russian: "Якорная лебедка ON", using: localization),
+                            note: formatNoteLabel(english: "Ask the charter company representative about spare fuse", russian: "Спросите у представителя чартерной компании про запасной предохранитель", using: localization)
                         )
                     ]
                 ),
                 ChecklistSubsection(
-                    title: "220V Panel / Панель 220В",
+                    title: formatTitleLabel(english: "220V Panel", russian: "Панель 220В", using: localization),
                     items: [
-                        ChecklistItem(title: "Battery charger is on / Индикатор берегового питания ON"),
-                        ChecklistItem(title: "220V sockets work / Розетки и зарядное устройство работают"),
-                        ChecklistItem(title: "Cable connection is serviceable / Береговой кабель исправен")
+                        ChecklistItem(title: formatTitleLabel(english: "Battery charger is on", russian: "Индикатор берегового питания ON", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "220V sockets work", russian: "Розетки и зарядное устройство работают", using: localization)),
+                        ChecklistItem(title: formatTitleLabel(english: "Cable connection is serviceable", russian: "Береговой кабель исправен", using: localization))
                     ]
                 ),
                 ChecklistSubsection(
-                    title: "Saloon & Cabins / Салон и каюты",
+                    title: formatTitleLabel(english: "Saloon & Cabins", russian: "Салон и каюты", using: localization),
                     items: [
                         ChecklistItem(
-                            title: "Lights / Лампочки",
-                            note: "Лампочки светят, светильники целые, выключатели работают"
+                            title: formatTitleLabel(english: "Lights", russian: "Лампочки", using: localization),
+                            note: formatNoteLabel(english: "Lights work, fixtures are intact, switches work", russian: "Лампочки светят, светильники целые, выключатели работают", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Hatches / Люки",
-                            note: "Люки без трещин и царапин, ручки и петли надежные, не протекают (проверьте с помощью шланга/ведра и полотенца)"
+                            title: formatTitleLabel(english: "Hatches", russian: "Люки", using: localization),
+                            note: formatNoteLabel(english: "Hatches without cracks and scratches, handles and hinges are reliable, don't leak (check with hose/bucket and towel)", russian: "Люки без трещин и царапин, ручки и петли надежные, не протекают (проверьте с помощью шланга/ведра и полотенца)", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Cushions / Подушки",
-                            note: "Подушки диванов сухие и чистые (снизу тоже), без повреждений"
+                            title: formatTitleLabel(english: "Cushions", russian: "Подушки", using: localization),
+                            note: formatNoteLabel(english: "Sofa cushions are dry and clean (underneath too), no damage", russian: "Подушки диванов сухие и чистые (снизу тоже), без повреждений", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Floors / Пайолы",
-                            note: "Пайолы - откройте все, проверьте килевые болты, кингстоны, фитинги, краны, шланги. Если есть вода, проверьте, соленая или пресная"
+                            title: formatTitleLabel(english: "Floors", russian: "Пайолы", using: localization),
+                            note: formatNoteLabel(english: "Floorboards - open all, check keel bolts, seacocks, fittings, valves, hoses. If there is water, check if it's salt or fresh", russian: "Пайолы - откройте все, проверьте килевые болты, кингстоны, фитинги, краны, шланги. Если есть вода, проверьте, соленая или пресная", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Furniture / Мебель",
-                            note: "Мебель без сильных повреждений, без вмятин, дверцы шкафов держатся надежно, замки крепко фиксируют"
+                            title: formatTitleLabel(english: "Furniture", russian: "Мебель", using: localization),
+                            note: formatNoteLabel(english: "Furniture without major damage, no dents, cabinet doors hold securely, locks fix firmly", russian: "Мебель без сильных повреждений, без вмятин, дверцы шкафов держатся надежно, замки крепко фиксируют", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Fans / Вентиляторы",
-                            note: "Вентиляторы дуют, без повреждений"
+                            title: formatTitleLabel(english: "Fans", russian: "Вентиляторы", using: localization),
+                            note: formatNoteLabel(english: "Fans blow, no damage", russian: "Вентиляторы дуют, без повреждений", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Scratches / Царапины",
-                            note: "Царапины и сколы - сделайте фото и видео салона"
+                            title: formatTitleLabel(english: "Scratches", russian: "Царапины", using: localization),
+                            note: formatNoteLabel(english: "Scratches and chips - take photos and video of the saloon", russian: "Царапины и сколы - сделайте фото и видео салона", using: localization)
                         )
                     ]
                 ),
                 ChecklistSubsection(
-                    title: "Toilets / Гальюны",
+                    title: formatTitleLabel(english: "Toilets", russian: "Гальюны", using: localization),
                     items: [
                         ChecklistItem(
-                            title: "Toilet pump(s) / Помпа туалета",
-                            note: "Помпа туалета работает на смыв и промыв, душевая помпа, все краны исправны, накопитель пустой, кран закрыт, запахи отсутствуют"
+                            title: formatTitleLabel(english: "Toilet pump(s)", russian: "Помпа туалета", using: localization),
+                            note: formatNoteLabel(english: "Toilet pump works for flush and rinse, shower pump, all valves are working, holding tank is empty, valve is closed, no odors", russian: "Помпа туалета работает на смыв и промыв, душевая помпа, все краны исправны, накопитель пустой, кран закрыт, запахи отсутствуют", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Lights / Лампочки",
-                            note: "Лампочки светят, светильники целые, выключатели работают"
+                            title: formatTitleLabel(english: "Lights", russian: "Лампочки", using: localization),
+                            note: formatNoteLabel(english: "Lights work, fixtures are intact, switches work", russian: "Лампочки светят, светильники целые, выключатели работают", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Hatches / Люки",
-                            note: "Люки без трещин и царапин, ручки и петли надежные, не протекают (проверьте с помощью шланга/ведра и полотенца)"
+                            title: formatTitleLabel(english: "Hatches", russian: "Люки", using: localization),
+                            note: formatNoteLabel(english: "Hatches without cracks and scratches, handles and hinges are reliable, don't leak (check with hose/bucket and towel)", russian: "Люки без трещин и царапин, ручки и петли надежные, не протекают (проверьте с помощью шланга/ведра и полотенца)", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Doors / Двери",
-                            note: "Двери открываются и закрываются надежно, ручки и замки не выпадают"
+                            title: formatTitleLabel(english: "Doors", russian: "Двери", using: localization),
+                            note: formatNoteLabel(english: "Doors open and close securely, handles and locks don't fall out", russian: "Двери открываются и закрываются надежно, ручки и замки не выпадают", using: localization)
                         )
                     ]
                 ),
                 ChecklistSubsection(
-                    title: "Galley / Камбуз",
+                    title: formatTitleLabel(english: "Galley", russian: "Камбуз", using: localization),
                     items: [
                         ChecklistItem(
-                            title: "Gas stove / Плита",
-                            note: "Плита - включите газ, кран газа перекрывается, плита блокируется, дверца духовки блокируется, второй баллон полный"
+                            title: formatTitleLabel(english: "Gas stove", russian: "Плита", using: localization),
+                            note: formatNoteLabel(english: "Stove - turn on gas, gas valve closes, stove locks, oven door locks, second bottle is full", russian: "Плита - включите газ, кран газа перекрывается, плита блокируется, дверца духовки блокируется, второй баллон полный", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Fridges / Холодильники",
-                            note: "Холодильники охлаждают, вода откачивается, запахи отсутствуют"
+                            title: formatTitleLabel(english: "Fridges", russian: "Холодильники", using: localization),
+                            note: formatNoteLabel(english: "Fridges cool, water is pumped out, no odors", russian: "Холодильники охлаждают, вода откачивается, запахи отсутствуют", using: localization)
                         )
                     ]
                 ),
                 ChecklistSubsection(
-                    title: "Engine / Двигатель",
+                    title: formatTitleLabel(english: "Engine", russian: "Двигатель", using: localization),
                     items: [
                         ChecklistItem(
-                            title: "Cleanliness / Чистота",
-                            note: "Чисто и сухо - мотор и под мотором"
+                            title: formatTitleLabel(english: "Cleanliness", russian: "Чистота", using: localization),
+                            note: formatNoteLabel(english: "Clean and dry - engine and under engine", russian: "Чисто и сухо - мотор и под мотором", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Oil / Масло",
-                            note: "Уровень масла в двигателе, в трансмиссии, следы эмульсии в трансмиссии, резерв масла"
+                            title: formatTitleLabel(english: "Oil", russian: "Масло", using: localization),
+                            note: formatNoteLabel(english: "Engine oil level, transmission oil level, traces of emulsion in transmission, oil reserve", russian: "Уровень масла в двигателе, в трансмиссии, следы эмульсии в трансмиссии, резерв масла", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Coolant / Охлаждающая жидкость",
-                            note: "Уровень охлаждающей жидкости, резерв антифриза. Важно: не открывайте на теплом или горячем моторе!"
+                            title: formatTitleLabel(english: "Coolant", russian: "Охлаждающая жидкость", using: localization),
+                            note: formatNoteLabel(english: "Coolant level, antifreeze reserve. Important: do not open on warm or hot engine!", russian: "Уровень охлаждающей жидкости, резерв антифриза. Важно: не открывайте на теплом или горячем моторе!", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Alternator belt / Ремень генератора",
-                            note: "Ремень генератора - состояние и натяжение"
+                            title: formatTitleLabel(english: "Alternator belt", russian: "Ремень генератора", using: localization),
+                            note: formatNoteLabel(english: "Alternator belt - condition and tension", russian: "Ремень генератора - состояние и натяжение", using: localization)
                         )
                     ]
                 ),
                 ChecklistSubsection(
-                    title: "Steering / Рулевое устройство",
+                    title: formatTitleLabel(english: "Steering", russian: "Рулевое устройство", using: localization),
                     items: [
                         ChecklistItem(
-                            title: "Steering ropes / Штуртросы",
-                            note: "Штуртросы - состояние и натяжение"
+                            title: formatTitleLabel(english: "Steering ropes", russian: "Штуртросы", using: localization),
+                            note: formatNoteLabel(english: "Steering ropes - condition and tension", russian: "Штуртросы - состояние и натяжение", using: localization)
                         )
                     ]
                 )
             ]
         ),
         ChecklistSection(
-            title: "Outside the Boat / Снаружи яхты",
+            title: formatTitleLabel(english: "Outside the Boat", russian: "Снаружи яхты", using: localization),
             subsections: [
                 ChecklistSubsection(
-                    title: "Stern / Корма",
+                    title: formatTitleLabel(english: "Stern", russian: "Корма", using: localization),
                     items: [
                         ChecklistItem(
-                            title: "Pulpit / Носовые рейлинги",
-                            note: "Носовые рейлинги не имеют люфта, не погнуты"
+                            title: formatTitleLabel(english: "Pulpit", russian: "Носовые рейлинги", using: localization),
+                            note: formatNoteLabel(english: "Pulpit has no play, not bent", russian: "Носовые рейлинги не имеют люфта, не погнуты", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Guardrails / Леера",
-                            note: "Леера натянуты, стопорные кольца, карабины"
+                            title: formatTitleLabel(english: "Guardrails", russian: "Леера", using: localization),
+                            note: formatNoteLabel(english: "Guardrails are taut, stop rings, carabiners", russian: "Леера натянуты, стопорные кольца, карабины", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Sternlight / Кормовой огонь",
-                            note: "Кормовой огонь светит"
+                            title: formatTitleLabel(english: "Sternlight", russian: "Кормовой огонь", using: localization),
+                            note: formatNoteLabel(english: "Stern light works", russian: "Кормовой огонь светит", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Fenders / Кранцы",
-                            note: "Кранцы - посчитайте все кранцы на яхте, привяжите надежно"
+                            title: formatTitleLabel(english: "Fenders", russian: "Кранцы", using: localization),
+                            note: formatNoteLabel(english: "Fenders - count all fenders on the yacht, tie securely", russian: "Кранцы - посчитайте все кранцы на яхте, привяжите надежно", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Mooring lines / Швартовы",
-                            note: "Швартовы - количество, длина, проверьте состояние"
+                            title: formatTitleLabel(english: "Mooring lines", russian: "Швартовы", using: localization),
+                            note: formatNoteLabel(english: "Mooring lines - quantity, length, check condition", russian: "Швартовы - количество, длина, проверьте состояние", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Gas bottles / Газовые баллоны",
-                            note: "Газовые баллоны - количество, вес, объем"
+                            title: formatTitleLabel(english: "Gas bottles", russian: "Газовые баллоны", using: localization),
+                            note: formatNoteLabel(english: "Gas bottles - quantity, weight, volume", russian: "Газовые баллоны - количество, вес, объем", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Ramp / Аппарель",
-                            note: "Аппарель - откройте/закройте"
+                            title: formatTitleLabel(english: "Ramp", russian: "Аппарель", using: localization),
+                            note: formatNoteLabel(english: "Ramp - open/close", russian: "Аппарель - откройте/закройте", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Outboard / Мотор для тузика",
-                            note: "Мотор для тузика - проверьте уровень топлива, откройте подачу топлива и воздуха, вытяните подсос, заведите мотор, заглушите мотор через 10-15 секунд, закройте подачу воздуха и топлива"
+                            title: formatTitleLabel(english: "Outboard", russian: "Мотор для тузика", using: localization),
+                            note: formatNoteLabel(english: "Outboard - check fuel level, open fuel and air supply, pull choke, start engine, stop engine after 10-15 seconds, close air and fuel supply", russian: "Мотор для тузика - проверьте уровень топлива, откройте подачу топлива и воздуха, вытяните подсос, заведите мотор, заглушите мотор через 10-15 секунд, закройте подачу воздуха и топлива", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Damages / Повреждения",
-                            note: "Повреждения - сделайте фото/видео"
+                            title: formatTitleLabel(english: "Damages", russian: "Повреждения", using: localization),
+                            note: formatNoteLabel(english: "Damages - take photos/video", russian: "Повреждения - сделайте фото/видео", using: localization)
                         )
                     ]
                 ),
                 ChecklistSubsection(
-                    title: "Sides / Борта",
+                    title: formatTitleLabel(english: "Sides", russian: "Борта", using: localization),
                     items: [
                         ChecklistItem(
-                            title: "Guardrails / Леера",
-                            note: "Леера натянуты, стопорные кольца, карабины"
+                            title: formatTitleLabel(english: "Guardrails", russian: "Леера", using: localization),
+                            note: formatNoteLabel(english: "Guardrails are taut, stop rings, carabiners", russian: "Леера натянуты, стопорные кольца, карабины", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Stanchions / Стойки лееров",
-                            note: "Стойки лееров не имеют люфта, не погнуты"
+                            title: formatTitleLabel(english: "Stanchions", russian: "Стойки лееров", using: localization),
+                            note: formatNoteLabel(english: "Stanchions have no play, not bent", russian: "Стойки лееров не имеют люфта, не погнуты", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Damages / Повреждения",
-                            note: "Повреждения - сделайте фото/видео"
+                            title: formatTitleLabel(english: "Damages", russian: "Повреждения", using: localization),
+                            note: formatNoteLabel(english: "Damages - take photos/video", russian: "Повреждения - сделайте фото/видео", using: localization)
                         )
                     ]
                 ),
                 ChecklistSubsection(
-                    title: "Bow / Бак",
+                    title: formatTitleLabel(english: "Bow", russian: "Бак", using: localization),
                     items: [
                         ChecklistItem(
-                            title: "Pulpit / Носовые рейлинги",
-                            note: "Носовые рейлинги не имеют люфта, не погнуты"
+                            title: formatTitleLabel(english: "Pulpit", russian: "Носовые рейлинги", using: localization),
+                            note: formatNoteLabel(english: "Pulpit has no play, not bent", russian: "Носовые рейлинги не имеют люфта, не погнуты", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Lights / Навигационные огни",
-                            note: "Навигационные огни - бортовые, подсветка палубы, топовый, круговой"
+                            title: formatTitleLabel(english: "Lights", russian: "Навигационные огни", using: localization),
+                            note: formatNoteLabel(english: "Navigation lights - side lights, deck lighting, masthead, all-round", russian: "Навигационные огни - бортовые, подсветка палубы, топовый, круговой", using: localization)
                         )
                     ]
                 ),
                 ChecklistSubsection(
-                    title: "Windlass / Якорная лебедка",
+                    title: formatTitleLabel(english: "Windlass", russian: "Якорная лебедка", using: localization),
                     items: [
                         ChecklistItem(
-                            title: "Open and fix hatch (lid) / Откройте и зафиксируйте люк",
+                            title: formatTitleLabel(english: "Open and fix hatch (lid)", russian: "Откройте и зафиксируйте люк", using: localization),
                         ),
                         ChecklistItem(
-                            title: "Anchor / Якорь",
-                            note: "Якорь подвязан шкертиком"
+                            title: formatTitleLabel(english: "Anchor", russian: "Якорь", using: localization),
+                            note: formatNoteLabel(english: "Anchor is tied with seizing", russian: "Якорь подвязан шкертиком", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Chain / Цепь",
-                            note: "Цепь подвязана шкертиком к лодке надежно, проверьте длину цепи и разметку"
+                            title: formatTitleLabel(english: "Chain", russian: "Цепь", using: localization),
+                            note: formatNoteLabel(english: "Chain is securely tied to boat with seizing, check chain length and markings", russian: "Цепь подвязана шкертиком к лодке надежно, проверьте длину цепи и разметку", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Windlass / Якорная лебедка",
-                            note: "Якорная лебедка - затяните брашпиль (шпиль), отвяжите якорь, опустите и поднимите якорь, подвяжите якорь"
+                            title: formatTitleLabel(english: "Windlass", russian: "Якорная лебедка", using: localization),
+                            note: formatNoteLabel(english: "Windlass - tighten windlass (capstan), untie anchor, lower and raise anchor, tie anchor", russian: "Якорная лебедка - затяните брашпиль (шпиль), отвяжите якорь, опустите и поднимите якорь, подвяжите якорь", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Close hatch (lid) / Закройте люк",
+                            title: formatTitleLabel(english: "Close hatch (lid)", russian: "Закройте люк", using: localization),
                         )
                     ]
                 ),
                 ChecklistSubsection(
-                    title: "Engine / Двигатель",
+                    title: formatTitleLabel(english: "Engine", russian: "Двигатель", using: localization),
                     items: [
                         ChecklistItem(
-                            title: "Start engine / Запустите",
-                            note: "Запустите - проверьте мокрый выхлоп, проверьте струю воды на ходу вперед, переключите на ход назад и проверьте заброс кормы, запишите моточасы"
+                            title: formatTitleLabel(english: "Start engine", russian: "Запустите", using: localization),
+                            note: formatNoteLabel(english: "Start - check wet exhaust, check water stream in forward gear, switch to reverse and check stern wash, record engine hours", russian: "Запустите - проверьте мокрый выхлоп, проверьте струю воды на ходу вперед, переключите на ход назад и проверьте заброс кормы, запишите моточасы", using: localization)
                         )
                     ]
                 ),
                 ChecklistSubsection(
-                    title: "Navigation / Навигация",
+                    title: formatTitleLabel(english: "Navigation", russian: "Навигация", using: localization),
                     items: [
                         ChecklistItem(
-                            title: "Echo sounder / Эхолот",
-                            note: "Эхолот - спросите про глубину от киля/датчика/уровня воды"
+                            title: formatTitleLabel(english: "Echo sounder", russian: "Эхолот", using: localization),
+                            note: formatNoteLabel(english: "Echo sounder - ask about depth from keel/sensor/water level", russian: "Эхолот - спросите про глубину от киля/датчика/уровня воды", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Boat speed / Датчик скорости",
-                            note: "Датчик скорости - больше нуля на ходу назад"
+                            title: formatTitleLabel(english: "Boat speed", russian: "Датчик скорости", using: localization),
+                            note: formatNoteLabel(english: "Speed sensor - greater than zero in reverse", russian: "Датчик скорости - больше нуля на ходу назад", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Autopilot / Автопилот",
-                            note: "Автопилот - включается, поворачивает руль влево/вправо"
+                            title: formatTitleLabel(english: "Autopilot", russian: "Автопилот", using: localization),
+                            note: formatNoteLabel(english: "Autopilot - turns on, turns rudder left/right", russian: "Автопилот - включается, поворачивает руль влево/вправо", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Windex / Анемометр",
-                            note: "Анемометр - показания силы и направления"
+                            title: formatTitleLabel(english: "Windex", russian: "Анемометр", using: localization),
+                            note: formatNoteLabel(english: "Anemometer - readings of strength and direction", russian: "Анемометр - показания силы и направления", using: localization)
                         )
                     ]
                 ),
                 ChecklistSubsection(
-                    title: "After check / После проверки",
+                    title: formatTitleLabel(english: "After check", russian: "После проверки", using: localization),
                     items: [
                         ChecklistItem(
-                            title: "Engine - neutral and stop / Двигатель - нейтралка и стоп",
-                            note: "Двигатель - нейтралка и стоп"
+                            title: formatTitleLabel(english: "Engine - neutral and stop", russian: "Двигатель - нейтралка и стоп", using: localization),
+                            note: formatNoteLabel(english: "Engine - neutral and stop", russian: "Двигатель - нейтралка и стоп", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Nav lights - off / Навигационные огни - выключены",
-                            note: "Навигационные огни - выключены"
+                            title: formatTitleLabel(english: "Nav lights - off", russian: "Навигационные огни - выключены", using: localization),
+                            note: formatNoteLabel(english: "Navigation lights - off", russian: "Навигационные огни - выключены", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Navigation - off / Навигация - выключена",
-                            note: "Навигация - выключена"
+                            title: formatTitleLabel(english: "Navigation - off", russian: "Навигация - выключена", using: localization),
+                            note: formatNoteLabel(english: "Navigation - off", russian: "Навигация - выключена", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Windlass - off / Якорная лебедка - выключена",
-                            note: "Якорная лебедка - выключена"
+                            title: formatTitleLabel(english: "Windlass - off", russian: "Якорная лебедка - выключена", using: localization),
+                            note: formatNoteLabel(english: "Windlass - off", russian: "Якорная лебедка - выключена", using: localization)
                         )
                     ]
                 ),
                 ChecklistSubsection(
-                    title: "Rig / Снаряжение",
+                    title: formatTitleLabel(english: "Rig", russian: "Снаряжение", using: localization),
                     items: [
                         ChecklistItem(
-                            title: "Winches / Лебедки",
-                            note: "Лебедки - крутятся руками по часовой стрелке легко и без хруста, не крутятся против часовой стрелки, крутятся ручкой в режимах легко и без хруста, вертикальный люфт минимальный, люфт вращения минимальный, юбка без трещин и повреждений"
+                            title: formatTitleLabel(english: "Winches", russian: "Лебедки", using: localization),
+                            note: formatNoteLabel(english: "Winches - turn clockwise by hand easily and without grinding, don't turn counterclockwise, turn with handle in modes easily and without grinding, vertical play minimal, rotation play minimal, skirt without cracks and damage", russian: "Лебедки - крутятся руками по часовой стрелке легко и без хруста, не крутятся против часовой стрелки, крутятся ручкой в режимах легко и без хруста, вертикальный люфт минимальный, люфт вращения минимальный, юбка без трещин и повреждений", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Ropes / Тросы",
-                            note: "Тросы - пройдитесь руками и взглядом, без надрывов и потертостей"
+                            title: formatTitleLabel(english: "Ropes", russian: "Тросы", using: localization),
+                            note: formatNoteLabel(english: "Ropes - go through by hand and visually, no tears and wear", russian: "Тросы - пройдитесь руками и взглядом, без надрывов и потертостей", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Before open clutches on deck / Перед открытием стопоров на палубе",
-                            note: "Перед открытием стопоров на палубе - зафиксируйте тросы на лебедке"
+                            title: formatTitleLabel(english: "Before open clutches on deck", russian: "Перед открытием стопоров на палубе", using: localization),
+                            note: formatNoteLabel(english: "Before opening clutches on deck - secure ropes on winch", russian: "Перед открытием стопоров на палубе - зафиксируйте тросы на лебедке", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Clutches / Стопоры",
-                            note: "Стопоры - откройте/закройте, оттяните кулачок и проверьте пружину"
+                            title: formatTitleLabel(english: "Clutches", russian: "Стопоры", using: localization),
+                            note: formatNoteLabel(english: "Clutches - open/close, pull back cam and check spring", russian: "Стопоры - откройте/закройте, оттяните кулачок и проверьте пружину", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Shackles / Скобы",
-                            note: "Скобы - все протяните пассатижами"
+                            title: formatTitleLabel(english: "Shackles", russian: "Скобы", using: localization),
+                            note: formatNoteLabel(english: "Shackles - tighten all with pliers", russian: "Скобы - все протяните пассатижами", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Blocks / Блоки",
-                            note: "Блоки - осмотрите, вращаются без хруста"
+                            title: formatTitleLabel(english: "Blocks", russian: "Блоки", using: localization),
+                            note: formatNoteLabel(english: "Blocks - inspect, rotate without grinding", russian: "Блоки - осмотрите, вращаются без хруста", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Jib cars / Каретки стакселя",
-                            note: "Каретки стакселя - двигаются вдоль погона без перекосов"
+                            title: formatTitleLabel(english: "Jib cars", russian: "Каретки стакселя", using: localization),
+                            note: formatNoteLabel(english: "Jib cars - move along track without distortion", russian: "Каретки стакселя - двигаются вдоль погона без перекосов", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Mainsheet car / Каретка грота",
-                            note: "Каретка грота - двигается вдоль погона без перекосов"
+                            title: formatTitleLabel(english: "Mainsheet car", russian: "Каретка грота", using: localization),
+                            note: formatNoteLabel(english: "Mainsheet car - moves along track without distortion", russian: "Каретка грота - двигается вдоль погона без перекосов", using: localization)
                         ),
                         ChecklistItem(
-                            title: "Boom / Гик",
-                            note: "Гик - проверьте все блоки у нока и пятки, крепление к мачте, крепление оттяжки"
+                            title: formatTitleLabel(english: "Boom", russian: "Гик", using: localization),
+                            note: formatNoteLabel(english: "Boom - check all blocks at head and foot, attachment to mast, vang attachment", russian: "Гик - проверьте все блоки у нока и пятки, крепление к мачте, крепление оттяжки", using: localization)
                         )
                     ]
                 )
             ]
         ),
         ChecklistSection(
-            title: "Sails / Паруса",
+            title: formatTitleLabel(english: "Sails", russian: "Паруса", using: localization),
             items: [
                 ChecklistItem(
-                    title: "Jib (Genoa) / Стаксель",
-                    note: "Стаксель - откройте руками легко, ткань без надрывов, швы не расходятся, шкотовый угол без надрывов, шкоты надежно закреплены, нижняя шкаторина без надрывов, галсовый угол надежно закреплен, задняя шкаторина без надрывов, корд по задней надежно закреплен, ликтрос без надрывов, особенно снизу, фал без надрывов, надежно закреплен, закрывается руками легко"
+                    title: formatTitleLabel(english: "Jib (Genoa)", russian: "Стаксель", using: localization),
+                    note: formatNoteLabel(english: "Jib - open easily by hand, fabric without tears, seams don't separate, clew without tears, sheets securely fastened, foot without tears, tack securely fastened, leech without tears, leech cord securely fastened, luff tape without tears especially at bottom, halyard without tears, securely fastened, closes easily by hand", russian: "Стаксель - откройте руками легко, ткань без надрывов, швы не расходятся, шкотовый угол без надрывов, шкоты надежно закреплены, нижняя шкаторина без надрывов, галсовый угол надежно закреплен, задняя шкаторина без надрывов, корд по задней надежно закреплен, ликтрос без надрывов, особенно снизу, фал без надрывов, надежно закреплен, закрывается руками легко", using: localization)
                 ),
                 ChecklistItem(
-                    title: "Battens Main / Грот с латами",
-                    note: "Грот - откройте руками легко, ткань без надрывов, швы не расходятся, шкотовый угол без надрывов, шкоты надежно закреплены, нижняя шкаторина без надрывов, галсовый угол надежно закреплен, задняя шкаторина без надрывов, корд по задней надежно закреплен, ликтрос без надрывов, особенно снизу, фал без надрывов, надежно закреплен, закрывается руками легко"
+                    title: formatTitleLabel(english: "Battens Main", russian: "Грот с латами", using: localization),
+                    note: formatNoteLabel(english: "Mainsail - open easily by hand, fabric without tears, seams don't separate, clew without tears, sheets securely fastened, foot without tears, tack securely fastened, leech without tears, leech cord securely fastened, luff tape without tears especially at bottom, halyard without tears, securely fastened, closes easily by hand", russian: "Грот - откройте руками легко, ткань без надрывов, швы не расходятся, шкотовый угол без надрывов, шкоты надежно закреплены, нижняя шкаторина без надрывов, галсовый угол надежно закреплен, задняя шкаторина без надрывов, корд по задней надежно закреплен, ликтрос без надрывов, особенно снизу, фал без надрывов, надежно закреплен, закрывается руками легко", using: localization)
                 ),
                 ChecklistItem(
-                    title: "Furling Main / Грот с закруткой",
-                    note: "Грот с закруткой - откройте руками легко, ткань без надрывов, швы не расходятся, шкотовый угол без надрывов, шкоты надежно закреплены, нижняя шкаторина без надрывов, галсовый угол надежно закреплен, задняя шкаторина без надрывов, корд по задней надежно закреплен, ликтрос без надрывов, особенно снизу, фал без надрывов, надежно закреплен, закрывается руками легко"
+                    title: formatTitleLabel(english: "Furling Main", russian: "Грот с закруткой", using: localization),
+                    note: formatNoteLabel(english: "Furling mainsail - open easily by hand, fabric without tears, seams don't separate, clew without tears, sheets securely fastened, foot without tears, tack securely fastened, leech without tears, leech cord securely fastened, luff tape without tears especially at bottom, halyard without tears, securely fastened, closes easily by hand", russian: "Грот с закруткой - откройте руками легко, ткань без надрывов, швы не расходятся, шкотовый угол без надрывов, шкоты надежно закреплены, нижняя шкаторина без надрывов, галсовый угол надежно закреплен, задняя шкаторина без надрывов, корд по задней надежно закреплен, ликтрос без надрывов, особенно снизу, фал без надрывов, надежно закреплен, закрывается руками легко", using: localization)
                 )
             ]
         ),
         ChecklistSection(
-            title: "Optional Equipment / Дополнительное оборудование",
+            title: formatTitleLabel(english: "Optional Equipment", russian: "Дополнительное оборудование", using: localization),
             items: [
                 ChecklistItem(
-                    title: "Generator / Генератор",
-                    note: "Генератор - узнайте у представителя чартерной компании: как правильно запускать и останавливать, как переключать лодку на генератор или береговое питание"
+                    title: formatTitleLabel(english: "Generator", russian: "Генератор", using: localization),
+                    note: formatNoteLabel(english: "Generator - ask charter company representative: how to properly start and stop, how to switch boat to generator or shore power", russian: "Генератор - узнайте у представителя чартерной компании: как правильно запускать и останавливать, как переключать лодку на генератор или береговое питание", using: localization)
                 ),
                 ChecklistItem(
-                    title: "Air conditioner / Кондиционер",
-                    note: "Кондиционер - проверьте кран трубы забортного охлаждения, перед включением убедитесь, что он открыт"
+                    title: formatTitleLabel(english: "Air conditioner", russian: "Кондиционер", using: localization),
+                    note: formatNoteLabel(english: "Air conditioner - check seacock for raw water cooling, before turning on make sure it's open", russian: "Кондиционер - проверьте кран трубы забортного охлаждения, перед включением убедитесь, что он открыт", using: localization)
                 ),
                 ChecklistItem(
-                    title: "Watermaker / Опреснитель",
-                    note: "Опреснитель - не используйте в марине, узнайте у представителя чартерной компании, как правильно запускать и использовать"
+                    title: formatTitleLabel(english: "Watermaker", russian: "Опреснитель", using: localization),
+                    note: formatNoteLabel(english: "Watermaker - don't use in marina, ask charter company representative how to properly start and use", russian: "Опреснитель - не используйте в марине, узнайте у представителя чартерной компании, как правильно запускать и использовать", using: localization)
                 )
             ]
         ),
         ChecklistSection(
-            title: "Safety Equipment Check / Безопасность",
+            title: formatTitleLabel(english: "Safety Equipment Check", russian: "Безопасность", using: localization),
             items: [
                 ChecklistItem(
-                    title: "Life jackets / Спасательные жилеты",
-                    note: "Спасательные жилеты - количество, попросите в чартерной детские жилеты, если в экипаже есть дети, состояние баллонов, если жилеты надувные"
+                    title: formatTitleLabel(english: "Life jackets", russian: "Спасательные жилеты", using: localization),
+                    note: formatNoteLabel(english: "Life jackets - quantity, ask charter company for children's jackets if there are children in crew, cylinder condition if jackets are inflatable", russian: "Спасательные жилеты - количество, попросите в чартерной детские жилеты, если в экипаже есть дети, состояние баллонов, если жилеты надувные", using: localization)
                 ),
                 ChecklistItem(
-                    title: "Safety harnesses / Страховочные обвязки",
-                    note: "Страховочные обвязки - количество, стропы с карабинами, карабины исправны"
+                    title: formatTitleLabel(english: "Safety harnesses", russian: "Страховочные обвязки", using: localization),
+                    note: formatNoteLabel(english: "Safety harnesses - quantity, straps with carabiners, carabiners are working", russian: "Страховочные обвязки - количество, стропы с карабинами, карабины исправны", using: localization)
                 ),
                 ChecklistItem(
-                    title: "Life raft / Спасательный плот",
-                    note: "Спасательный плот - проверьте дату последнего осмотра, проверьте надежность и метод крепления плота"
+                    title: formatTitleLabel(english: "Life raft", russian: "Спасательный плот", using: localization),
+                    note: formatNoteLabel(english: "Life raft - check last inspection date, check reliability and method of raft attachment", russian: "Спасательный плот - проверьте дату последнего осмотра, проверьте надежность и метод крепления плота", using: localization)
                 ),
                 ChecklistItem(
-                    title: "Life ring/horseshoe / Спасательный круг и MOB маячок",
-                    note: "Спасательный круг и MOB маячок - проверьте исправность лампочки"
+                    title: formatTitleLabel(english: "Life ring/horseshoe", russian: "Спасательный круг и MOB маячок", using: localization),
+                    note: formatNoteLabel(english: "Life ring and MOB beacon - check light functionality", russian: "Спасательный круг и MOB маячок - проверьте исправность лампочки", using: localization)
                 ),
                 ChecklistItem(
-                    title: "Visual Distress signals / Пиротехника",
-                    note: "Пиротехника - расположение, количество, срок годности"
+                    title: formatTitleLabel(english: "Visual Distress signals", russian: "Пиротехника", using: localization),
+                    note: formatNoteLabel(english: "Pyrotechnics - location, quantity, expiration date", russian: "Пиротехника - расположение, количество, срок годности", using: localization)
                 ),
                 ChecklistItem(
-                    title: "Fire extinguishers / Огнетушители",
-                    note: "Огнетушители - расположение, тип, количество, срок годности"
+                    title: formatTitleLabel(english: "Fire extinguishers", russian: "Огнетушители", using: localization),
+                    note: formatNoteLabel(english: "Fire extinguishers - location, type, quantity, expiration date", russian: "Огнетушители - расположение, тип, количество, срок годности", using: localization)
                 ),
                 ChecklistItem(
-                    title: "Smoke and CO detectors (if any) / Датчики дыма и CO (если есть)",
-                    note: "Датчики дыма и CO (если есть) - расположение"
+                    title: formatTitleLabel(english: "Smoke and CO detectors (if any)", russian: "Датчики дыма и CO (если есть)", using: localization),
+                    note: formatNoteLabel(english: "Smoke and CO detectors (if any) - location", russian: "Датчики дыма и CO (если есть) - расположение", using: localization)
                 ),
                 ChecklistItem(
-                    title: "First aid kit / Аптечка",
-                    note: "Аптечка - расположение, состав, срок годности"
+                    title: formatTitleLabel(english: "First aid kit", russian: "Аптечка", using: localization),
+                    note: formatNoteLabel(english: "First aid kit - location, contents, expiration date", russian: "Аптечка - расположение, состав, срок годности", using: localization)
                 )
             ]
         ),
         ChecklistSection(
-            title: "Communication with Charter Manager / Общение с чартерной",
+            title: formatTitleLabel(english: "Communication with Charter Manager", russian: "Общение с чартерной", using: localization),
             items: [
                 ChecklistItem(
-                    title: "Point out major problems / Укажите на основные недочеты и проблемы",
-                    note: "Укажите на основные недочеты и проблемы. Обсудите все, что пометили в чек-листе"
+                    title: formatTitleLabel(english: "Point out major problems", russian: "Укажите на основные недочеты и проблемы", using: localization),
+                    note: formatNoteLabel(english: "Point out major shortcomings and problems. Discuss everything marked in the checklist", russian: "Укажите на основные недочеты и проблемы. Обсудите все, что пометили в чек-листе", using: localization)
                 ),
                 ChecklistItem(
-                    title: "Ask about: cruising engine speeds, fuel consumption / Узнайте про: крейсерские обороты двигателя, расход топлива",
-                    note: "Узнайте про: крейсерские обороты двигателя, расход топлива, емкость топливного и водяных баков, расположение переключателя водяных баков"
+                    title: formatTitleLabel(english: "Ask about: cruising engine speeds, fuel consumption", russian: "Узнайте про: крейсерские обороты двигателя, расход топлива", using: localization),
+                    note: formatNoteLabel(english: "Ask about: cruising engine speeds, fuel consumption, fuel and water tank capacity, water tank switch location", russian: "Узнайте про: крейсерские обороты двигателя, расход топлива, емкость топливного и водяных баков, расположение переключателя водяных баков", using: localization)
                 ),
                 ChecklistItem(
-                    title: "Ask for list of required documents for state authorities / Уточните список необходимых документов для госорганов",
-                    note: "Уточните список необходимых документов для госорганов"
+                    title: formatTitleLabel(english: "Ask for list of required documents for state authorities", russian: "Уточните список необходимых документов для госорганов", using: localization),
+                    note: formatNoteLabel(english: "Clarify list of required documents for state authorities", russian: "Уточните список необходимых документов для госорганов", using: localization)
                 ),
                 ChecklistItem(
-                    title: "Write down contacts / Запишите контакты",
-                    note: "Запишите контакты чартерной, спасательных служб и береговой охраны"
+                    title: formatTitleLabel(english: "Write down contacts", russian: "Запишите контакты", using: localization),
+                    note: formatNoteLabel(english: "Write down contacts of charter company, rescue services and coast guard", russian: "Запишите контакты чартерной, спасательных служб и береговой охраны", using: localization)
                 )
             ]
         )
-    ]
+        ]
+    }
 }

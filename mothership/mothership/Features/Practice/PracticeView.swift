@@ -70,7 +70,7 @@ struct PracticeView: View {
     }
     
     private var filteredModules: [PracticeModule] {
-        let allModules = PracticeModule.defaultModules
+        let allModules = PracticeModule.defaultModules(using: localization)
         if selectedCategory == .all {
             return allModules
         }
@@ -228,78 +228,90 @@ struct GridCard: View {
 // MARK: - Default Learning Modules
 
 extension PracticeModule {
-    static let defaultModules: [PracticeModule] = [
-        PracticeModule(
-            title: "Безопасность",
-            subtitle: "Брифинг по безопасности на яхте",
-            category: .briefing,
-            type: .document,
-            source: .remote
-        ),
-        PracticeModule(
-            title: "Жизнь на яхте",
-            subtitle: "Брифинг по жизни на яхте",
-            category: .briefing,
-            type: .document,
-            source: .remote
-        ),
-        PracticeModule(
-            title: "Аптечка",
-            subtitle: "Аптечка",
-            category: .safety,
-            type: .document,
-            source: .remote
-        ),
-        PracticeModule(
-            title: "Сход на берег",
-            subtitle: "Сход на берег",
-            category: .safety,
-            type: .document,
-            source: .remote
-        ),
-        PracticeModule(
-            title: "Швартовка и отход",
-            subtitle: "Швартовка и отход",
-            category: .safety,
-            type: .document,
-            source: .remote
-        ),
-        PracticeModule(
-            title: "Штык со шлагом",
-            subtitle: "Штык со шлагом",
-            category: .knots,
-            type: .document,
-            source: .remote
-        ),
-        PracticeModule(
-            title: "Подготовка к выходу",
-            subtitle: "Подготовка к выходу",
-            category: .briefing,
-            type: .checklist,
-            source: .remote
-        ),
-        PracticeModule(
-            title: "Отход от пирса",
-            subtitle: "Отход от пирса",
-            category: .mooring,
-            type: .document,
-            source: .remote
-        ),
-        PracticeModule(
-            title: "Швартовка по средиземноморски",
-            subtitle: "Швартовка по средиземноморски",
-            category: .mooring,
-            type: .document,
-            source: .remote
-        ),
-        PracticeModule(
-            title: "Постановка на якорь",
-            subtitle: "Постановка на якорь",
-            category: .mooring,
-            type: .document,
-            source: .remote
-        )
-    ]
+    static func defaultModules(using localization: LocalizationService) -> [PracticeModule] {
+        [
+            PracticeModule(
+                id: UUID(uuidString: "00000000-0000-0000-0000-000000000001")!,
+                title: localization.localized(L10n.Practice.Module.safetyBriefingTitle),
+                subtitle: localization.localized(L10n.Practice.Module.safetyBriefingSubtitle),
+                category: .briefing,
+                type: .document,
+                source: .remote
+            ),
+            PracticeModule(
+                id: UUID(uuidString: "00000000-0000-0000-0000-000000000002")!,
+                title: localization.localized(L10n.Practice.Module.lifeOnYachtTitle),
+                subtitle: localization.localized(L10n.Practice.Module.lifeOnYachtSubtitle),
+                category: .briefing,
+                type: .document,
+                source: .remote
+            ),
+            PracticeModule(
+                id: UUID(uuidString: "00000000-0000-0000-0000-000000000003")!,
+                title: localization.localized(L10n.Practice.Module.firstAidKitTitle),
+                subtitle: localization.localized(L10n.Practice.Module.firstAidKitSubtitle),
+                category: .safety,
+                type: .document,
+                source: .remote
+            ),
+            PracticeModule(
+                id: UUID(uuidString: "00000000-0000-0000-0000-000000000004")!,
+                title: localization.localized(L10n.Practice.Module.goingAshoreTitle),
+                subtitle: localization.localized(L10n.Practice.Module.goingAshoreSubtitle),
+                category: .safety,
+                type: .document,
+                source: .remote
+            ),
+            PracticeModule(
+                id: UUID(uuidString: "00000000-0000-0000-0000-000000000005")!,
+                title: localization.localized(L10n.Practice.Module.mooringAndDepartureTitle),
+                subtitle: localization.localized(L10n.Practice.Module.mooringAndDepartureSubtitle),
+                category: .safety,
+                type: .document,
+                source: .remote
+            ),
+            PracticeModule(
+                id: UUID(uuidString: "00000000-0000-0000-0000-000000000006")!,
+                title: localization.localized(L10n.Practice.Module.roundTurnTitle),
+                subtitle: localization.localized(L10n.Practice.Module.roundTurnSubtitle),
+                category: .knots,
+                type: .document,
+                source: .remote
+            ),
+            PracticeModule(
+                id: UUID(uuidString: "00000000-0000-0000-0000-000000000007")!,
+                title: localization.localized(L10n.Practice.Module.preDepartureTitle),
+                subtitle: localization.localized(L10n.Practice.Module.preDepartureSubtitle),
+                category: .briefing,
+                type: .checklist,
+                source: .remote
+            ),
+            PracticeModule(
+                id: UUID(uuidString: "00000000-0000-0000-0000-000000000008")!,
+                title: localization.localized(L10n.Practice.Module.departureFromPierTitle),
+                subtitle: localization.localized(L10n.Practice.Module.departureFromPierSubtitle),
+                category: .mooring,
+                type: .document,
+                source: .remote
+            ),
+            PracticeModule(
+                id: UUID(uuidString: "00000000-0000-0000-0000-000000000009")!,
+                title: localization.localized(L10n.Practice.Module.mediterraneanMooringTitle),
+                subtitle: localization.localized(L10n.Practice.Module.mediterraneanMooringSubtitle),
+                category: .mooring,
+                type: .document,
+                source: .remote
+            ),
+            PracticeModule(
+                id: UUID(uuidString: "00000000-0000-0000-0000-000000000010")!,
+                title: localization.localized(L10n.Practice.Module.anchoringTitle),
+                subtitle: localization.localized(L10n.Practice.Module.anchoringSubtitle),
+                category: .mooring,
+                type: .document,
+                source: .remote
+            )
+        ]
+    }
 }
 
 #Preview {
