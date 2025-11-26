@@ -28,28 +28,87 @@ final class ChecklistStore {
     
     // MARK: - Checklist Management
     
-    func ensureDefaultCheckInChecklist() {
+    func ensureDefaultCheckInChecklist(using localization: LocalizationService = LocalizationService()) {
         // Check if check-in checklist already exists
-        let checkInExists = checklists.contains { checklist in
+        if let existingIndex = checklists.firstIndex(where: { checklist in
             checklist.type == .charterScoped && checklist.charterType == .checkIn
-        }
-        
-        if !checkInExists {
-            let defaultCheckIn = Checklist.defaultCheckInChecklist()
+        }) {
+            // Check if the checklist needs to be regenerated due to language mismatch
+            let existingChecklist = checklists[existingIndex]
+            let currentLanguageCode = localization.effectiveLanguage.code
+            let hasBilingualFormat = existingChecklist.title.contains(" / ")
+            
+            // If current language is English but checklist has bilingual format, regenerate it
+            // If current language is Russian but checklist doesn't have bilingual format, regenerate it
+            let needsRegeneration = (currentLanguageCode == "en" && hasBilingualFormat) ||
+                                   (currentLanguageCode == "ru" && !hasBilingualFormat)
+            
+            if needsRegeneration {
+                // Regenerate with correct language, preserving the ID to maintain state associations
+                var regeneratedChecklist = Checklist.defaultCheckInChecklist(using: localization)
+                regeneratedChecklist = Checklist(
+                    id: existingChecklist.id,
+                    title: regeneratedChecklist.title,
+                    type: regeneratedChecklist.type,
+                    charterType: regeneratedChecklist.charterType,
+                    referenceType: regeneratedChecklist.referenceType,
+                    sections: regeneratedChecklist.sections,
+                    source: regeneratedChecklist.source,
+                    lastFetched: regeneratedChecklist.lastFetched
+                )
+                checklists[existingIndex] = regeneratedChecklist
+                save()
+            }
+        } else {
+            // Checklist doesn't exist, create it
+            let defaultCheckIn = Checklist.defaultCheckInChecklist(using: localization)
             checklists.append(defaultCheckIn)
             save()
             markChecklistsLoaded()
         }
     }
     
-    func getCheckInChecklist() -> Checklist? {
-        return checklists.first { checklist in
+    func getCheckInChecklist(using localization: LocalizationService? = nil) -> Checklist? {
+        guard let checklist = checklists.first(where: { checklist in
             checklist.type == .charterScoped && checklist.charterType == .checkIn
+        }) else {
+            return nil
         }
+        
+        // If localization is provided, check if checklist needs regeneration
+        if let localization = localization {
+            let currentLanguageCode = localization.effectiveLanguage.code
+            let hasBilingualFormat = checklist.title.contains(" / ")
+            let needsRegeneration = (currentLanguageCode == "en" && hasBilingualFormat) ||
+                                   (currentLanguageCode == "ru" && !hasBilingualFormat)
+            
+            if needsRegeneration {
+                // Regenerate with correct language, preserving the ID to maintain state associations
+                var regeneratedChecklist = Checklist.defaultCheckInChecklist(using: localization)
+                // Preserve the original ID so saved states remain associated
+                regeneratedChecklist = Checklist(
+                    id: checklist.id,
+                    title: regeneratedChecklist.title,
+                    type: regeneratedChecklist.type,
+                    charterType: regeneratedChecklist.charterType,
+                    referenceType: regeneratedChecklist.referenceType,
+                    sections: regeneratedChecklist.sections,
+                    source: regeneratedChecklist.source,
+                    lastFetched: regeneratedChecklist.lastFetched
+                )
+                if let index = checklists.firstIndex(where: { $0.id == checklist.id }) {
+                    checklists[index] = regeneratedChecklist
+                    save()
+                    return regeneratedChecklist
+                }
+            }
+        }
+        
+        return checklist
     }
     
-    func getCheckInChecklist(for charterId: UUID) -> Checklist? {
-        guard let baseChecklist = getCheckInChecklist() else { return nil }
+    func getCheckInChecklist(for charterId: UUID, using localization: LocalizationService? = nil) -> Checklist? {
+        guard let baseChecklist = getCheckInChecklist(using: localization) else { return nil }
         
         // Return a copy with charter-specific state applied
         var checklist = baseChecklist
