@@ -13,17 +13,29 @@ enum FlashcardFetcher {
     /// These define which folders to fetch and their localized names
     static let deckConfigurations: [DeckConfiguration] = [
         DeckConfiguration(
-            folderName: "звуковые сигналы",
+            languageFolders: [
+                "ru": "ru/звуковые сигналы",
+                "en": "en/sound signals"
+            ],
+            legacyFolderNames: ["звуковые сигналы"],
             displayNameKey: "learn.deck.sound_signals",
             descriptionKey: "learn.deck.sound_signals.description"
         ),
         DeckConfiguration(
-            folderName: "навигационные огни",
+            languageFolders: [
+                "ru": "ru/навигационные огни",
+                "en": "en/navigation lights"
+            ],
+            legacyFolderNames: ["навигационные огни"],
             displayNameKey: "learn.deck.navigation_lights",
             descriptionKey: "learn.deck.navigation_lights.description"
         ),
         DeckConfiguration(
-            folderName: "МППСС",
+            languageFolders: [
+                "ru": "ru/МППСС",
+                "en": "en/colregs"
+            ],
+            legacyFolderNames: ["МППСС"],
             displayNameKey: "learn.deck.colregs",
             descriptionKey: "learn.deck.colregs.description"
         )
@@ -134,10 +146,12 @@ enum FlashcardFetcher {
         useCache: Bool = true,
         forceRefresh: Bool = false
     ) async throws -> [FlashcardDeck] {
+        let languageCode = localization.effectiveLanguage.code
         var decks: [FlashcardDeck] = []
         var errors: [String: Error] = [:]
         
         for config in deckConfigurations {
+            let folderPath = config.folderPath(for: languageCode)
             // Check for cancellation before each deck
             try Task.checkCancellation()
             
@@ -145,11 +159,11 @@ enum FlashcardFetcher {
                 let displayName = localization.localized(config.displayNameKey)
                 let description = config.descriptionKey.map { localization.localized($0) }
                 
-                // Find existing deck by folderName to preserve its ID
-                let existingDeck = existingDecks.first { $0.folderName == config.folderName }
+                // Find existing deck by folder path (or legacy names) to preserve its ID
+                let existingDeck = config.existingDeck(for: languageCode, in: existingDecks)
                 
                 let deck = try await fetchDeck(
-                    folderName: config.folderName,
+                    folderName: folderPath,
                     displayName: displayName,
                     description: description,
                     existingDeckID: existingDeck?.id,
@@ -164,17 +178,17 @@ enum FlashcardFetcher {
                 // Don't log or add to errors - this is normal behavior
                 continue
             } catch let error as ContentFetchError {
-                errors[config.folderName] = error
+                errors[folderPath] = error
                 
                 // If rate limited, try to use cached content
                 if case .rateLimited(let timeUntilReset) = error, useCache {
-                    AppLogger.warning("Rate limited for '\(config.folderName)', using cached content (resets in \(Int(timeUntilReset))s)")
-                    let existingDeck = existingDecks.first { $0.folderName == config.folderName }
+                    AppLogger.warning("Rate limited for '\(folderPath)', using cached content (resets in \(Int(timeUntilReset))s)")
+                    let existingDeck = config.existingDeck(for: languageCode, in: existingDecks)
                     if let existingDeck = existingDeck, !existingDeck.flashcards.isEmpty {
                         decks.append(existingDeck)
                     }
                 } else {
-                    AppLogger.error("Failed to fetch deck '\(config.folderName)': \(error.localizedDescription)")
+                    AppLogger.error("Failed to fetch deck '\(folderPath)': \(error.localizedDescription)")
                 }
                 // Continue fetching other decks even if one fails
             } catch {
@@ -185,9 +199,9 @@ enum FlashcardFetcher {
                     continue
                 }
                 
-                errors[config.folderName] = error
+                errors[folderPath] = error
                 let errorType = String(describing: type(of: error))
-                AppLogger.error("Error fetching deck '\(config.folderName)': \(error.localizedDescription) (type: \(errorType))")
+                AppLogger.error("Error fetching deck '\(folderPath)': \(error.localizedDescription) (type: \(errorType))")
                 // Continue fetching other decks even if one fails
             }
         }
@@ -221,8 +235,41 @@ enum FlashcardFetcher {
 // MARK: - Deck Configuration
 
 struct DeckConfiguration {
-    let folderName: String
+    let languageFolders: [String: String]
+    let legacyFolderNames: [String]
     let displayNameKey: String
     let descriptionKey: String?
+    
+    init(
+        languageFolders: [String: String],
+        legacyFolderNames: [String] = [],
+        displayNameKey: String,
+        descriptionKey: String?
+    ) {
+        self.languageFolders = languageFolders
+        self.legacyFolderNames = legacyFolderNames
+        self.displayNameKey = displayNameKey
+        self.descriptionKey = descriptionKey
+    }
+    
+    func folderPath(for languageCode: String) -> String {
+        if let path = languageFolders[languageCode] {
+            return path
+        }
+        if let ruPath = languageFolders["ru"] {
+            return ruPath
+        }
+        if let enPath = languageFolders["en"] {
+            return enPath
+        }
+        return languageFolders.values.first ?? ""
+    }
+    
+    func existingDeck(for languageCode: String, in decks: [FlashcardDeck]) -> FlashcardDeck? {
+        let currentPath = folderPath(for: languageCode)
+        return decks.first { deck in
+            deck.folderName == currentPath || legacyFolderNames.contains(deck.folderName)
+        }
+    }
 }
 

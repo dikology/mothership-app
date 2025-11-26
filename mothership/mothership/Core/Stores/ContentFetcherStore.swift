@@ -135,7 +135,7 @@ final class ContentFetcherStore {
             // Life on Yacht
             "00000000-0000-0000-0000-000000000002": [
                 "ru": "команда/жизнь на лодке.md",
-                "en": "team/life on yacht.md"
+                "en": "crew/life on board.md"
             ],
             // First Aid Kit
             "00000000-0000-0000-0000-000000000003": [
@@ -160,7 +160,7 @@ final class ContentFetcherStore {
             // Pre-departure Preparation
             "00000000-0000-0000-0000-000000000007": [
                 "ru": "чеклисты/подготовка к выходу.md",
-                "en": "checklists/pre-departure preparation.md"
+                "en": "checklists/pre-departure checklist.md"
             ],
             // Departure from Pier
             "00000000-0000-0000-0000-000000000008": [
