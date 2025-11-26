@@ -142,6 +142,8 @@
 "profile.reputation" = "Репутация";
 "profile.edit_profile" = "Редактировать профиль";
 "profile.select_user_type" = "Выберите тип пользователя";
+"profile.delete_account" = "Удалить аккаунт";
+"profile.delete_account_confirmation" = "Вы уверены, что хотите удалить аккаунт? Это приведет к удалению ваших данных с этого устройства. Это действие нельзя отменить.";
 
 // MARK: - Settings
 

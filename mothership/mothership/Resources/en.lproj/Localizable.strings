@@ -142,6 +142,8 @@
 "profile.reputation" = "Reputation";
 "profile.edit_profile" = "Edit Profile";
 "profile.select_user_type" = "Select User Type";
+"profile.delete_account" = "Delete Account";
+"profile.delete_account_confirmation" = "Are you sure you want to delete your account? This will remove your data from this device. This action cannot be undone.";
 
 // MARK: - Settings
 

@@ -13,6 +13,7 @@ struct ProfileView: View {
     
     @State private var showEditProfile = false
     @State private var showUserTypePicker = false
+    @State private var showDeleteAccountAlert = false
     
     private var user: User? {
         userStore.currentUser
@@ -141,6 +142,7 @@ struct ProfileView: View {
                 }
             }
             
+            /*
             Button(action: {}) {
                 HStack {
                     Image(systemName: "plus.circle.fill")
@@ -149,6 +151,7 @@ struct ProfileView: View {
                         .foregroundColor(AppColors.basicsCardColor)
                 }
             }
+            */
         }
     }
     
@@ -219,6 +222,21 @@ struct ProfileView: View {
                     Image(systemName: "arrow.right.square")
                     Text(localization.localized(L10n.Auth.signOut))
                 }
+            }
+            
+            Button(role: .destructive, action: { showDeleteAccountAlert = true }) {
+                HStack {
+                    Image(systemName: "trash")
+                    Text(localization.localized(L10n.Profile.deleteAccount))
+                }
+            }
+            .alert(localization.localized(L10n.Profile.deleteAccount), isPresented: $showDeleteAccountAlert) {
+                Button(localization.localized(L10n.Common.cancel), role: .cancel) { }
+                Button(localization.localized(L10n.Common.delete), role: .destructive) {
+                    userStore.signOut()
+                }
+            } message: {
+                Text(localization.localized(L10n.Profile.deleteAccountConfirmation))
             }
         }
     }
